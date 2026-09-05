@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from typing import Dict, Any
 
-MINECRAFT_DIR = Path("/data/minecraft")
+MINECRAFT_DIR = Path(os.environ.get("MINECRAFT_DIR", "/data/minecraft" if Path("/data/minecraft").exists() or not Path("./data/minecraft").exists() else "./data/minecraft"))
 PROPERTIES_FILE = MINECRAFT_DIR / "server.properties"
 SETTINGS_FILE = MINECRAFT_DIR / "dashboard_settings.json"
 

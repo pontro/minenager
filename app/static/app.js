@@ -1,10 +1,11 @@
-import { initServerManager } from './js/server.js?v=5';
-import { initInstaller } from './js/installer.js?v=5';
-import { initModsManager } from './js/mods.js?v=5';
-import { initMrpackUploader } from './js/mrpack.js?v=5';
-import { initSettingsManager } from './js/settings.js?v=5';
-import { initPlayersManager } from './js/players.js?v=5';
-import { initDiscordManager } from './js/discord.js?v=5';
+import { initServerManager } from './js/server.js?v=6';
+import { initInstaller } from './js/installer.js?v=6';
+import { initModsManager } from './js/mods.js?v=6';
+import { initMrpackUploader } from './js/mrpack.js?v=6';
+import { initSettingsManager } from './js/settings.js?v=6';
+import { initPlayersManager } from './js/players.js?v=6';
+import { initDiscordManager } from './js/discord.js?v=6';
+import { initMetricsManager } from './js/metrics.js?v=6';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize Subsystems
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsManager = initSettingsManager();
     const playersManager = initPlayersManager();
     const discordManager = initDiscordManager();
+    const metricsManager = initMetricsManager();
 
     initMrpackUploader(() => {
         modsManager.loadInstalledMods();
@@ -38,15 +40,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (targetId === 'tab-server') {
                 playersManager.loadPlayers();
+                metricsManager.onTabDeactivated();
             } else if (targetId === 'tab-mods') {
                 modsManager.loadInstalledMods();
                 modsManager.loadMods();
                 installer.updateLoaderVersions();
+                metricsManager.onTabDeactivated();
             } else if (targetId === 'tab-settings') {
                 settingsManager.loadBackups();
                 settingsManager.loadStorage();
+                metricsManager.onTabDeactivated();
+            } else if (targetId === 'tab-metrics') {
+                metricsManager.onTabActivated();
             } else if (targetId === 'tab-discord') {
                 discordManager.loadDiscordStatus();
+                metricsManager.onTabDeactivated();
+            } else {
+                metricsManager.onTabDeactivated();
             }
         });
     });

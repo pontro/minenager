@@ -1,0 +1,146 @@
+<!-- Tab 6: Performance & Real-Time Metrics -->
+<div id="tab-metrics" class="tab-pane">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📈 Server Performance &amp; Resource Monitor</span>
+                    <span id="metricsLiveBadge" class="status-badge online" style="font-size: 0.75rem;">● Live (2s)</span>
+                </h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Real-time CPU, RAM, and game tick diagnostics for your host and Minecraft server process.
+                </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">
+                    Uptime: <strong id="metricsUptimeText" style="color: var(--text-main);">--</strong>
+                </span>
+                <button type="button" id="btnRefreshMetrics" class="btn btn-sm btn-send" title="Manual refresh">
+                    🔄 Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- 4 Core Metric Gauge Cards -->
+        <div class="metrics-grid">
+            <!-- 1. TPS & Tick Health -->
+            <div class="metric-card">
+                <div class="metric-card-header">
+                    <span class="metric-card-title">⚡ Tick Rate &amp; Health</span>
+                    <span id="metricTpsBadge" class="status-badge online">20.0 TPS</span>
+                </div>
+                <div class="metric-card-main">
+                    <div class="metric-main-value" id="metricTpsVal">20.0 <span class="metric-unit">TPS</span></div>
+                    <div class="metric-sub-label">
+                        MSPT: <strong id="metricMsptVal" style="color: var(--text-main);">25.0 ms</strong> 
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">(&lt;50ms = ideal)</span>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="metricTpsBar" class="progress-bar-fill fill-online" style="width: 100%;"></div>
+                </div>
+                <div class="metric-footer" id="metricTpsStatusText">
+                    🟢 Normal performance (50.0ms tick budget)
+                </div>
+            </div>
+
+            <!-- 2. CPU Utilization -->
+            <div class="metric-card">
+                <div class="metric-card-header">
+                    <span class="metric-card-title">💻 Total CPU Utilization</span>
+                    <span id="metricCpuBadge" class="status-badge online">0.0%</span>
+                </div>
+                <div class="metric-card-main">
+                    <div class="metric-main-value" id="metricSysCpuVal">0.0<span class="metric-unit">%</span></div>
+                    <div class="metric-sub-label">
+                        Minecraft Process: <strong id="metricProcCpuVal" style="color: var(--text-main);">0.0%</strong>
+                        <span id="metricCpuCores" style="color: var(--text-muted); font-size: 0.75rem;"></span>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="metricCpuBar" class="progress-bar-fill fill-cpu" style="width: 0%;"></div>
+                </div>
+                <div class="metric-footer" id="metricLoadAvgText">
+                    Load Average: 0.00, 0.00, 0.00
+                </div>
+            </div>
+
+            <!-- 3. RAM Usage -->
+            <div class="metric-card">
+                <div class="metric-card-header">
+                    <span class="metric-card-title">🧠 Memory (RAM)</span>
+                    <span id="metricRamBadge" class="status-badge online">0 MB</span>
+                </div>
+                <div class="metric-card-main">
+                    <div class="metric-main-value" id="metricProcRamVal">0 <span class="metric-unit">MB</span></div>
+                    <div class="metric-sub-label">
+                        Allocated: <strong id="metricMaxRamVal" style="color: var(--text-main);">-- GB</strong> | 
+                        Host Used: <strong id="metricSysRamVal" style="color: var(--text-muted);">--</strong>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="metricRamBar" class="progress-bar-fill fill-ram" style="width: 0%;"></div>
+                </div>
+                <div class="metric-footer" id="metricRamFooter">
+                    System RAM: calculating...
+                </div>
+            </div>
+
+            <!-- 4. JVM Threads & Process -->
+            <div class="metric-card">
+                <div class="metric-card-header">
+                    <span class="metric-card-title">🧵 Java Process &amp; Threads</span>
+                    <span id="metricPidBadge" class="status-badge offline">PID: --</span>
+                </div>
+                <div class="metric-card-main">
+                    <div class="metric-main-value" id="metricThreadsVal">0 <span class="metric-unit">threads</span></div>
+                    <div class="metric-sub-label">
+                        JVM Worker Pool &amp; Netty I/O
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="metricThreadsBar" class="progress-bar-fill fill-threads" style="width: 25%;"></div>
+                </div>
+                <div class="metric-footer" id="metricProcessStatus">
+                    Server process: <span id="metricServerStatusText">Offline</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-Time Mini Graphs Section -->
+        <div class="charts-container" style="margin-top: 1.5rem;">
+            <!-- CPU History Mini-Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <span>📊 CPU Activity (Last 60 Seconds)</span>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-dot" style="background-color: #38bdf8;"></span> System CPU</span>
+                            <span class="legend-item"><span class="legend-dot" style="background-color: #22c55e;"></span> Minecraft Java</span>
+                        </div>
+                    </div>
+                    <span id="chartCpuLatest" style="font-size: 0.8rem; color: var(--text-muted);">0.0%</span>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="cpuChartCanvas" width="500" height="140"></canvas>
+                </div>
+            </div>
+
+            <!-- RAM History Mini-Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <span>🧠 RAM Consumption (Last 60 Seconds)</span>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-dot" style="background-color: #a855f7;"></span> Process RSS (MB)</span>
+                        </div>
+                    </div>
+                    <span id="chartRamLatest" style="font-size: 0.8rem; color: var(--text-muted);">0 MB</span>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="ramChartCanvas" width="500" height="140"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

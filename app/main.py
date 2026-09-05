@@ -3,10 +3,11 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.routers import mods, mrpack, settings, installer, process, backup, players, storage, discord
+from app.routers import mods, mrpack, settings, installer, process, backup, players, storage, discord, metrics
 from app.services import modrinth, mrpack as mrpack_service, settings as settings_service, backup as backup_service
 from app.services.server_process import server_manager
 from app.services.discord_bot import discord_bot_manager, get_config as get_discord_config
+from app.services.metrics import metrics_service
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,9 +32,20 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"Minenager: Error starting Discord bot: {e}")
 
+    # Startup: 3. Start Metrics Sampler
+    try:
+        metrics_service.start()
+    except Exception as e:
+        print(f"Minenager: Error starting metrics service: {e}")
+
     yield
 
-    # Shutdown: cleanly stop Discord bot and Minecraft server
+    # Shutdown: cleanly stop services
+    try:
+        metrics_service.stop()
+    except Exception:
+        pass
+
     try:
         await discord_bot_manager.stop()
     except Exception:
@@ -60,6 +72,7 @@ app.include_router(backup.router)
 app.include_router(players.router)
 app.include_router(storage.router)
 app.include_router(discord.router)
+app.include_router(metrics.router)
 
 @app.get("/")
 async def index(request: Request):

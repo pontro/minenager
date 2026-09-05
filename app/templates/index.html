@@ -18,6 +18,7 @@
                 <li><button class="nav-link" data-tab="tab-mods">Mods &amp; Packs</button></li>
                 <li><button class="nav-link" data-tab="tab-console">Console</button></li>
                 <li><button class="nav-link" data-tab="tab-settings">Settings</button></li>
+                <li><button class="nav-link" data-tab="tab-metrics">📈 Performance</button></li>
                 <li><button class="nav-link" data-tab="tab-discord">💬 Discord Bot</button></li>
             </ul>
         </nav>
@@ -38,6 +39,9 @@
 
         <!-- Tab 5: Discord Bot & Remote Control -->
         {% include "tabs/tab_discord.html" %}
+
+        <!-- Tab 6: Performance & Real-Time Metrics -->
+        {% include "tabs/tab_metrics.html" %}
     </main>
 
     <!-- Components & Modals -->
@@ -50,6 +54,6 @@
         <p>Minenager &bull; Lightweight Minecraft Server Manager &bull; Powered by Modrinth</p>
     </footer>
 
-    <script type="module" src="/static/app.js?v=5"></script>
+    <script type="module" src="/static/app.js?v=6"></script>
 </body>
 </html>
