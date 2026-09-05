@@ -11,12 +11,12 @@ MINECRAFT_DIR = Path("/data/minecraft")
 def _download_to_file(url: str, dest_path: Path):
     dest_path.parent.mkdir(parents=True, exist_ok=True)
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=60) as resp, open(dest_path, "wb") as out_file:
+    with urllib.request.urlopen(req, timeout=90) as resp, open(dest_path, "wb") as out_file:
         out_file.write(resp.read())
 
 def _fetch_json(url: str) -> Any:
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=15) as resp:
+    with urllib.request.urlopen(req, timeout=25) as resp:
         return json.loads(resp.read().decode('utf-8'))
 
 def _get_fabric_installer_version() -> str:

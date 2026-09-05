@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional
@@ -18,7 +19,8 @@ class ToggleModRequest(BaseModel):
 
 @router.get("/versions")
 async def get_versions():
-    return {"versions": modrinth.get_minecraft_versions()}
+    versions = await asyncio.to_thread(modrinth.get_minecraft_versions)
+    return {"versions": versions}
 
 @router.get("/loaders")
 async def get_loaders():
@@ -31,17 +33,19 @@ async def search_mods(
     loader: Optional[str] = None,
     limit: int = Query(20, ge=1, le=50)
 ):
-    hits = modrinth.search_mods(query=q, mc_version=version, loader=loader, limit=limit)
+    hits = await asyncio.to_thread(modrinth.search_mods, query=q, mc_version=version, loader=loader, limit=limit)
     return {"hits": hits}
 
 @router.get("/installed")
 async def get_installed():
-    return {"installed": modrinth.list_installed_mods()}
+    installed = await asyncio.to_thread(modrinth.list_installed_mods)
+    return {"installed": installed}
 
 @router.post("/install")
 async def install_mod(payload: InstallModRequest):
     try:
-        res = modrinth.install_mod(
+        res = await asyncio.to_thread(
+            modrinth.install_mod,
             project_id_or_slug=payload.project_id_or_slug,
             mc_version=payload.mc_version,
             loader=payload.loader
@@ -53,13 +57,13 @@ async def install_mod(payload: InstallModRequest):
 @router.post("/uninstall")
 async def uninstall_mod(payload: UninstallModRequest):
     try:
-        return modrinth.uninstall_mod(payload.filename)
+        return await asyncio.to_thread(modrinth.uninstall_mod, payload.filename)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/toggle")
 async def toggle_mod(payload: ToggleModRequest):
     try:
-        return modrinth.toggle_mod(payload.filename)
+        return await asyncio.to_thread(modrinth.toggle_mod, payload.filename)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

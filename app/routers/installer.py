@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional
@@ -17,7 +18,7 @@ async def get_loader_versions(
     loader: str = Query("fabric", description="Mod loader")
 ):
     try:
-        versions = downloader.get_loader_versions(version, loader)
+        versions = await asyncio.to_thread(downloader.get_loader_versions, version, loader)
         return {"versions": versions, "loader_versions": versions}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -26,7 +27,8 @@ async def get_loader_versions(
 async def install_server(payload: InstallServerRequest):
     try:
         mc = payload.mc_version or payload.minecraft_version or "1.20.1"
-        res = downloader.install_custom_server(
+        res = await asyncio.to_thread(
+            downloader.install_custom_server,
             mc_version=mc,
             loader=payload.loader,
             loader_version=payload.loader_version
