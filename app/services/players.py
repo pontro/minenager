@@ -54,6 +54,16 @@ def get_online_players_from_logs(logs: List[Dict[str, Any]]) -> List[str]:
 
     return list(online)
 
+def get_online_players(server_mgr=None) -> List[str]:
+    """Helper to return list of online player names."""
+    if server_mgr is None:
+        from app.services.server_process import server_manager
+        server_mgr = server_manager
+    if server_mgr.status != "online":
+        return []
+    logs = server_mgr.get_logs(0)["logs"]
+    return get_online_players_from_logs(logs)
+
 def get_all_players_data(server_mgr) -> Dict[str, Any]:
     """Return comprehensive players status (online, ops, whitelist, bans)."""
     ops = get_ops()
