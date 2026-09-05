@@ -206,7 +206,8 @@ def install_mod(
         "filename": filename,
         "version_number": target_version.get("version_number"),
         "size": primary_file.get("size"),
-        "downloaded_files": downloaded_files
+        "downloaded_files": downloaded_files,
+        "installed_dependencies": downloaded_files[1:] if len(downloaded_files) > 1 else []
     }
 
 def uninstall_mod(filename: str) -> Dict[str, Any]:
