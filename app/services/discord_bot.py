@@ -336,9 +336,18 @@ class DiscordBotManager:
                             break
 
             except Exception as e:
-                logger.error(f"Discord connection error: {e}")
+                err_str = str(e)
+                logger.error(f"Discord connection error: {err_str}")
                 self.status = "error"
-                self.last_error = str(e)
+                if "4004" in err_str:
+                    self.last_error = "Invalid Bot Token (Discord 4004 Auth Failed). Please reset and copy the Token under the Bot tab in Discord Developer Portal."
+                    # Break loop so it doesn't spam reconnection attempts with invalid credentials
+                    break
+                elif "4014" in err_str:
+                    self.last_error = "Missing Gateway Intents (Discord 4014). Please enable 'Message Content Intent' under the Bot tab in Discord Developer Portal."
+                    break
+                else:
+                    self.last_error = err_str
             finally:
                 if self._heartbeat_task and not self._heartbeat_task.done():
                     self._heartbeat_task.cancel()
