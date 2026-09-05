@@ -94,6 +94,7 @@ Minenager includes a built-in asynchronous Discord bot that connects directly vi
 | Command | Permission | Description |
 | :--- | :--- | :--- |
 | `!status` | Public / Admin | Live server status embed (state, version, loader, RAM, online players). |
+| `!metrics` / `!tps` | Public / Admin | Live CPU %, RAM utilization (JVM RSS & Host), and TPS/MSPT tick rate. |
 | `!players` | Public / Admin | Displays the list of online players with Minotar skin avatars. |
 | `!turnon` | Admin Only | Starts the Minecraft server. |
 | `!turnoff` | Admin Only | Cleanly saves world data and stops the Minecraft server. |

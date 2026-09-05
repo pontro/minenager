@@ -432,7 +432,46 @@ class DiscordBotManager:
             }
             await self.send_rest_message(channel_id, embed=embed)
 
-        # 2. Players Command
+        # 2. Performance / Metrics Command (!metrics / !perf / !tps / !ram / !cpu)
+        elif cmd in ["metrics", "perf", "performance", "tps", "ram", "cpu", "usage"]:
+            if not is_admin and not allow_public_status:
+                await self.send_rest_message(channel_id, "⛔ You do not have permission to view server performance metrics.")
+                return
+
+            from app.services.metrics import metrics_service
+            snap = metrics_service.get_live_metrics()
+            tps_val = snap["tps"]["tps"]
+            mspt_val = snap["tps"]["mspt"]
+            tps_status = snap["tps"]["status"]
+
+            sys_cpu = snap["cpu"]["system_percent"]
+            proc_cpu = snap["cpu"]["process_percent"]
+            cores = snap["cpu"]["num_cpus"]
+
+            proc_rss = snap["memory"]["process_rss_formatted"]
+            max_ram = f"{snap['memory']['max_ram_gb']} GB"
+            sys_ram = f"{snap['memory']['system_used_formatted']} / {snap['memory']['system_total_formatted']}"
+            uptime = snap["host"]["uptime_formatted"]
+            threads = snap["host"]["threads"]
+
+            color = 3066993 if tps_val >= 19.0 else (16744272 if tps_val >= 15.0 else 15158332)
+
+            embed = {
+                "title": "📈 Server Performance & Resource Usage",
+                "color": color,
+                "fields": [
+                    {"name": "⚡ Tick Rate (TPS)", "value": f"**{tps_val:.1f} TPS** (`{mspt_val:.1f} ms` MSPT)\n_{tps_status}_", "inline": True},
+                    {"name": "💻 CPU Utilization", "value": f"**{sys_cpu:.1f}%** Total\nProcess: `{proc_cpu:.1f}%` ({cores} cores)", "inline": True},
+                    {"name": "🧠 RAM Utilization", "value": f"**{proc_rss}** (JVM RSS)\nAllocated: `{max_ram}`\nHost: `{sys_ram}`", "inline": True},
+                    {"name": "⏱️ Server Uptime", "value": f"`{uptime}`", "inline": True},
+                    {"name": "🧵 JVM Threads", "value": f"`{threads}` active threads", "inline": True},
+                    {"name": "📊 Load Average", "value": f"`{', '.join(map(str, snap['cpu']['load_avg']))}`", "inline": True}
+                ],
+                "footer": {"text": "Minenager Live Metrics Monitor"}
+            }
+            await self.send_rest_message(channel_id, embed=embed)
+
+        # 3. Players Command
         elif cmd in ["players", "list", "who"]:
             if not is_admin and not allow_public_status:
                 await self.send_rest_message(channel_id, "⛔ You do not have permission to view player list.")
@@ -451,7 +490,7 @@ class DiscordBotManager:
                 }
                 await self.send_rest_message(channel_id, embed=embed)
 
-        # 3. Turn On / Start Command
+        # 4. Turn On / Start Command
         elif cmd in ["turnon", "start", "on"]:
             if not is_admin:
                 await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can start the server.")
@@ -470,7 +509,7 @@ class DiscordBotManager:
                 java_args=all_settings.get("java_args", "")
             )
 
-        # 4. Turn Off / Stop Command
+        # 5. Turn Off / Stop Command
         elif cmd in ["turnoff", "stop", "off"]:
             if not is_admin:
                 await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can stop the server.")
@@ -484,7 +523,7 @@ class DiscordBotManager:
             await self.send_rest_message(channel_id, "⏳ Saving world and cleanly stopping the server...")
             server_manager.stop_server()
 
-        # 5. Restart Command
+        # 6. Restart Command
         elif cmd in ["restart", "reboot"]:
             if not is_admin:
                 await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can restart the server.")
@@ -493,7 +532,7 @@ class DiscordBotManager:
             await self.send_rest_message(channel_id, "🔄 Restarting Minecraft server...")
             server_manager.restart_server()
 
-        # 6. Execute Console Command
+        # 7. Execute Console Command
         elif cmd in ["cmd", "command", "exec"]:
             if not is_admin:
                 await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can execute console commands.")
@@ -507,10 +546,11 @@ class DiscordBotManager:
             server_manager.send_command(mc_cmd)
             await self.send_rest_message(channel_id, f"💻 Sent command to Minecraft console: `{mc_cmd}`")
 
-        # 7. Help Command
+        # 8. Help Command
         elif cmd in ["help", "commands"]:
             fields = [
                 {"name": f"`{prefix}status`", "value": "Check live server status and RAM", "inline": True},
+                {"name": f"`{prefix}metrics`", "value": "Check live CPU %, RAM usage, and TPS", "inline": True},
                 {"name": f"`{prefix}players`", "value": "List all players currently online", "inline": True}
             ]
             if is_admin:
