@@ -2,4 +2,3 @@ fastapi
 uvicorn[standard]
 jinja2
 pydantic
-aiohttp

@@ -1,10 +1,12 @@
 import asyncio
 import json
 import logging
-import traceback
+import urllib.request
+import urllib.error
+import ssl
 from pathlib import Path
 from typing import Dict, Any, Optional, List
-import aiohttp
+import websockets
 from app.services.server_process import server_manager
 from app.services import settings as settings_service, mrpack as mrpack_service, players as players_service
 
@@ -17,8 +19,8 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "enabled": False,
     "token": "",
     "channel_id": "",
-    "admin_ids": [],         # List of Discord user IDs
-    "admin_role_ids": [],    # List of Discord role IDs
+    "admin_ids": [],
+    "admin_role_ids": [],
     "allow_public_status": True,
     "prefix": "!",
     "notify_server_start": True,
@@ -52,6 +54,28 @@ def save_config(new_config: Dict[str, Any]) -> Dict[str, Any]:
         json.dump(current, f, indent=2)
     return current
 
+def _send_rest_sync(token: str, channel_id: str, payload: Dict[str, Any]) -> tuple:
+    url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
+    body = json.dumps(payload).encode('utf-8')
+    req = urllib.request.Request(
+        url,
+        data=body,
+        headers={
+            "Authorization": f"Bot {token}",
+            "Content-Type": "application/json",
+            "User-Agent": "MinenagerBot (https://github.com/pontro/minenager, 1.0)"
+        },
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return True, "OK"
+    except urllib.error.HTTPError as e:
+        err_msg = e.read().decode('utf-8', errors='ignore')
+        return False, f"HTTP {e.code}: {err_msg[:120]}"
+    except Exception as e:
+        return False, str(e)
+
 class DiscordBotManager:
     _instance = None
 
@@ -69,8 +93,7 @@ class DiscordBotManager:
         self.bot_user: Optional[Dict[str, Any]] = None
         self.last_error: Optional[str] = None
         self._task: Optional[asyncio.Task] = None
-        self._ws: Optional[aiohttp.ClientWebSocketResponse] = None
-        self._session: Optional[aiohttp.ClientSession] = None
+        self._ws = None
         self._heartbeat_task: Optional[asyncio.Task] = None
         self._last_sequence: Optional[int] = None
         self._stop_requested = False
@@ -105,10 +128,11 @@ class DiscordBotManager:
         self.status = "disconnected"
         if self._heartbeat_task and not self._heartbeat_task.done():
             self._heartbeat_task.cancel()
-        if self._ws and not self._ws.closed:
-            await self._ws.close()
-        if self._session and not self._session.closed:
-            await self._session.close()
+        if self._ws:
+            try:
+                await self._ws.close()
+            except Exception:
+                pass
         if self._task and not self._task.done():
             self._task.cancel()
 
@@ -123,32 +147,17 @@ class DiscordBotManager:
         if not token or not channel_id:
             return False
 
-        url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
-        headers = {
-            "Authorization": f"Bot {token}",
-            "Content-Type": "application/json",
-            "User-Agent": "MinenagerBot (https://github.com/pontro/minenager, 1.0)"
-        }
         payload: Dict[str, Any] = {}
         if content:
             payload["content"] = content
         if embed:
             payload["embeds"] = [embed]
 
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.post(url, headers=headers, json=payload, timeout=aiohttp.ClientTimeout(total=10)) as resp:
-                    if resp.status in [200, 201]:
-                        return True
-                    else:
-                        err_text = await resp.text()
-                        logger.error(f"Discord REST error {resp.status}: {err_text}")
-                        self.last_error = f"HTTP {resp.status}: {err_text[:100]}"
-                        return False
-        except Exception as e:
-            logger.error(f"Failed to send Discord message: {e}")
-            self.last_error = str(e)
-            return False
+        ok, err = await asyncio.to_thread(_send_rest_sync, token, channel_id, payload)
+        if not ok:
+            logger.error(f"Failed to send Discord message: {err}")
+            self.last_error = err
+        return ok
 
     async def send_test_message(self) -> Dict[str, Any]:
         cfg = get_config()
@@ -194,7 +203,7 @@ class DiscordBotManager:
             embed = {
                 "title": "🟢 Minecraft Server is Online!",
                 "description": f"The server is ready for connections on port **25565**.",
-                "color": 3066993,  # Green
+                "color": 3066993,
                 "fields": [
                     {"name": "Version", "value": f"Minecraft {mc_ver} ({loader})", "inline": True},
                     {"name": "RAM Allocated", "value": kwargs.get("ram", "4 GB"), "inline": True}
@@ -205,7 +214,7 @@ class DiscordBotManager:
             embed = {
                 "title": "🔴 Minecraft Server Stopped",
                 "description": "The Minecraft server process has shut down.",
-                "color": 15158332,  # Red
+                "color": 15158332,
                 "footer": {"text": "Minenager • Server Offline"}
             }
         elif event_type == "player_join" and cfg.get("notify_player_join_leave", True):
@@ -214,7 +223,7 @@ class DiscordBotManager:
             embed = {
                 "title": f"👤 {player} joined the game",
                 "description": f"**{player}** connected to the world.",
-                "color": 3447003,  # Blue
+                "color": 3447003,
                 "thumbnail": {"url": f"https://minotar.net/avatar/{player}/64.png"},
                 "footer": {"text": f"Minenager • {count} player(s) online"}
             }
@@ -224,7 +233,7 @@ class DiscordBotManager:
             embed = {
                 "title": f"🚪 {player} left the game",
                 "description": f"**{player}** disconnected.",
-                "color": 10070709,  # Gray/Dark
+                "color": 10070709,
                 "thumbnail": {"url": f"https://minotar.net/avatar/{player}/64.png"},
                 "footer": {"text": f"Minenager • {count} player(s) online"}
             }
@@ -233,22 +242,20 @@ class DiscordBotManager:
             embed = {
                 "title": "⚠️ Minecraft Server Crashed",
                 "description": f"The server stopped unexpectedly.\n```\n{reason[:300]}\n```",
-                "color": 16744272,  # Amber
+                "color": 16744272,
                 "footer": {"text": "Minenager • Crash Alert"}
             }
 
         if embed:
             await self.send_rest_message(channel_id, embed=embed)
 
-    async def _heartbeat_loop(self, interval_ms: int):
+    async def _heartbeat_loop(self, ws, interval_ms: int):
         while not self._stop_requested:
             try:
                 await asyncio.sleep(interval_ms / 1000.0)
-                if self._ws and not self._ws.closed:
-                    await self._ws.send_json({
-                        "op": 1,
-                        "d": self._last_sequence
-                    })
+                if ws:
+                    payload = json.dumps({"op": 1, "d": self._last_sequence})
+                    await ws.send(payload)
             except asyncio.CancelledError:
                 break
             except Exception as e:
@@ -256,6 +263,7 @@ class DiscordBotManager:
                 break
 
     async def _run_bot_loop(self):
+        ssl_ctx = ssl.create_default_context()
         while not self._stop_requested:
             cfg = get_config()
             token = cfg.get("token", "").strip()
@@ -264,74 +272,67 @@ class DiscordBotManager:
                 break
 
             try:
-                self._session = aiohttp.ClientSession()
                 gateway_url = "wss://gateway.discord.gg/?v=10&encoding=json"
+                self.status = "connecting"
 
-                async with self._session.ws_connect(gateway_url) as ws:
+                async with websockets.connect(gateway_url, ssl=ssl_ctx) as ws:
                     self._ws = ws
-                    self.status = "connecting"
 
-                    async for msg in ws:
+                    async for message in ws:
                         if self._stop_requested:
                             break
 
-                        if msg.type == aiohttp.WSMsgType.TEXT:
-                            data = json.loads(msg.data)
-                            op = data.get("op")
-                            seq = data.get("s")
-                            if seq is not None:
-                                self._last_sequence = seq
-                            t = data.get("t")
-                            d = data.get("d")
+                        data = json.loads(message)
+                        op = data.get("op")
+                        seq = data.get("s")
+                        if seq is not None:
+                            self._last_sequence = seq
+                        t = data.get("t")
+                        d = data.get("d")
 
-                            # Opcode 10: Hello -> start heartbeat & identify
-                            if op == 10:
-                                heartbeat_interval = d["heartbeat_interval"]
-                                if self._heartbeat_task and not self._heartbeat_task.done():
-                                    self._heartbeat_task.cancel()
-                                self._heartbeat_task = asyncio.create_task(self._heartbeat_loop(heartbeat_interval))
+                        # Opcode 10: Hello -> start heartbeat & identify
+                        if op == 10:
+                            heartbeat_interval = d["heartbeat_interval"]
+                            if self._heartbeat_task and not self._heartbeat_task.done():
+                                self._heartbeat_task.cancel()
+                            self._heartbeat_task = asyncio.create_task(self._heartbeat_loop(ws, heartbeat_interval))
 
-                                # Send Opcode 2: Identify
-                                # Intents: GUILDS (1) + GUILD_MESSAGES (512) + MESSAGE_CONTENT (32768) + DIRECT_MESSAGES (4096) = 37377
-                                identify_payload = {
-                                    "op": 2,
-                                    "d": {
-                                        "token": token,
-                                        "intents": 37377,
-                                        "properties": {
-                                            "os": "linux",
-                                            "browser": "Minenager",
-                                            "device": "Minenager"
-                                        },
-                                        "presence": {
-                                            "activities": [{
-                                                "name": "Minecraft Server",
-                                                "type": 0
-                                            }],
-                                            "status": "online",
-                                            "afk": False
-                                        }
+                            # Send Opcode 2: Identify
+                            identify_payload = {
+                                "op": 2,
+                                "d": {
+                                    "token": token,
+                                    "intents": 37377,
+                                    "properties": {
+                                        "os": "linux",
+                                        "browser": "Minenager",
+                                        "device": "Minenager"
+                                    },
+                                    "presence": {
+                                        "activities": [{
+                                            "name": "Minecraft Server",
+                                            "type": 0
+                                        }],
+                                        "status": "online",
+                                        "afk": False
                                     }
                                 }
-                                await ws.send_json(identify_payload)
+                            }
+                            await ws.send(json.dumps(identify_payload))
 
-                            # Opcode 0: Dispatch Events
-                            elif op == 0:
-                                if t == "READY":
-                                    self.status = "connected"
-                                    self.bot_user = d.get("user")
-                                    self.last_error = None
-                                    logger.info(f"Discord Bot connected as {self.bot_user.get('username')}")
+                        # Opcode 0: Dispatch Events
+                        elif op == 0:
+                            if t == "READY":
+                                self.status = "connected"
+                                self.bot_user = d.get("user")
+                                self.last_error = None
+                                logger.info(f"Discord Bot connected as {self.bot_user.get('username')}")
 
-                                elif t == "MESSAGE_CREATE":
-                                    asyncio.create_task(self._handle_message(d))
+                            elif t == "MESSAGE_CREATE":
+                                asyncio.create_task(self._handle_message(d))
 
-                            # Opcode 7: Reconnect requested by Discord
-                            elif op == 7 or op == 9:
-                                logger.info("Discord requested reconnect/resume.")
-                                break
-
-                        elif msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
+                        elif op in (7, 9):
+                            logger.info("Discord requested reconnect.")
                             break
 
             except Exception as e:
@@ -341,8 +342,6 @@ class DiscordBotManager:
             finally:
                 if self._heartbeat_task and not self._heartbeat_task.done():
                     self._heartbeat_task.cancel()
-                if self._session and not self._session.closed:
-                    await self._session.close()
 
             if not self._stop_requested:
                 await asyncio.sleep(5)
@@ -352,28 +351,24 @@ class DiscordBotManager:
         admin_ids = [str(x).strip() for x in cfg.get("admin_ids", []) if str(x).strip()]
         admin_role_ids = [str(x).strip() for x in cfg.get("admin_role_ids", []) if str(x).strip()]
 
-        # If no admin restrictions configured, default allow user who invited the bot / channel admin
         if not admin_ids and not admin_role_ids:
             return True
 
-        # Check user ID
         if user_id in admin_ids:
             return True
 
-        # Check roles or administrator permission flag
         if member:
             user_roles = [str(r) for r in member.get("roles", [])]
             for r in user_roles:
                 if r in admin_role_ids:
                     return True
             perms = int(member.get("permissions", "0"))
-            if perms & 0x8:  # Administrator flag
+            if perms & 0x8:
                 return True
 
         return False
 
     async def _handle_message(self, data: Dict[str, Any]):
-        # Ignore bot messages
         author = data.get("author", {})
         if author.get("bot", False):
             return
@@ -384,14 +379,12 @@ class DiscordBotManager:
         channel_id = str(data.get("channel_id", ""))
         configured_channel = str(cfg.get("channel_id", "")).strip()
 
-        # If channel is restricted, verify channel
         if configured_channel and channel_id != configured_channel:
             return
 
         if not content.startswith(prefix):
             return
 
-        # Strip prefix
         raw_cmd = content[len(prefix):].strip()
         parts = raw_cmd.split()
         if not parts:
