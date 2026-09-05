@@ -499,18 +499,27 @@ class DiscordBotManager:
                 await self.send_rest_message(chan_id, "⚠️ Server is already offline.")
                 return
             await self.send_rest_message(chan_id, "⏳ Saving world and cleanly stopping the Minecraft server...")
-            server_manager.stop_server()
+            try:
+                server_manager.stop()
+            except Exception as e:
+                await self.send_rest_message(chan_id, f"❌ Error stopping server: {e}")
 
         async def _execute_restart(chan_id: str):
             await self.send_rest_message(chan_id, "🔄 Restarting Minecraft server...")
-            server_manager.restart_server()
+            try:
+                server_manager.restart()
+            except Exception as e:
+                await self.send_rest_message(chan_id, f"❌ Error restarting server: {e}")
 
         async def _execute_backup(chan_id: str):
             if backup_service.backup_status["is_busy"]:
                 await self.send_rest_message(chan_id, "⚠️ A backup or restore task is already running.")
                 return
             await self.send_rest_message(chan_id, "💾 **Starting World Backup Routine**...\nBroadcasting a 1-minute countdown in game chat, saving the world, and creating backup archive.")
-            backup_service.run_backup_routine(server_manager)
+            try:
+                backup_service.run_backup_routine(server_manager)
+            except Exception as e:
+                await self.send_rest_message(chan_id, f"❌ Error starting backup: {e}")
 
         # 4. Turn On / Start Command
         if cmd in ["turnon", "start", "on"]:
@@ -524,12 +533,10 @@ class DiscordBotManager:
                 return
 
             await self.send_rest_message(channel_id, "⏳ Launching Minecraft server...")
-            all_settings = settings_service.get_all_settings()
-            server_manager.start_server(
-                ram_gb=all_settings.get("ram_gb", 4),
-                min_ram_gb=all_settings.get("min_ram_gb", 1),
-                java_args=all_settings.get("java_args", "")
-            )
+            try:
+                server_manager.start()
+            except Exception as e:
+                await self.send_rest_message(channel_id, f"❌ Error starting server: {e}")
 
         # 5. Turn Off / Stop Command (With Confirmation)
         elif cmd in ["turnoff", "stop", "off"]:

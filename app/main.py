@@ -18,11 +18,7 @@ async def lifespan(app: FastAPI):
             server_jar = Path("/data/minecraft/server.jar")
             if server_jar.exists() and server_manager.get_status()["status"] == "offline":
                 print("Minenager: Auto-start enabled. Launching Minecraft server on boot...")
-                server_manager.start_server(
-                    ram_gb=all_settings.get("ram_gb", 4),
-                    min_ram_gb=all_settings.get("min_ram_gb", 1),
-                    java_args=all_settings.get("java_args", "")
-                )
+                server_manager.start()
     except Exception as e:
         print(f"Minenager: Error during auto-start on boot: {e}")
 
@@ -53,7 +49,7 @@ async def lifespan(app: FastAPI):
 
     try:
         if server_manager.get_status()["status"] in ["online", "starting"]:
-            server_manager.stop_server()
+            server_manager.stop()
     except Exception:
         pass
 
