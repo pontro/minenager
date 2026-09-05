@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">
+            <span class="logo-icon">⛏️</span>
+            <span>Minenager</span>
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><button class="nav-link active" data-tab="tab-server">Server</button></li>
+                <li><button class="nav-link" data-tab="tab-mods">Mods &amp; Packs</button></li>
+                <li><button class="nav-link" data-tab="tab-console">Console</button></li>
+                <li><button class="nav-link" data-tab="tab-settings">Settings</button></li>
+                <li><button class="nav-link" data-tab="tab-backups" disabled style="opacity:0.4; cursor:not-allowed;">Backups</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Tab 1: Server Overview -->
+        {% include "tabs/tab_server.html" %}
+
+        <!-- Tab 2: Modrinth Mods & Packs -->
+        {% include "tabs/tab_mods.html" %}
+
+        <!-- Tab 3: Dedicated Console -->
+        {% include "tabs/tab_console.html" %}
+
+        <!-- Tab 4: Server Settings & Backups -->
+        {% include "tabs/tab_settings.html" %}
+    </main>
+
+    <!-- Components & Modals -->
+    {% include "components/modal_installed_mods.html" %}
+
+    <!-- Floating Toast for Confirmations -->
+    <div id="toast" class="toast-msg">✔ Action completed successfully!</div>
+
+    <footer>
+        <p>Minenager &bull; Lightweight Minecraft Server Manager &bull; Powered by Modrinth</p>
+    </footer>
+
+    <script type="module" src="/static/app.js"></script>
+</body>
+</html>

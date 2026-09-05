@@ -1,0 +1,110 @@
+<!-- Tab 1: Server Overview -->
+<div id="tab-server" class="tab-pane active">
+    <section class="server-card">
+        <div class="server-header">
+            <div class="server-title-group">
+                <h1 class="server-title" id="dashboardPackName">{{ server.pack_name }}</h1>
+                <div id="statusBadge" class="status-badge {{ server.status }}">
+                    <span class="status-dot"></span>
+                    <span id="statusText">{{ server.status | capitalize }}</span>
+                </div>
+            </div>
+            <div class="controls-group">
+                <button id="btnStart" class="btn btn-start" {% if server.status != 'offline' %}disabled{% endif %}>
+                    ▶ Start
+                </button>
+                <button id="btnRestart" class="btn btn-restart" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %}>
+                    🔄 Restart
+                </button>
+                <button id="btnStop" class="btn btn-stop" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %}>
+                    ⏹ Stop
+                </button>
+                <button id="btnCreateBackup" class="btn btn-send" title="Broadcast 1-min warning, shutdown, create backup, and restart">
+                    💾 Backup
+                </button>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-box">
+                <span class="info-label">Minecraft</span>
+                <span class="info-value" id="dashboardMcVersion">{{ server.version }}</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Loader</span>
+                <span class="info-value" id="dashboardLoader">{{ server.loader }}</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">RAM Allocated</span>
+                <span class="info-value" id="dashboardRam">{{ server.ram }}</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Players</span>
+                <span class="info-value" id="dashboardPlayers">0 / {{ server.max_players }}</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Port / Address</span>
+                <span class="info-value">localhost:{{ server.port }}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visual Connected Players & Moderation Card -->
+    <section class="card">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>👥 Connected Players &amp; Moderation</span>
+                    <span id="onlinePlayersBadge" class="status-badge offline" style="font-size: 0.75rem;">0 Online</span>
+                </h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Manage permissions and moderate online players with 1-click OP, Kick, Ban, and Whitelist buttons.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; gap: 0.35rem;">
+                    <input 
+                        type="text" 
+                        id="inputQuickPlayer" 
+                        class="form-input" 
+                        placeholder="Player username..." 
+                        style="width: 160px; padding: 0.4rem 0.75rem; font-size: 0.85rem;"
+                        autocomplete="off"
+                    >
+                    <button type="button" id="btnQuickWhitelist" class="btn btn-sm btn-send" title="Whitelist a player by username">
+                        🛡️ Whitelist
+                    </button>
+                </div>
+                <button type="button" id="btnRefreshPlayers" class="btn btn-sm btn-restart">
+                    🔄 Refresh
+                </button>
+            </div>
+        </div>
+
+        <div id="playersList" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.25rem;">
+            <div class="empty-state" style="padding: 1.5rem 1rem;">No players currently online.</div>
+        </div>
+    </section>
+
+    <!-- Quick Console preview on server page -->
+    <section class="console-card">
+        <div class="console-header">
+            <h2 class="console-title">
+                <span>💻 Live Console</span>
+            </h2>
+        </div>
+        <div id="consoleOutput" class="console-output">
+<span class="log-time">[Server thread/INFO]</span> Minecraft Server is currently offline.
+<span class="log-time">[Server thread/INFO]</span> Press "Start" to launch the server.</div>
+        <form id="commandForm" class="console-input-form">
+            <input 
+                type="text" 
+                id="commandInput" 
+                class="console-input" 
+                placeholder="Type a command (e.g. /help, /say Hello) and press Enter..." 
+                autocomplete="off"
+            >
+            <button type="submit" class="btn btn-send">Send</button>
+        </form>
+    </section>
+</div>

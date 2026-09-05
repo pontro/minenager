@@ -1,0 +1,20 @@
+<!-- Tab 3: Dedicated Console -->
+<div id="tab-console" class="tab-pane">
+    <section class="console-card" style="height: calc(100vh - 180px); display: flex; flex-direction: column;">
+        <div class="console-header">
+            <h2 class="console-title">💻 Server Terminal Console</h2>
+        </div>
+        <div id="dedicatedConsoleOutput" class="console-output" style="flex: 1; height: 100%;">
+<span class="log-time">[Server thread/INFO]</span> Minecraft Server is currently offline.</div>
+        <form id="dedicatedCommandForm" class="console-input-form" style="margin-top: 0.75rem;">
+            <input 
+                type="text" 
+                id="dedicatedCommandInput" 
+                class="console-input" 
+                placeholder="Type a command and press Enter..." 
+                autocomplete="off"
+            >
+            <button type="submit" class="btn btn-send">Send</button>
+        </form>
+    </section>
+</div>

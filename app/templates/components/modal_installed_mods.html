@@ -1,0 +1,27 @@
+<!-- Pop-up Modal: Installed Mods Management -->
+<div id="installedModsModal" class="modal-overlay">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <div class="modal-title">
+                <span>📁 Installed Mods</span>
+                <span id="modalModsCountBadge" class="installed-badge badge-active" style="margin-left: 0.5rem;">0</span>
+            </div>
+            <button type="button" id="btnCloseInstalledModal" class="modal-close-btn" title="Close window">✕</button>
+        </div>
+
+        <div class="modal-search-bar">
+            <input 
+                type="text" 
+                id="modalModSearchInput" 
+                class="form-input" 
+                style="width: 100%;" 
+                placeholder="🔍 Search installed mods (matches anywhere in filename)..."
+                autocomplete="off"
+            >
+        </div>
+
+        <div id="modalInstalledModsList" class="modal-body">
+            <div class="loading-state">Checking installed mods...</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,128 @@
+<!-- Tab 2: Modrinth Mods & .mrpack Integration -->
+<div id="tab-mods" class="tab-pane">
+    <!-- 1. Server Software & Version Installer (Top of Screen) -->
+    <div class="card" id="serverInstallerCard">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>⛏️ Server Software &amp; Version</span>
+                    <span id="installerLockBadge" class="status-badge {% if instance %}online{% else %}offline{% endif %}" style="font-size: 0.75rem;">
+                        {% if instance %}● Installed &amp; Locked{% else %}○ Not Configured{% endif %}
+                    </span>
+                </h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Choose your Minecraft version and mod loader to automatically download and configure <code>server.jar</code>.
+                </p>
+            </div>
+            <div id="installerActions" style="display: flex; gap: 0.5rem;">
+                <button type="button" id="btnChangeInstaller" class="btn btn-sm btn-restart" style="display: {% if instance %}inline-flex{% else %}none{% endif %};">
+                    🔄 Change
+                </button>
+                <button type="button" id="btnInstallServer" class="btn btn-install" style="display: {% if not instance %}inline-flex{% else %}none{% endif %};">
+                    ⬇ Install Server
+                </button>
+            </div>
+        </div>
+
+        <div class="filter-bar" style="background-color: var(--bg-card); border-radius: 8px;">
+            <div class="filter-group">
+                <label class="filter-label" for="installerMcVersion">Minecraft Version</label>
+                <select id="installerMcVersion" class="form-select" {% if instance %}disabled{% endif %}>
+                    {% for v in mc_versions %}
+                        <option value="{{ v }}" {% if v == server.version %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="installerLoader">Loader</label>
+                <select id="installerLoader" class="form-select" {% if instance %}disabled{% endif %}>
+                    {% for l in loaders %}
+                        <option value="{{ l }}" {% if l == server.loader | lower %}selected{% endif %}>{{ l | capitalize }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group" style="flex: 1; min-width: 180px;">
+                <label class="filter-label" for="installerLoaderVersion">Loader Version</label>
+                <select id="installerLoaderVersion" class="form-select" style="width: 100%;" {% if instance %}disabled{% endif %}>
+                    <option value="{{ instance.loader_version if instance and instance.loader_version else 'latest' }}">{{ instance.loader_version if instance and instance.loader_version else 'Latest Stable' }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Installed Mods Summary & Modal Trigger Card -->
+    <div class="card" id="installedModsSummaryCard">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📁 Installed Server Mods</span>
+                    <span id="installedCountBadge" class="status-badge online" style="font-size: 0.75rem;">0 Mods</span>
+                </h2>
+                <p id="installedSummaryText" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Manage, enable, disable, and remove mods installed in <code>/data/minecraft/mods/</code>.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="button" id="btnOpenInstalledModal" class="btn btn-send">
+                    📂 View &amp; Manage Installed Mods
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. .mrpack Modpack Upload Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title" style="font-size: 1.15rem;">📦 Import Modpack (.mrpack)</h2>
+        </div>
+        <div id="mrpackDropzone" class="dropzone-box">
+            <div class="dropzone-icon">📁</div>
+            <div class="dropzone-title">Select a .mrpack file from your device</div>
+            <p class="dropzone-sub">Upload a Modrinth modpack (.mrpack) to automatically install server files, mods, and lock version settings</p>
+            <button type="button" class="btn btn-send" id="btnBrowseMrpack" style="margin-top: 0.5rem; pointer-events: auto;">
+                📂 Browse Device for .mrpack
+            </button>
+            <input type="file" id="mrpackFileInput" style="display: none;">
+        </div>
+        <div id="mrpackUploadStatus" class="upload-status">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span id="mrpackStatusText" style="font-weight: 600;">Processing .mrpack...</span>
+                <span id="mrpackPercentText" style="color: var(--text-muted); font-size: 0.85rem;">0%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div id="mrpackProgressBar" class="progress-bar"></div>
+            </div>
+            <div id="mrpackDetails" style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 0.5rem;"></div>
+        </div>
+    </div>
+
+    <!-- 4. Browse & Search Modrinth Mods Card -->
+    <div class="card">
+        <div class="card-header" style="flex-wrap: wrap; gap: 1rem; align-items: center;">
+            <div>
+                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📦 Browse &amp; Add Mods</span>
+                </h2>
+                <span id="modsResultCount" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem; display: inline-block;"></span>
+            </div>
+            <div style="flex: 1; min-width: 280px; max-width: 500px; margin-left: auto;">
+                <input 
+                    type="text" 
+                    id="modSearchInput" 
+                    class="form-input" 
+                    style="width: 100%;"
+                    placeholder="🔍 Search mods (e.g. Sodium, Lithium, Voice Chat)..."
+                    autocomplete="off"
+                >
+            </div>
+        </div>
+        <div id="modsContainer" class="mods-container">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <div>Loading popular mods...</div>
+            </div>
+        </div>
+    </div>
+</div>

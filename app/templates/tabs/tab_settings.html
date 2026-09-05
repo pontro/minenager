@@ -1,0 +1,390 @@
+<!-- Tab 4: Server Settings & RAM Configuration -->
+<div id="tab-settings" class="tab-pane">
+    <form id="settingsForm">
+        <div class="card" style="margin-bottom: 1.25rem;">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">⚙️ Server Settings &amp; Configuration</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                        Edit memory allocation and common options in <code>server.properties</code>.
+                    </p>
+                </div>
+                <button type="submit" id="btnSaveSettingsTop" class="btn btn-start">
+                    💾 Save Settings
+                </button>
+            </div>
+        </div>
+
+        <div class="settings-grid">
+            <!-- Memory (RAM) Configuration -->
+            <div class="settings-card">
+                <h3 class="settings-card-title">⚡ RAM Allocation</h3>
+                
+                <!-- Maximum RAM (-Xmx) Slider -->
+                <div class="ram-slider-wrapper">
+                    <div class="ram-value-display">
+                        <span class="setting-name">Maximum RAM (-Xmx)</span>
+                        <span id="ramDisplayBadge" class="ram-val-badge">{{ settings.ram_gb }} GB</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="settingRamRange" 
+                        class="range-input" 
+                        min="1" 
+                        max="16" 
+                        step="1" 
+                        value="{{ settings.ram_gb }}"
+                    >
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                        <span>1 GB</span>
+                        <span>4 GB</span>
+                        <span>8 GB</span>
+                        <span>16 GB</span>
+                    </div>
+                </div>
+
+                <!-- Minimum RAM (-Xms) Slider -->
+                <div class="ram-slider-wrapper" style="margin-top: 0.75rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <div class="ram-value-display">
+                        <span class="setting-name">Minimum RAM (-Xms)</span>
+                        <span id="minRamDisplayBadge" class="ram-val-badge" style="color: var(--status-starting); background-color: rgba(245, 158, 11, 0.1);">{{ settings.min_ram_gb }} GB</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="settingMinRam" 
+                        class="range-input" 
+                        min="1" 
+                        max="16" 
+                        step="1" 
+                        value="{{ settings.min_ram_gb }}"
+                    >
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                        <span>1 GB</span>
+                        <span>4 GB</span>
+                        <span>8 GB</span>
+                        <span>16 GB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gameplay Rules -->
+            <div class="settings-card">
+                <h3 class="settings-card-title">🎮 Gameplay &amp; World</h3>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Gamemode</span>
+                        <span class="setting-desc">Default player game mode</span>
+                    </div>
+                    <select id="prop_gamemode" class="form-select">
+                        <option value="survival" {% if settings.properties['gamemode'] == 'survival' %}selected{% endif %}>Survival</option>
+                        <option value="creative" {% if settings.properties['gamemode'] == 'creative' %}selected{% endif %}>Creative</option>
+                        <option value="adventure" {% if settings.properties['gamemode'] == 'adventure' %}selected{% endif %}>Adventure</option>
+                        <option value="spectator" {% if settings.properties['gamemode'] == 'spectator' %}selected{% endif %}>Spectator</option>
+                    </select>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Difficulty</span>
+                        <span class="setting-desc">World damage &amp; mob difficulty</span>
+                    </div>
+                    <select id="prop_difficulty" class="form-select">
+                        <option value="peaceful" {% if settings.properties['difficulty'] == 'peaceful' %}selected{% endif %}>Peaceful</option>
+                        <option value="easy" {% if settings.properties['difficulty'] == 'easy' %}selected{% endif %}>Easy</option>
+                        <option value="normal" {% if settings.properties['difficulty'] == 'normal' %}selected{% endif %}>Normal</option>
+                        <option value="hard" {% if settings.properties['difficulty'] == 'hard' %}selected{% endif %}>Hard</option>
+                    </select>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Max Players</span>
+                        <span class="setting-desc">Maximum concurrent slots (1-10)</span>
+                    </div>
+                    <input 
+                        type="number" 
+                        id="prop_max_players" 
+                        class="form-input" 
+                        min="1" 
+                        max="10" 
+                        value="{{ settings.properties.get('max-players', '10') }}" 
+                        style="width: 80px; text-align: center; font-family: var(--font-mono); font-weight: 700;"
+                    >
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">World Name</span>
+                        <span class="setting-desc">level-name folder</span>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="prop_level_name" 
+                        class="form-input" 
+                        value="{{ settings.properties.get('level-name', 'world') }}" 
+                        style="width: 140px;"
+                    >
+                </div>
+            </div>
+
+            <!-- Security & Online Mode -->
+            <div class="settings-card">
+                <h3 class="settings-card-title">🛡️ Security &amp; Access</h3>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Online Mode</span>
+                        <span class="setting-desc">Verify accounts with Mojang (Disable for offline/cracked)</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="prop_online_mode" {% if settings.properties.get('online-mode') == 'true' %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">PVP</span>
+                        <span class="setting-desc">Allow players to attack each other</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="prop_pvp" {% if settings.properties.get('pvp') == 'true' %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Whitelist</span>
+                        <span class="setting-desc">Allow only whitelisted players to join</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="prop_white_list" {% if settings.properties.get('white-list') == 'true' %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Allow Flight</span>
+                        <span class="setting-desc">Allow survival flight (prevents kick)</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="prop_allow_flight" {% if settings.properties.get('allow-flight') == 'true' %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Performance & Entity Spawning -->
+            <div class="settings-card">
+                <h3 class="settings-card-title">🚀 Performance &amp; Distance</h3>
+                <div class="setting-slider-item">
+                    <div class="setting-slider-header">
+                        <div class="setting-info">
+                            <span class="setting-name">View Distance</span>
+                            <span class="setting-desc">Client chunk render radius</span>
+                        </div>
+                        <span id="badge_view_distance" class="setting-badge-val">{{ settings.properties.get('view-distance', '10') }} Chunks</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="prop_view_distance" 
+                        class="range-input" 
+                        min="4" 
+                        max="32" 
+                        step="1" 
+                        value="{{ settings.properties.get('view-distance', '10') }}"
+                    >
+                    <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted);">
+                        <span>4 (Fast)</span>
+                        <span>10 (Default)</span>
+                        <span>16 (High)</span>
+                        <span>32 (Max)</span>
+                    </div>
+                </div>
+
+                <div class="setting-slider-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <div class="setting-slider-header">
+                        <div class="setting-info">
+                            <span class="setting-name">Simulation Distance</span>
+                            <span class="setting-desc">Active entity &amp; block tick radius</span>
+                        </div>
+                        <span id="badge_simulation_distance" class="setting-badge-val">{{ settings.properties.get('simulation-distance', '10') }} Chunks</span>
+                    </div>
+                    <input 
+                        type="range" 
+                        id="prop_simulation_distance" 
+                        class="range-input" 
+                        min="4" 
+                        max="32" 
+                        step="1" 
+                        value="{{ settings.properties.get('simulation-distance', '10') }}"
+                    >
+                    <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted);">
+                        <span>4 (Low CPU)</span>
+                        <span>10 (Default)</span>
+                        <span>16 (High)</span>
+                        <span>32 (Max)</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Spawn Monsters</span>
+                        <span class="setting-desc">Hostile mobs like zombies &amp; skeletons</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="prop_spawn_monsters" {% if settings.properties.get('spawn-monsters', 'true') == 'true' %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Command Blocks</span>
+                        <span class="setting-desc">Allow command block execution</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="prop_enable_command_block" {% if settings.properties.get('enable-command-block', 'true') == 'true' %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- MOTD & Network info (Occupies 2 columns under Gameplay and Security) -->
+            <div class="settings-card span-2">
+                <h3 class="settings-card-title">📡 Message of the Day &amp; Ports</h3>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Server MOTD</span>
+                        <span class="setting-desc">Description shown in Minecraft multiplayer server list</span>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="prop_motd" 
+                        class="form-input" 
+                        value="{{ settings.properties.get('motd', 'A Minecraft Server') }}" 
+                        style="flex: 1; max-width: 450px;"
+                    >
+                </div>
+
+                <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <div class="setting-info">
+                        <span class="setting-name">Minecraft Server Port</span>
+                        <span class="setting-desc">Fixed port mapped for players to connect</span>
+                    </div>
+                    <span class="status-badge online" style="font-family: var(--font-mono); font-size: 0.85rem;">25565 (Locked)</span>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Backups Management Card -->
+    <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>💾 World Backups (/data/backups)</span>
+                    <span id="backupCountBadge" class="status-badge online" style="font-size: 0.75rem;">{{ backups | length }} / 7 Saved</span>
+                </h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Automatically maintains the last 7 backups with Mexico City timestamps (CDMX). Restoring a backup safely stops the server, replaces world files, and reopens the server.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="button" id="btnRefreshBackups" class="btn btn-sm btn-send">🔄 Reload Backups</button>
+            </div>
+        </div>
+
+        <div id="backupLiveStatusBanner" style="display: none; padding: 0.75rem 1rem; background: rgba(34, 139, 116, 0.15); border: 1px solid var(--accent-sage); border-radius: 8px; font-size: 0.9rem; margin-top: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="spinner" style="width: 14px; height: 14px; border-width: 2px; margin: 0;"></span>
+                <span id="backupLiveStatusText">Backup in progress...</span>
+            </div>
+        </div>
+
+        <div id="backupsList" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+            <div class="loading-state">Loading backups...</div>
+        </div>
+    </div>
+
+    <!-- Storage Breakdown & Disk Space Saver Card (Idea 7) -->
+    <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📊 Storage Usage &amp; Disk Space Saver</span>
+                    <span id="storageTotalBadge" class="status-badge online" style="font-size: 0.75rem;">Calculating...</span>
+                </h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Monitor disk space on low-spec hardware and instantly purge old log archives and crash dumps.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="button" id="btnCleanLogs" class="btn btn-sm btn-restart" title="Delete old .log.gz archives and crash dumps">
+                    🧹 Clean Old Logs &amp; Dumps
+                </button>
+                <button type="button" id="btnRefreshStorage" class="btn btn-sm btn-send">
+                    🔄 Refresh
+                </button>
+            </div>
+        </div>
+
+        <div class="info-grid" style="margin-top: 0.5rem;">
+            <div class="info-box">
+                <span class="info-label">🌍 World Data</span>
+                <span class="info-value" id="storageWorld">--</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">💾 Backups</span>
+                <span class="info-value" id="storageBackups">--</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">📦 Installed Mods</span>
+                <span class="info-value" id="storageMods">--</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">📜 Logs &amp; Dumps</span>
+                <span class="info-value" id="storageLogs">--</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">💿 Free Disk Space</span>
+                <span class="info-value" id="storageFreeDisk" style="color: var(--status-online);">--</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- World Reset Card -->
+    <div class="card" style="border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.04); margin-top: 1.5rem;">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" style="color: var(--status-starting); font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🌍 World Reset</span>
+                </h2>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Delete only the world save data (overworld <code>world/</code>, Nether, The End, player inventories, and advancements). <strong>Does NOT touch your server .jar, installed mods, or configuration.</strong> A fresh world will generate upon next startup.
+                </p>
+            </div>
+            <button type="button" id="btnDeleteWorld" class="btn btn-restart" style="padding: 0.75rem 1.5rem; white-space: nowrap;">
+                🗑️ Delete World Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Danger Zone: Delete All & Reset to 0 -->
+    <div class="card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); margin-top: 1rem;">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" style="color: var(--status-offline); font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>⚠️ Danger Zone</span>
+                </h2>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Completely wipe all server data in <code>/data/minecraft/</code> (mods, world, configuration, server .jar) to start from scratch. Backups in <code>/data/backups/</code> will be preserved.
+                </p>
+            </div>
+            <button type="button" id="btnResetServer" class="btn btn-danger" style="padding: 0.75rem 1.5rem; white-space: nowrap;">
+                🗑️ Delete All &amp; Start from 0
+            </button>
+        </div>
+    </div>
+</div>
