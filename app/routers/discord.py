@@ -7,8 +7,8 @@ router = APIRouter(prefix="/api/discord", tags=["discord"])
 
 class SaveDiscordConfigRequest(BaseModel):
     enabled: bool
-    token: str
-    channel_id: str
+    token: Optional[str] = ""
+    channel_id: Optional[str] = ""
     admin_ids: Optional[List[str]] = []
     admin_role_ids: Optional[List[str]] = []
     allow_public_status: Optional[bool] = True

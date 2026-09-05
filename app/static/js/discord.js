@@ -103,6 +103,7 @@ export function initDiscordManager() {
             const status = data.status || {};
             const cfg = data.config || {};
 
+            // Update badge
             if (!cfg.enabled) {
                 discordStatusBadge.className = 'status-badge offline';
                 discordStatusBadge.textContent = '○ Disabled';
@@ -115,15 +116,59 @@ export function initDiscordManager() {
                 discordStatusBadge.textContent = '◐ Connecting...';
             } else if (status.status === 'error') {
                 discordStatusBadge.className = 'status-badge offline';
-                discordStatusBadge.textContent = `⚠️ Error: ${status.last_error ? status.last_error.slice(0, 20) : 'Disconnected'}`;
+                discordStatusBadge.textContent = `⚠️ Error: ${status.last_error ? status.last_error.slice(0, 25) : 'Disconnected'}`;
             } else {
                 discordStatusBadge.className = 'status-badge offline';
                 discordStatusBadge.textContent = '○ Offline / Disconnected';
             }
+
+            // Sync form values
+            const enabledInput = document.getElementById('discord_enabled');
+            if (enabledInput && typeof cfg.enabled === 'boolean') enabledInput.checked = cfg.enabled;
+
+            const channelInput = document.getElementById('discord_channel_id');
+            if (channelInput && cfg.channel_id) channelInput.value = cfg.channel_id;
+
+            const prefixInput = document.getElementById('discord_prefix');
+            if (prefixInput && cfg.prefix) prefixInput.value = cfg.prefix;
+
+            const tokenInput = document.getElementById('discord_token');
+            const tokenSavedBadge = document.getElementById('tokenSavedBadge');
+            if (cfg.token || cfg.token_masked) {
+                if (tokenInput) tokenInput.placeholder = '•••••••••••••••••••••••• (Saved)';
+                if (tokenSavedBadge) tokenSavedBadge.style.display = 'inline-block';
+            } else {
+                if (tokenSavedBadge) tokenSavedBadge.style.display = 'none';
+            }
+
+            const adminIdsInput = document.getElementById('discord_admin_ids');
+            if (adminIdsInput && cfg.admin_ids) adminIdsInput.value = (cfg.admin_ids || []).join(', ');
+
+            const adminRolesInput = document.getElementById('discord_admin_role_ids');
+            if (adminRolesInput && cfg.admin_role_ids) adminRolesInput.value = (cfg.admin_role_ids || []).join(', ');
+
+            const publicStatusInput = document.getElementById('discord_allow_public_status');
+            if (publicStatusInput && typeof cfg.allow_public_status === 'boolean') publicStatusInput.checked = cfg.allow_public_status;
+
+            const notifyStart = document.getElementById('discord_notify_server_start');
+            if (notifyStart && typeof cfg.notify_server_start === 'boolean') notifyStart.checked = cfg.notify_server_start;
+
+            const notifyStop = document.getElementById('discord_notify_server_stop');
+            if (notifyStop && typeof cfg.notify_server_stop === 'boolean') notifyStop.checked = cfg.notify_server_stop;
+
+            const notifyJoinLeave = document.getElementById('discord_notify_player_join_leave');
+            if (notifyJoinLeave && typeof cfg.notify_player_join_leave === 'boolean') notifyJoinLeave.checked = cfg.notify_player_join_leave;
+
+            const notifyCrash = document.getElementById('discord_notify_server_crash');
+            if (notifyCrash && typeof cfg.notify_server_crash === 'boolean') notifyCrash.checked = cfg.notify_server_crash;
+
         } catch (err) {
             console.error('Error fetching Discord status:', err);
         }
     }
+
+    // Load status on initialization
+    loadDiscordStatus();
 
     return { loadDiscordStatus };
 }

@@ -52,7 +52,12 @@
 
                 <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
                     <div class="setting-info" style="flex: 1;">
-                        <span class="setting-name">Discord Bot Token</span>
+                        <span class="setting-name">
+                            Discord Bot Token
+                            <span id="tokenSavedBadge" class="status-badge online" style="font-size: 0.7rem; padding: 0.15rem 0.4rem; margin-left: 0.5rem; {% if not discord.config.token %}display:none;{% endif %}">
+                                ✔ Saved
+                            </span>
+                        </span>
                         <span class="setting-desc">Secret token from Discord Developer Portal (Bot tab)</span>
                     </div>
                     <div style="display: flex; gap: 0.5rem; flex: 1; max-width: 450px;">
