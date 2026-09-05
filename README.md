@@ -28,7 +28,7 @@ Built with **FastAPI**, **Docker**, and modern vanilla JavaScript & CSS with no 
 Clone the repository and launch the container:
 
 ```bash
-git clone https://github.com/<your-username>/minenager.git
+git clone https://github.com/pontro/minenager.git
 cd minenager
 docker compose up -d
 ```
