@@ -26,6 +26,12 @@ export function initServerManager() {
 
         if (consoleOutput) {
             consoleOutput.appendChild(line);
+
+            // Keep only the last 100 log lines in DOM to prevent lag and memory bloat
+            while (consoleOutput.children.length > 100) {
+                consoleOutput.removeChild(consoleOutput.firstElementChild);
+            }
+
             consoleOutput.scrollTop = consoleOutput.scrollHeight;
         }
     }
