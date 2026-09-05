@@ -6,9 +6,10 @@ import urllib.error
 import ssl
 from pathlib import Path
 from typing import Dict, Any, Optional, List
+import time
 import websockets
 from app.services.server_process import server_manager
-from app.services import settings as settings_service, mrpack as mrpack_service, players as players_service
+from app.services import settings as settings_service, mrpack as mrpack_service, players as players_service, backup as backup_service
 
 logger = logging.getLogger("minenager.discord")
 
@@ -97,6 +98,7 @@ class DiscordBotManager:
         self._heartbeat_task: Optional[asyncio.Task] = None
         self._last_sequence: Optional[int] = None
         self._stop_requested = False
+        self._pending_confirmations: Dict[str, Dict[str, Any]] = {}
 
     def get_status_info(self) -> Dict[str, Any]:
         cfg = get_config()
@@ -490,8 +492,28 @@ class DiscordBotManager:
                 }
                 await self.send_rest_message(channel_id, embed=embed)
 
+        # Helper functions for confirmed actions
+        async def _execute_turnoff(chan_id: str):
+            curr = server_manager.get_status()["status"]
+            if curr == "offline":
+                await self.send_rest_message(chan_id, "⚠️ Server is already offline.")
+                return
+            await self.send_rest_message(chan_id, "⏳ Saving world and cleanly stopping the Minecraft server...")
+            server_manager.stop_server()
+
+        async def _execute_restart(chan_id: str):
+            await self.send_rest_message(chan_id, "🔄 Restarting Minecraft server...")
+            server_manager.restart_server()
+
+        async def _execute_backup(chan_id: str):
+            if backup_service.backup_status["is_busy"]:
+                await self.send_rest_message(chan_id, "⚠️ A backup or restore task is already running.")
+                return
+            await self.send_rest_message(chan_id, "💾 **Starting World Backup Routine**...\nBroadcasting a 1-minute countdown in game chat, saving the world, and creating backup archive.")
+            backup_service.run_backup_routine(server_manager)
+
         # 4. Turn On / Start Command
-        elif cmd in ["turnon", "start", "on"]:
+        if cmd in ["turnon", "start", "on"]:
             if not is_admin:
                 await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can start the server.")
                 return
@@ -509,30 +531,95 @@ class DiscordBotManager:
                 java_args=all_settings.get("java_args", "")
             )
 
-        # 5. Turn Off / Stop Command
+        # 5. Turn Off / Stop Command (With Confirmation)
         elif cmd in ["turnoff", "stop", "off"]:
             if not is_admin:
                 await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can stop the server.")
                 return
 
-            curr = server_manager.get_status()["status"]
-            if curr == "offline":
-                await self.send_rest_message(channel_id, "⚠️ Server is already offline.")
-                return
+            if "confirm" in args or "-y" in args or "yes" in args:
+                await _execute_turnoff(channel_id)
+            else:
+                self._pending_confirmations[channel_id] = {
+                    "action": "turnoff",
+                    "author_id": str(author.get("id")),
+                    "expires_at": time.time() + 45
+                }
+                await self.send_rest_message(
+                    channel_id,
+                    f"⚠️ **Confirmation Required**: Are you sure you want to stop the Minecraft server?\nType `{prefix}confirm` or `{prefix}turnoff confirm` within 45 seconds to proceed, or `{prefix}cancel` to abort."
+                )
 
-            await self.send_rest_message(channel_id, "⏳ Saving world and cleanly stopping the server...")
-            server_manager.stop_server()
-
-        # 6. Restart Command
+        # 6. Restart Command (With Confirmation)
         elif cmd in ["restart", "reboot"]:
             if not is_admin:
                 await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can restart the server.")
                 return
 
-            await self.send_rest_message(channel_id, "🔄 Restarting Minecraft server...")
-            server_manager.restart_server()
+            if "confirm" in args or "-y" in args or "yes" in args:
+                await _execute_restart(channel_id)
+            else:
+                self._pending_confirmations[channel_id] = {
+                    "action": "restart",
+                    "author_id": str(author.get("id")),
+                    "expires_at": time.time() + 45
+                }
+                await self.send_rest_message(
+                    channel_id,
+                    f"⚠️ **Confirmation Required**: Are you sure you want to restart the Minecraft server?\nType `{prefix}confirm` or `{prefix}restart confirm` within 45 seconds to proceed, or `{prefix}cancel` to abort."
+                )
 
-        # 7. Execute Console Command
+        # 7. Backup Command (With Confirmation)
+        elif cmd in ["backup", "saveworld", "worldbackup"]:
+            if not is_admin:
+                await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can create backups.")
+                return
+
+            if "confirm" in args or "-y" in args or "yes" in args:
+                await _execute_backup(channel_id)
+            else:
+                self._pending_confirmations[channel_id] = {
+                    "action": "backup",
+                    "author_id": str(author.get("id")),
+                    "expires_at": time.time() + 45
+                }
+                await self.send_rest_message(
+                    channel_id,
+                    f"💾 **Confirmation Required**: Start world backup routine?\n_The server will broadcast a 1-minute countdown in game chat, save the world, archive it to `/data/backups/`, and automatically reopen._\nType `{prefix}confirm` or `{prefix}backup confirm` within 45 seconds to proceed, or `{prefix}cancel` to abort."
+                )
+
+        # 8. Confirm Pending Action Command
+        elif cmd in ["confirm", "yes", "y"]:
+            if not is_admin:
+                await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can confirm actions.")
+                return
+
+            pending = self._pending_confirmations.get(channel_id)
+            if not pending or time.time() > pending["expires_at"]:
+                if channel_id in self._pending_confirmations:
+                    del self._pending_confirmations[channel_id]
+                await self.send_rest_message(channel_id, "⚠️ No pending action to confirm, or the confirmation request timed out.")
+                return
+
+            action = pending["action"]
+            del self._pending_confirmations[channel_id]
+
+            if action == "turnoff":
+                await _execute_turnoff(channel_id)
+            elif action == "restart":
+                await _execute_restart(channel_id)
+            elif action == "backup":
+                await _execute_backup(channel_id)
+
+        # 9. Cancel Pending Action Command
+        elif cmd in ["cancel", "abort", "no"]:
+            if channel_id in self._pending_confirmations:
+                del self._pending_confirmations[channel_id]
+                await self.send_rest_message(channel_id, "❌ Action cancelled.")
+            else:
+                await self.send_rest_message(channel_id, "ℹ️ No pending action to cancel.")
+
+        # 10. Execute Console Command
         elif cmd in ["cmd", "command", "exec"]:
             if not is_admin:
                 await self.send_rest_message(channel_id, "⛔ Permission denied: Only Admins can execute console commands.")
@@ -546,7 +633,7 @@ class DiscordBotManager:
             server_manager.send_command(mc_cmd)
             await self.send_rest_message(channel_id, f"💻 Sent command to Minecraft console: `{mc_cmd}`")
 
-        # 8. Help Command
+        # 11. Help Command
         elif cmd in ["help", "commands"]:
             fields = [
                 {"name": f"`{prefix}status`", "value": "Check live server status and RAM", "inline": True},
@@ -556,8 +643,10 @@ class DiscordBotManager:
             if is_admin:
                 fields.extend([
                     {"name": f"`{prefix}turnon`", "value": "Start the Minecraft server", "inline": True},
-                    {"name": f"`{prefix}turnoff`", "value": "Cleanly stop the Minecraft server", "inline": True},
-                    {"name": f"`{prefix}restart`", "value": "Restart the server", "inline": True},
+                    {"name": f"`{prefix}turnoff`", "value": "Cleanly stop server (requires confirm)", "inline": True},
+                    {"name": f"`{prefix}restart`", "value": "Restart server (requires confirm)", "inline": True},
+                    {"name": f"`{prefix}backup`", "value": "Create world backup (requires confirm)", "inline": True},
+                    {"name": f"`{prefix}confirm` / `!cancel`", "value": "Confirm or cancel pending action", "inline": True},
                     {"name": f"`{prefix}cmd <command>`", "value": "Run a Minecraft console command", "inline": True}
                 ])
 

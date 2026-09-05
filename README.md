@@ -97,8 +97,10 @@ Minenager includes a built-in asynchronous Discord bot that connects directly vi
 | `!metrics` / `!tps` | Public / Admin | Live CPU %, RAM utilization (JVM RSS & Host), and TPS/MSPT tick rate. |
 | `!players` | Public / Admin | Displays the list of online players with Minotar skin avatars. |
 | `!turnon` | Admin Only | Starts the Minecraft server. |
-| `!turnoff` | Admin Only | Cleanly saves world data and stops the Minecraft server. |
-| `!restart` | Admin Only | Restarts the Minecraft server with a chat warning. |
+| `!turnoff` | Admin Only | Cleanly saves world data and stops the Minecraft server *(requires confirmation)*. |
+| `!restart` | Admin Only | Restarts the Minecraft server with a chat warning *(requires confirmation)*. |
+| `!backup` | Admin Only | Creates a world backup archive with countdown in chat *(requires confirmation)*. |
+| `!confirm` / `!cancel` | Admin Only | Confirms or aborts a pending action within 45 seconds. |
 | `!cmd <command>` | Admin Only | Executes any Minecraft console command (e.g. `!cmd time set day`, `!cmd weather clear`, `!cmd op Steve`). |
 | `!help` | Public / Admin | Displays the commands cheat sheet and server controls. |
 
