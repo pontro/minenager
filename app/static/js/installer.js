@@ -94,9 +94,10 @@ export function initInstaller() {
             });
 
             const data = await res.json();
-            if (!res.ok) throw new Error(data.detail || 'Installation failed');
+            const loaderName = (data.loader || data.instance?.loader || loader || 'Minecraft').toUpperCase();
+            const verName = data.version || data.minecraft_version || data.instance?.minecraft_version || mc;
 
-            showToast(`✔ Server ${data.loader.toUpperCase()} ${data.version} installed!`);
+            showToast(`✔ Server ${loaderName} ${verName} installed!`);
 
             if (installerMcVersion) installerMcVersion.disabled = true;
             if (installerLoader) installerLoader.disabled = true;
@@ -111,8 +112,8 @@ export function initInstaller() {
 
             const dashMc = document.getElementById('dashboardMcVersion');
             const dashLoader = document.getElementById('dashboardLoader');
-            if (dashMc) dashMc.textContent = data.version;
-            if (dashLoader) dashLoader.textContent = data.loader;
+            if (dashMc) dashMc.textContent = verName;
+            if (dashLoader) dashLoader.textContent = loaderName;
 
         } catch (err) {
             alert(`Installation error: ${err.message}`);

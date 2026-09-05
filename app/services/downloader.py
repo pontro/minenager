@@ -207,5 +207,9 @@ def install_custom_server(mc_version: str, loader: str, loader_version: Optional
 
     return {
         "success": True,
+        "loader": loader.lower(),
+        "version": mc_version,
+        "minecraft_version": mc_version,
+        "loader_version": instance_info["loader_version"],
         "instance": instance_info
     }
