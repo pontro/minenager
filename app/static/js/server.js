@@ -5,11 +5,8 @@ let logStartIndex = 0;
 
 export function initServerManager() {
     const consoleOutput = document.getElementById('consoleOutput');
-    const dedicatedConsoleOutput = document.getElementById('dedicatedConsoleOutput');
     const commandForm = document.getElementById('commandForm');
     const commandInput = document.getElementById('commandInput');
-    const dedicatedCommandForm = document.getElementById('dedicatedCommandForm');
-    const dedicatedCommandInput = document.getElementById('dedicatedCommandInput');
     const btnStart = document.getElementById('btnStart');
     const btnStop = document.getElementById('btnStop');
     const btnRestart = document.getElementById('btnRestart');
@@ -28,12 +25,8 @@ export function initServerManager() {
         line.innerHTML = `<span class="log-time">[${escapeHtml(log.timestamp)}]</span> <span class="${typeClass}">${escapeHtml(txt)}</span>`;
 
         if (consoleOutput) {
-            consoleOutput.appendChild(line.cloneNode(true));
+            consoleOutput.appendChild(line);
             consoleOutput.scrollTop = consoleOutput.scrollHeight;
-        }
-        if (dedicatedConsoleOutput) {
-            dedicatedConsoleOutput.appendChild(line);
-            dedicatedConsoleOutput.scrollTop = dedicatedConsoleOutput.scrollHeight;
         }
     }
 
@@ -148,15 +141,6 @@ export function initServerManager() {
         if (cmd) {
             sendConsoleCommand(cmd);
             commandInput.value = '';
-        }
-    });
-
-    dedicatedCommandForm?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const cmd = dedicatedCommandInput?.value;
-        if (cmd) {
-            sendConsoleCommand(cmd);
-            dedicatedCommandInput.value = '';
         }
     });
 }
