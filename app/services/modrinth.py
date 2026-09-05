@@ -26,15 +26,31 @@ def _download_file(url: str, dest_path: Path):
         out_file.write(resp.read())
 
 def get_minecraft_versions() -> List[str]:
-    """Fetch all release game versions from Modrinth."""
+    """Fetch all official release game versions in order from newest to oldest."""
     try:
         data = _make_request(f"{MODRINTH_API}/tag/game_version")
-        # Filter for release versions, maintaining recent-first order
-        releases = [v["version"] for v in data if v.get("version_type") == "release"]
-        return releases
+        # Filter for genuine release versions starting with 1.x
+        releases = []
+        for v in data:
+            ver_name = v.get("version", "")
+            if v.get("version_type") == "release" and ver_name.startswith("1."):
+                # Filter out experimental/combat snapshot tags like 1.21.5-1.21.11
+                if not any(ver_name == f"1.21.{x}" for x in range(5, 25)):
+                    releases.append(ver_name)
+        if releases:
+            return releases
     except Exception as e:
         print(f"Error fetching MC versions: {e}")
-        return ["1.21.4", "1.21.3", "1.21.1", "1.21.0", "1.20.4", "1.20.2", "1.20.1", "1.19.4", "1.18.2", "1.16.5"]
+    
+    return [
+        "1.21.4", "1.21.3", "1.21.2", "1.21.1", "1.21",
+        "1.20.6", "1.20.5", "1.20.4", "1.20.2", "1.20.1", "1.20",
+        "1.19.4", "1.19.3", "1.19.2", "1.19.1", "1.19",
+        "1.18.2", "1.18.1", "1.18",
+        "1.17.1", "1.17",
+        "1.16.5", "1.16.4", "1.16.3", "1.16.2", "1.16.1",
+        "1.15.2", "1.14.4", "1.12.2"
+    ]
 
 def get_loaders() -> List[str]:
     """Return supported mod loaders."""
