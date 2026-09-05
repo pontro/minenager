@@ -46,7 +46,16 @@ def get_storage_breakdown() -> Dict[str, Any]:
     logs_dir = MINECRAFT_DIR / "logs"
     crash_dir = MINECRAFT_DIR / "crash-reports"
     logs_bytes = get_dir_size(logs_dir) + get_dir_size(crash_dir)
-    
+
+    # Include root .hprof and .dmp heap dump files in the logs & dumps calculation
+    if MINECRAFT_DIR.exists():
+        for pattern in ("*.hprof", "*.dmp"):
+            for f in MINECRAFT_DIR.glob(pattern):
+                try:
+                    logs_bytes += f.stat().st_size
+                except Exception:
+                    pass
+
     total_server_bytes = get_dir_size(MINECRAFT_DIR) + backups_bytes
 
     # Get total and free space of partition
@@ -77,7 +86,7 @@ def get_storage_breakdown() -> Dict[str, Any]:
     }
 
 def clean_old_logs() -> Dict[str, Any]:
-    """Delete archived .log.gz files and old crash dumps to reclaim disk space."""
+    """Delete archived .log.gz files, Java heap dumps (.hprof / .dmp), and old crash dumps to reclaim disk space."""
     logs_dir = MINECRAFT_DIR / "logs"
     crash_dir = MINECRAFT_DIR / "crash-reports"
 
@@ -104,10 +113,23 @@ def clean_old_logs() -> Dict[str, Any]:
             except Exception as e:
                 print(f"Error deleting crash dump {f}: {e}")
 
+    # Delete JVM heap dumps (.hprof and .dmp files) across Minecraft directory, logs, and crash reports
+    target_dirs = [MINECRAFT_DIR, logs_dir, crash_dir]
+    for d in target_dirs:
+        if d.exists():
+            for pattern in ("*.hprof", "*.dmp"):
+                for f in d.glob(pattern):
+                    try:
+                        reclaimed_bytes += f.stat().st_size
+                        f.unlink()
+                        deleted_files += 1
+                    except Exception as e:
+                        print(f"Error deleting heap dump {f}: {e}")
+
     return {
         "success": True,
         "deleted_files_count": deleted_files,
         "reclaimed_bytes": reclaimed_bytes,
         "reclaimed_formatted": format_size(reclaimed_bytes),
-        "message": f"Cleaned {deleted_files} old log & crash archives, freeing {format_size(reclaimed_bytes)}."
+        "message": f"Cleaned {deleted_files} old log archives & heap dumps, freeing {format_size(reclaimed_bytes)}."
     }
