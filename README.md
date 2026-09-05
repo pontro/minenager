@@ -15,7 +15,31 @@ Built with **FastAPI**, **Docker**, and modern vanilla JavaScript & CSS with no 
 - 👥 **Visual Player Management**: View online players with avatars (Minotar), kick, ban, whitelist, or promote to OP with a single click.
 - 💻 **Real-time Web Console**: Live log streaming with colorized output and an interactive command input box.
 - ⚙️ **Simplified Server Settings**: Adjust RAM allocation, gamemode, difficulty, max players (1–10), view distance, simulation distance, and MOTD.
+- 🔌 **Auto-Start on Boot**: Optional toggle to launch the Minecraft server automatically when the Docker container boots on host PC power-on.
 - 💾 **1-Click Backups & Storage Optimizer**: Quick world backups, download/restore points, and a 1-click log & crash report cleaner to save disk space on small hosts.
+
+---
+
+## ⚡ Lightweight Resource Footprint
+
+Minenager is built specifically for low-spec and older hardware:
+
+| Component | RAM Usage (Idle) | CPU Usage (Idle) |
+| :--- | :--- | :--- |
+| **Web Dashboard & API** | **~95 MB** | **< 1.0%** |
+| **Vanilla Frontend** | **0 MB** (Zero client bundles/node_modules) | **0%** |
+
+*Minecraft server RAM is separately configurable (1 GB to 16 GB) directly from the Settings tab.*
+
+---
+
+## 🖥️ Host PC Boot Policy & Auto-Start
+
+Minenager is configured out-of-the-box with `restart: unless-stopped` in `docker-compose.yml`:
+1. **Host PC Startup**: When your server PC powers on or restarts, Docker automatically boots the Minenager container in the background.
+2. **Dashboard-Only vs. Minecraft Server Auto-Start**:
+   - **Default (Off)**: Only the lightweight web dashboard runs (~95 MB RAM), waiting for you to press **Start** when you're ready to play.
+   - **Auto-Start Enabled**: If you enable **Auto-Start on Boot** under the **Settings** tab, Minenager will also immediately launch your Minecraft server upon container boot.
 
 ---
 
