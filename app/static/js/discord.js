@@ -21,10 +21,17 @@ export function initDiscordManager() {
         }
     });
 
-    // Save Discord Settings
-    discordForm?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (btnSaveDiscord) btnSaveDiscord.disabled = true;
+    // Save Discord Settings Function
+    async function saveDiscordSettings(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        if (btnSaveDiscord) {
+            btnSaveDiscord.disabled = true;
+            btnSaveDiscord.textContent = '⏳ Saving...';
+        }
 
         const enabled = document.getElementById('discord_enabled')?.checked || false;
         const token = discordToken?.value.trim() || '';
@@ -66,13 +73,30 @@ export function initDiscordManager() {
             if (!res.ok) throw new Error(data.detail || 'Failed to save Discord settings');
 
             showToast('✔ Discord Bot settings saved!');
+
+            if (discordToken && token) {
+                discordToken.value = '';
+                discordToken.placeholder = '•••••••••••••••••••••••• (Saved)';
+            }
+            const tokenSavedBadge = document.getElementById('tokenSavedBadge');
+            if (tokenSavedBadge) {
+                tokenSavedBadge.style.display = 'inline-block';
+            }
+
             await loadDiscordStatus();
         } catch (err) {
+            console.error('Error saving Discord settings:', err);
             alert(`Error saving Discord settings: ${err.message}`);
         } finally {
-            if (btnSaveDiscord) btnSaveDiscord.disabled = false;
+            if (btnSaveDiscord) {
+                btnSaveDiscord.disabled = false;
+                btnSaveDiscord.textContent = '💾 Save Discord Settings';
+            }
         }
-    });
+    }
+
+    discordForm?.addEventListener('submit', saveDiscordSettings);
+    btnSaveDiscord?.addEventListener('click', saveDiscordSettings);
 
     // Send Test Message
     btnTestDiscord?.addEventListener('click', async () => {
