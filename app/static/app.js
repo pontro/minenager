@@ -5,6 +5,7 @@ import { initModsManager } from './js/mods.js';
 import { initMrpackUploader } from './js/mrpack.js';
 import { initSettingsManager } from './js/settings.js';
 import { initPlayersManager } from './js/players.js';
+import { initDiscordManager } from './js/discord.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize Subsystems
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modsManager = initModsManager();
     const settingsManager = initSettingsManager();
     const playersManager = initPlayersManager();
+    const discordManager = initDiscordManager();
 
     initMrpackUploader(() => {
         modsManager.loadInstalledMods();
@@ -44,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (targetId === 'tab-settings') {
                 settingsManager.loadBackups();
                 settingsManager.loadStorage();
+            } else if (targetId === 'tab-discord') {
+                discordManager.loadDiscordStatus();
             }
         });
     });

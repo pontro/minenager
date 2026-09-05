@@ -38,6 +38,29 @@ class MinecraftServerManager:
                 "text": line
             })
 
+    def _dispatch_discord_event(self, event_type: str, **kwargs):
+        """Safely dispatch async Discord events from background thread."""
+        try:
+            from app.services.discord_bot import discord_bot_manager
+            import asyncio
+            try:
+                loop = asyncio.get_running_loop()
+                if loop and loop.is_running():
+                    asyncio.create_task(discord_bot_manager.broadcast_event(event_type, **kwargs))
+                    return
+            except RuntimeError:
+                pass
+            
+            # Use default loop from main thread
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    asyncio.run_coroutine_threadsafe(discord_bot_manager.broadcast_event(event_type, **kwargs), loop)
+            except Exception:
+                pass
+        except Exception:
+            pass
+
     def _read_stdout(self):
         """Background thread to read server stdout line by line."""
         try:
@@ -53,6 +76,28 @@ class MinecraftServerManager:
                 if self.status == "starting" and ("Done (" in line or "For help, type \"help\"" in line):
                     with self.lock:
                         self.status = "online"
+                    dash_settings = settings_service.get_dashboard_settings()
+                    ram_val = f"{dash_settings.get('ram_gb', 4)} GB"
+                    self._dispatch_discord_event("server_start", ram=ram_val)
+
+                # Detect player join
+                elif "joined the game" in line:
+                    try:
+                        # Typical line: [12:34:56 INFO]: Steve joined the game
+                        msg_part = line.split("]: ", 1)[-1] if "]: " in line else line
+                        player_name = msg_part.split(" joined the game")[0].strip()
+                        self._dispatch_discord_event("player_join", player=player_name)
+                    except Exception:
+                        pass
+
+                # Detect player leave
+                elif "left the game" in line:
+                    try:
+                        msg_part = line.split("]: ", 1)[-1] if "]: " in line else line
+                        player_name = msg_part.split(" left the game")[0].strip()
+                        self._dispatch_discord_event("player_leave", player=player_name)
+                    except Exception:
+                        pass
 
             self.process.stdout.close()
         except Exception as e:
@@ -64,6 +109,7 @@ class MinecraftServerManager:
                 self.status = "offline"
                 self.start_time = None
                 self._append_log("[Minenager] Minecraft server process has stopped.")
+            self._dispatch_discord_event("server_stop")
 
     def start(self) -> Dict[str, Any]:
         with self.lock:

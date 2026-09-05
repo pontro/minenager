@@ -1,0 +1,250 @@
+<!-- Tab 5: Discord Bot Integration & Remote Commands -->
+<div id="tab-discord" class="tab-pane">
+    <form id="discordForm">
+        <!-- 1. Top Header & Action Controls -->
+        <div class="card" style="margin-bottom: 1.25rem;">
+            <div class="card-header" style="flex-wrap: wrap; gap: 1rem; align-items: center;">
+                <div>
+                    <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>💬 Discord Bot &amp; Remote Control</span>
+                        <span id="discordStatusBadge" class="status-badge {% if discord.status.status == 'connected' %}online{% elif discord.status.status == 'connecting' %}starting{% else %}offline{% endif %}" style="font-size: 0.75rem;">
+                            {% if discord.status.status == 'connected' %}
+                                ● Connected {% if discord.status.bot_user %}as {{ discord.status.bot_user.username }}{% endif %}
+                            {% elif discord.status.status == 'connecting' %}
+                                ◐ Connecting...
+                            {% elif discord.status.status == 'disabled' %}
+                                ○ Disabled
+                            {% else %}
+                                ○ Offline / Disconnected
+                            {% endif %}
+                        </span>
+                    </h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                        Control your Minecraft server with commands like <code>!turnon</code>, <code>!turnoff</code>, and receive live player join/leave alerts directly in Discord.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="button" id="btnTestDiscord" class="btn btn-sm btn-send" title="Send a test embed to your configured Discord channel">
+                        🧪 Send Test Message
+                    </button>
+                    <button type="submit" id="btnSaveDiscord" class="btn btn-start">
+                        💾 Save Discord Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-grid">
+            <!-- 2. Bot Credentials & Connection Setup -->
+            <div class="settings-card span-2">
+                <h3 class="settings-card-title">🤖 Bot Credentials &amp; Channel</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Enable Discord Bot</span>
+                        <span class="setting-desc">Connect the background WebSocket listener to Discord</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="discord_enabled" {% if discord.config.enabled %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <div class="setting-info" style="flex: 1;">
+                        <span class="setting-name">Discord Bot Token</span>
+                        <span class="setting-desc">Secret token from Discord Developer Portal (Bot tab)</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex: 1; max-width: 450px;">
+                        <input 
+                            type="password" 
+                            id="discord_token" 
+                            class="form-input" 
+                            style="flex: 1; font-family: var(--font-mono); font-size: 0.85rem;"
+                            placeholder="{% if discord.config.token %}•••••••••••••••••••••••• (Saved){% else %}Paste bot token here...{% endif %}"
+                            autocomplete="off"
+                        >
+                        <button type="button" id="btnToggleTokenVisibility" class="btn btn-sm btn-restart" style="padding: 0 0.75rem;">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+
+                <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <div class="setting-info">
+                        <span class="setting-name">Target Channel ID</span>
+                        <span class="setting-desc">The specific text channel for bot commands and game alerts</span>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="discord_channel_id" 
+                        class="form-input" 
+                        value="{{ discord.config.channel_id }}" 
+                        placeholder="e.g. 112233445566778899"
+                        style="width: 250px; font-family: var(--font-mono);"
+                    >
+                </div>
+
+                <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <div class="setting-info">
+                        <span class="setting-name">Command Prefix</span>
+                        <span class="setting-desc">Character to trigger commands (e.g. <code>!turnoff</code>)</span>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="discord_prefix" 
+                        class="form-input" 
+                        value="{{ discord.config.prefix if discord.config.prefix else '!' }}" 
+                        maxlength="5"
+                        style="width: 80px; text-align: center; font-family: var(--font-mono); font-weight: 700;"
+                    >
+                </div>
+            </div>
+
+            <!-- 3. Security & Access Control -->
+            <div class="settings-card">
+                <h3 class="settings-card-title">🛡️ Security &amp; Permissions</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Public Status Commands</span>
+                        <span class="setting-desc">Allow all users in channel to run <code>!status</code> and <code>!players</code></span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="discord_allow_public_status" {% if discord.config.allow_public_status %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem; flex-direction: column; align-items: flex-start; gap: 0.5rem;">
+                    <div class="setting-info">
+                        <span class="setting-name">Authorized Admin User IDs</span>
+                        <span class="setting-desc">Discord User IDs allowed to run <code>!turnon</code>, <code>!turnoff</code>, <code>!restart</code>, and <code>!cmd</code> (comma-separated). Leave empty to allow all channel users.</span>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="discord_admin_ids" 
+                        class="form-input" 
+                        value="{{ discord.config.admin_ids | join(', ') }}" 
+                        placeholder="e.g. 234567890123456789, 987654321098765432"
+                        style="width: 100%; font-family: var(--font-mono); font-size: 0.85rem;"
+                    >
+                </div>
+
+                <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem; flex-direction: column; align-items: flex-start; gap: 0.5rem;">
+                    <div class="setting-info">
+                        <span class="setting-name">Authorized Admin Role IDs</span>
+                        <span class="setting-desc">Discord Role IDs with admin control (comma-separated)</span>
+                    </div>
+                    <input 
+                        type="text" 
+                        id="discord_admin_role_ids" 
+                        class="form-input" 
+                        value="{{ discord.config.admin_role_ids | join(', ') }}" 
+                        placeholder="e.g. 100200300400500600"
+                        style="width: 100%; font-family: var(--font-mono); font-size: 0.85rem;"
+                    >
+                </div>
+            </div>
+
+            <!-- 4. Game Event Notifications -->
+            <div class="settings-card">
+                <h3 class="settings-card-title">🔔 Automatic Game Alerts</h3>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Server Start &amp; Stop</span>
+                        <span class="setting-desc">Send embeds when server goes online or shuts down</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="discord_notify_server_start" {% if discord.config.notify_server_start %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <div class="setting-info">
+                        <span class="setting-name">Player Join &amp; Leave</span>
+                        <span class="setting-desc">Broadcast player joins with Minotar face avatars</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="discord_notify_player_join_leave" {% if discord.config.notify_player_join_leave %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <div class="setting-info">
+                        <span class="setting-name">Server Crash Alerts</span>
+                        <span class="setting-desc">Send alert if the server terminates unexpectedly</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="discord_notify_server_crash" {% if discord.config.notify_server_crash %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- 5. Setup Guide & Commands Cheat Sheet Card -->
+    <div class="card" style="margin-top: 1.5rem;">
+        <div class="card-header">
+            <h2 class="card-title" style="font-size: 1.15rem;">📖 Setup Guide &amp; Bot Commands Reference</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 0.5rem;">
+            <!-- Setup Guide Column -->
+            <div style="background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <h4 style="color: var(--accent-sage); margin-bottom: 0.75rem; font-size: 0.95rem;">⚡ 3-Step Setup Guide</h4>
+                <ol style="padding-left: 1.25rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+                    <li>Go to <a href="https://discord.com/developers/applications" target="_blank" style="color: var(--accent-sage); text-decoration: underline;">Discord Developer Portal</a> ➔ Create an Application.</li>
+                    <li>In the <strong>Bot</strong> tab:
+                        <ul style="padding-left: 1rem; margin-top: 0.25rem;">
+                            <li>Click <strong>Reset Token</strong> &amp; copy it here.</li>
+                            <li>Under <em>Privileged Gateway Intents</em>, enable <strong>Message Content Intent</strong>.</li>
+                        </ul>
+                    </li>
+                    <li>In the <strong>OAuth2 ➔ URL Generator</strong> tab:
+                        <ul style="padding-left: 1rem; margin-top: 0.25rem;">
+                            <li>Select <code>bot</code> scope.</li>
+                            <li>Select permissions: <em>Send Messages</em>, <em>Embed Links</em>, <em>Read Message History</em>.</li>
+                            <li>Open the generated URL to invite the bot to your Discord server.</li>
+                        </ul>
+                    </li>
+                    <li>In Discord: Right-click your channel ➔ <em>Copy Channel ID</em> and paste it above.</li>
+                </ol>
+            </div>
+
+            <!-- Commands Reference Column -->
+            <div style="background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                <h4 style="color: var(--accent-sage); margin-bottom: 0.75rem; font-size: 0.95rem;">⌨️ Available Discord Commands</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.35rem;">
+                        <code>!turnon</code> / <code>!start</code>
+                        <span style="color: var(--status-online); font-size: 0.75rem; font-weight: 600;">[Admin] Start Server</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.35rem;">
+                        <code>!turnoff</code> / <code>!stop</code>
+                        <span style="color: var(--status-offline); font-size: 0.75rem; font-weight: 600;">[Admin] Stop Server</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.35rem;">
+                        <code>!restart</code>
+                        <span style="color: var(--status-starting); font-size: 0.75rem; font-weight: 600;">[Admin] Restart Server</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.35rem;">
+                        <code>!cmd &lt;command&gt;</code>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">[Admin] Run MC Console Command</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.35rem;">
+                        <code>!status</code>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">Check Status, RAM &amp; Version</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <code>!players</code>
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">List Online Players &amp; Avatars</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
