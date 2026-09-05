@@ -3,8 +3,8 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.routers import mods, mrpack, settings, installer, process, backup, players, storage, discord, metrics
-from app.services import modrinth, mrpack as mrpack_service, settings as settings_service, backup as backup_service
+from app.routers import mods, mrpack, settings, installer, process, backup, players, storage, discord, metrics, system
+from app.services import modrinth, mrpack as mrpack_service, settings as settings_service, backup as backup_service, updater as updater_service
 from app.services.server_process import server_manager
 from app.services.discord_bot import discord_bot_manager, get_config as get_discord_config
 from app.services.metrics import metrics_service
@@ -73,6 +73,7 @@ app.include_router(players.router)
 app.include_router(storage.router)
 app.include_router(discord.router)
 app.include_router(metrics.router)
+app.include_router(system.router)
 
 @app.get("/")
 async def index(request: Request):
@@ -104,6 +105,7 @@ async def index(request: Request):
     backups = backup_service.list_backups()
     discord_cfg = get_discord_config()
     discord_stat = discord_bot_manager.get_status_info()
+    app_version = updater_service.get_current_version()
 
     return templates.TemplateResponse(
         request=request,
@@ -119,6 +121,7 @@ async def index(request: Request):
             "discord": {
                 "config": discord_cfg,
                 "status": discord_stat
-            }
+            },
+            "app_version": app_version
         }
     )

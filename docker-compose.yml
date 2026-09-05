@@ -8,5 +8,6 @@ services:
     volumes:
       - ./data:/data
       - ./app:/code/app
+      - .:/repo
     environment:
       - PYTHONUNBUFFERED=1

@@ -365,6 +365,53 @@
         </div>
     </div>
 
+    <!-- Software & Dashboard Updates Card -->
+    <div class="card" style="margin-top: 1.5rem; border-color: rgba(99, 102, 241, 0.35);">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🔄 Software &amp; Dashboard Updates</span>
+                    <span id="appVersionBadge" class="status-badge online" style="font-family: var(--font-mono); font-size: 0.75rem;">v{{ app_version.commit if app_version else 'main' }}</span>
+                </h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                    1-Click Update: Fetch latest improvements and fixes directly from GitHub (<code>git pull origin main</code>) and gracefully reload Minenager without terminal access.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="button" id="btnCheckUpdate" class="btn btn-sm btn-send">
+                    🔍 Check for Updates
+                </button>
+                <button type="button" id="btnApplyUpdate" class="btn btn-sm btn-start" style="display: none;">
+                    🚀 Update Now
+                </button>
+            </div>
+        </div>
+
+        <div id="updateStatusContainer" style="margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); font-size: 0.85rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <span style="color: var(--text-muted);">Current Version:</span>
+                    <strong id="updateCurrentCommit" style="font-family: var(--font-mono); color: var(--text-primary); margin-left: 0.25rem;">
+                        {{ app_version.commit if app_version else 'unknown' }}
+                    </strong>
+                    <span id="updateCurrentMsg" style="color: var(--text-secondary); margin-left: 0.5rem; font-style: italic;">
+                        {{ app_version.message if app_version else '' }}
+                    </span>
+                </div>
+                <div style="color: var(--text-muted); font-size: 0.75rem;">
+                    <span id="updateCurrentDate">{{ app_version.date if app_version else '' }}</span>
+                </div>
+            </div>
+            <div id="updateDiffBox" style="display: none; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-color);">
+                <div style="color: var(--status-starting); font-weight: 600; margin-bottom: 0.25rem;" id="updateDiffTitle">
+                    ✨ New updates available!
+                </div>
+                <ul id="updateCommitList" style="margin: 0; padding-left: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary);">
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!-- World Reset Card -->
     <div class="card" style="border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.04); margin-top: 1.5rem;">
         <div class="card-header">

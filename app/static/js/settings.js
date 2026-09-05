@@ -360,5 +360,99 @@ export function initSettingsManager() {
         showToast('✔ Storage usage updated');
     });
 
-    return { loadBackups, loadStorage };
+    // --- 1-Click Update System ---
+    const btnCheckUpdate = document.getElementById('btnCheckUpdate');
+    const btnApplyUpdate = document.getElementById('btnApplyUpdate');
+    const updateDiffBox = document.getElementById('updateDiffBox');
+    const updateDiffTitle = document.getElementById('updateDiffTitle');
+    const updateCommitList = document.getElementById('updateCommitList');
+    const appVersionBadge = document.getElementById('appVersionBadge');
+    const updateCurrentCommit = document.getElementById('updateCurrentCommit');
+    const updateCurrentMsg = document.getElementById('updateCurrentMsg');
+    const updateCurrentDate = document.getElementById('updateCurrentDate');
+
+    async function checkUpdates(silent = false) {
+        if (!btnCheckUpdate) return;
+        btnCheckUpdate.disabled = true;
+        btnCheckUpdate.textContent = '⏳ Checking...';
+
+        try {
+            const res = await fetch('/api/system/check-update');
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || data.error || 'Check failed');
+
+            if (data.current) {
+                if (updateCurrentCommit) updateCurrentCommit.textContent = data.current.commit || 'unknown';
+                if (updateCurrentMsg) updateCurrentMsg.textContent = data.current.message || '';
+                if (updateCurrentDate) updateCurrentDate.textContent = data.current.date || '';
+                if (appVersionBadge) appVersionBadge.textContent = `v${data.current.commit || 'main'}`;
+            }
+
+            if (data.has_update) {
+                if (btnApplyUpdate) btnApplyUpdate.style.display = 'inline-flex';
+                if (updateDiffBox) updateDiffBox.style.display = 'block';
+                if (updateDiffTitle) updateDiffTitle.textContent = `✨ ${data.commits_count} new commit${data.commits_count > 1 ? 's' : ''} available on origin/main!`;
+
+                if (updateCommitList) {
+                    updateCommitList.innerHTML = '';
+                    (data.commits_behind || []).forEach(c => {
+                        const li = document.createElement('li');
+                        li.textContent = c;
+                        updateCommitList.appendChild(li);
+                    });
+                }
+                showToast(`✨ ${data.commits_count} new update(s) available!`);
+            } else {
+                if (btnApplyUpdate) btnApplyUpdate.style.display = 'none';
+                if (updateDiffBox) updateDiffBox.style.display = 'none';
+                if (!silent) showToast('✔ Minenager is already up to date!');
+            }
+        } catch (err) {
+            console.error('Update check error:', err);
+            if (!silent) alert(`Failed to check for updates: ${err.message}`);
+        } finally {
+            btnCheckUpdate.disabled = false;
+            btnCheckUpdate.textContent = '🔍 Check for Updates';
+        }
+    }
+
+    btnCheckUpdate?.addEventListener('click', () => checkUpdates(false));
+
+    btnApplyUpdate?.addEventListener('click', async () => {
+        if (!confirm('🚀 APPLY UPDATE?\n\nThis will:\n1. Pull the latest code from GitHub (git pull origin main)\n2. Gracefully reload Minenager\n3. Refresh your browser in 5 seconds\n\nYour Minecraft world and settings in /data/ will NOT be affected.\n\nContinue?')) {
+            return;
+        }
+
+        btnApplyUpdate.disabled = true;
+        btnCheckUpdate.disabled = true;
+        btnApplyUpdate.textContent = '⏳ Updating...';
+        showToast('🚀 Pulling updates from GitHub...');
+
+        try {
+            const res = await fetch('/api/system/update', { method: 'POST' });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || 'Update failed');
+
+            showToast('✔ Update applied! Reloading dashboard in 5s...');
+
+            let countdown = 5;
+            btnApplyUpdate.textContent = `🔄 Reloading (${countdown}s)...`;
+            const interval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    btnApplyUpdate.textContent = `🔄 Reloading (${countdown}s)...`;
+                } else {
+                    clearInterval(interval);
+                    window.location.reload();
+                }
+            }, 1000);
+        } catch (err) {
+            alert(`Update error: ${err.message}`);
+            btnApplyUpdate.disabled = false;
+            btnCheckUpdate.disabled = false;
+            btnApplyUpdate.textContent = '🚀 Update Now';
+        }
+    });
+
+    return { loadBackups, loadStorage, checkUpdates };
 }
