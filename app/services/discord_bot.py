@@ -386,13 +386,11 @@ class DiscordBotManager:
         prefix = cfg.get("prefix", "!")
         content = data.get("content", "").strip()
         channel_id = str(data.get("channel_id", ""))
-        configured_channel = str(cfg.get("channel_id", "")).strip()
-
-        if configured_channel and channel_id != configured_channel:
-            return
 
         if not content.startswith(prefix):
             return
+
+        logger.info(f"Received Discord command: '{content}' from {author.get('username')} (ID: {author.get('id')}) in channel {channel_id}")
 
         raw_cmd = content[len(prefix):].strip()
         parts = raw_cmd.split()
