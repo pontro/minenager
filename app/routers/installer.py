@@ -6,7 +6,8 @@ from app.services import downloader, mrpack
 router = APIRouter(prefix="/api/installer", tags=["installer"])
 
 class InstallServerRequest(BaseModel):
-    mc_version: str
+    mc_version: Optional[str] = None
+    minecraft_version: Optional[str] = None
     loader: str
     loader_version: Optional[str] = None
 
@@ -24,8 +25,9 @@ async def get_loader_versions(
 @router.post("/install")
 async def install_server(payload: InstallServerRequest):
     try:
+        mc = payload.mc_version or payload.minecraft_version or "1.20.1"
         res = downloader.install_custom_server(
-            mc_version=payload.mc_version,
+            mc_version=mc,
             loader=payload.loader,
             loader_version=payload.loader_version
         )

@@ -86,6 +86,7 @@ export function initInstaller() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    mc_version: mc,
                     minecraft_version: mc,
                     loader: loader,
                     loader_version: loader_ver
