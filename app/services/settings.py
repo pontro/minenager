@@ -29,7 +29,8 @@ DEFAULT_PROPERTIES = {
 DEFAULT_DASHBOARD_SETTINGS = {
     "ram_gb": 4,
     "min_ram_gb": 1,
-    "java_args": ""
+    "java_args": "",
+    "autostart": False
 }
 
 def parse_properties_file() -> Dict[str, str]:
@@ -131,19 +132,23 @@ def get_all_settings() -> Dict[str, Any]:
         "properties": props,
         "ram_gb": dash.get("ram_gb", 4),
         "min_ram_gb": dash.get("min_ram_gb", 1),
-        "java_args": dash.get("java_args", "")
+        "java_args": dash.get("java_args", ""),
+        "autostart": bool(dash.get("autostart", False))
     }
 
 def update_all_settings(payload: Dict[str, Any]) -> Dict[str, Any]:
     """Update properties and RAM settings."""
-    if "ram_gb" in payload or "min_ram_gb" in payload or "java_args" in payload:
-        dash_update = {}
-        if "ram_gb" in payload:
-            dash_update["ram_gb"] = int(payload["ram_gb"])
-        if "min_ram_gb" in payload:
-            dash_update["min_ram_gb"] = int(payload["min_ram_gb"])
-        if "java_args" in payload:
-            dash_update["java_args"] = str(payload["java_args"])
+    dash_update = {}
+    if "ram_gb" in payload:
+        dash_update["ram_gb"] = int(payload["ram_gb"])
+    if "min_ram_gb" in payload:
+        dash_update["min_ram_gb"] = int(payload["min_ram_gb"])
+    if "java_args" in payload:
+        dash_update["java_args"] = str(payload["java_args"])
+    if "autostart" in payload:
+        dash_update["autostart"] = bool(payload["autostart"])
+    
+    if dash_update:
         save_dashboard_settings(dash_update)
 
     if "properties" in payload and isinstance(payload["properties"], dict):

@@ -263,9 +263,20 @@
                         type="text" 
                         id="prop_motd" 
                         class="form-input" 
-                        value="{{ settings.properties.get('motd', 'A Minecraft Server') }}" 
+                        value="{{ settings.properties.get('motd', 'A Minecraft Server powered by Minenager') }}" 
                         style="flex: 1; max-width: 450px;"
                     >
+                </div>
+
+                <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                    <div class="setting-info">
+                        <span class="setting-name">Auto-Start on Boot</span>
+                        <span class="setting-desc">Automatically launch the Minecraft server whenever Docker container starts</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="setting_autostart" {% if settings.autostart %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
                 </div>
 
                 <div class="setting-item" style="border-top: 1px solid var(--border-color); padding-top: 0.75rem;">

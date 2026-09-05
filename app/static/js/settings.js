@@ -79,6 +79,8 @@ export function initSettingsManager() {
             'server-port': '25565'
         };
 
+        const autostart = document.getElementById('setting_autostart')?.checked || false;
+
         try {
             const res = await fetch('/api/settings', {
                 method: 'POST',
@@ -86,6 +88,7 @@ export function initSettingsManager() {
                 body: JSON.stringify({
                     ram_gb: ram_gb,
                     min_ram_gb: min_ram_gb,
+                    autostart: autostart,
                     properties: properties
                 })
             });

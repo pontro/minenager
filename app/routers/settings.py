@@ -10,6 +10,7 @@ class UpdateSettingsRequest(BaseModel):
     ram_gb: Optional[int] = None
     min_ram_gb: Optional[int] = None
     java_args: Optional[str] = None
+    autostart: Optional[bool] = None
     properties: Optional[Dict[str, Any]] = None
 
 @router.get("")

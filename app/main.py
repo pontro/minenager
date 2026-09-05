@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -5,7 +7,31 @@ from app.routers import mods, mrpack, settings, installer, process, backup, play
 from app.services import modrinth, mrpack as mrpack_service, settings as settings_service, backup as backup_service
 from app.services.server_process import server_manager
 
-app = FastAPI(title="Minenager")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: check if autostart is enabled and server.jar exists
+    try:
+        all_settings = settings_service.get_all_settings()
+        if all_settings.get("autostart"):
+            server_jar = Path("/data/minecraft/server.jar")
+            if server_jar.exists() and server_manager.get_status()["status"] == "offline":
+                print("Minenager: Auto-start enabled. Launching Minecraft server on boot...")
+                server_manager.start_server(
+                    ram_gb=all_settings.get("ram_gb", 4),
+                    min_ram_gb=all_settings.get("min_ram_gb", 1),
+                    java_args=all_settings.get("java_args", "")
+                )
+    except Exception as e:
+        print(f"Minenager: Error during auto-start on boot: {e}")
+    yield
+    # Shutdown: cleanly stop server if running
+    try:
+        if server_manager.get_status()["status"] in ["online", "starting"]:
+            server_manager.stop_server()
+    except Exception:
+        pass
+
+app = FastAPI(title="Minenager", lifespan=lifespan)
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
