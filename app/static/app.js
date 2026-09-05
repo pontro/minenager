@@ -1,11 +1,11 @@
 // --- Main Application Bootstrapper ---
-import { initServerManager } from './js/server.js';
-import { initInstaller } from './js/installer.js';
-import { initModsManager } from './js/mods.js';
-import { initMrpackUploader } from './js/mrpack.js';
-import { initSettingsManager } from './js/settings.js';
-import { initPlayersManager } from './js/players.js';
-import { initDiscordManager } from './js/discord.js';
+import { initServerManager } from './js/server.js?v=4';
+import { initInstaller } from './js/installer.js?v=4';
+import { initModsManager } from './js/mods.js?v=4';
+import { initMrpackUploader } from './js/mrpack.js?v=4';
+import { initSettingsManager } from './js/settings.js?v=4';
+import { initPlayersManager } from './js/players.js?v=4';
+import { initDiscordManager } from './js/discord.js?v=4';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize Subsystems
