@@ -254,15 +254,15 @@ export function initMetricsManager() {
             drawChart(cpuCanvas, [
                 {
                     key: 'sys_cpu',
-                    strokeColor: '#38bdf8',
-                    fillColorTop: 'rgba(56, 189, 248, 0.25)',
-                    fillColorBottom: 'rgba(56, 189, 248, 0.0)'
+                    strokeColor: '#7a28a3',
+                    fillColorTop: 'rgba(122, 40, 163, 0.35)',
+                    fillColorBottom: 'rgba(122, 40, 163, 0.0)'
                 },
                 {
                     key: 'proc_cpu',
-                    strokeColor: '#22c55e',
-                    fillColorTop: 'rgba(34, 197, 94, 0.25)',
-                    fillColorBottom: 'rgba(34, 197, 94, 0.0)'
+                    strokeColor: '#34d399',
+                    fillColorTop: 'rgba(52, 211, 153, 0.25)',
+                    fillColorBottom: 'rgba(52, 211, 153, 0.0)'
                 }
             ], 100, '%');
 
@@ -277,9 +277,9 @@ export function initMetricsManager() {
             drawChart(ramCanvas, [
                 {
                     key: 'proc_ram_mb',
-                    strokeColor: '#a855f7',
-                    fillColorTop: 'rgba(168, 85, 247, 0.25)',
-                    fillColorBottom: 'rgba(168, 85, 247, 0.0)'
+                    strokeColor: '#c23084',
+                    fillColorTop: 'rgba(194, 48, 132, 0.35)',
+                    fillColorBottom: 'rgba(194, 48, 132, 0.0)'
                 }
             ], maxMemLimitMb, 'M');
 

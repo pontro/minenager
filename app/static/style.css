@@ -1,52 +1,58 @@
 :root {
-    /* Brand Theme: Minenager Obsidian, Royal Indigo, Lavender & Sunrise Amber */
-    --bg-primary: #0a0815;
-    --bg-secondary: #110d24;
-    --bg-card: #171231;
-    --bg-card-hover: #1f1840;
-    --bg-console: #06040d;
-    --border-color: #2b2353;
-    --border-subtle: #1e173e;
+    /* Brand Theme: Minenager Dusk (Deep Indigo #422d9a, Purple #7a28a3, Magenta #c23084, Sunset Coral #e15353) */
+    --bg-primary: #0c0820;
+    --bg-secondary: #140d34;
+    --bg-card: #1c1348;
+    --bg-card-hover: #261a60;
+    --bg-console: #070414;
+    --border-color: #382582;
+    --border-subtle: #271a5c;
 
     /* Text Colors */
-    --text-primary: #f5f3ff;
-    --text-secondary: #c4b8e8;
-    --text-muted: #8075a8;
-    --text-highlight: #d8b4fe;
+    --text-primary: #fdfaff;
+    --text-secondary: #d8cbed;
+    --text-muted: #9584ba;
+    --text-highlight: #f472b6;
 
-    /* Accent & Brand Colors (Minenager Logo Purple/Indigo & Version 1.0 Amber) */
-    --accent-indigo: #6366f1;
-    --accent-violet: #7c3aed;
-    --accent-purple: #8b5cf6;
-    --accent-purple-hover: #6d28d9;
-    --accent-lavender: #a78bfa;
-    --accent-lavender-light: #ddd6fe;
-    --accent-amber: #f59e0b;
-    --accent-amber-light: #fef08a;
+    /* Exact Palette Stripes */
+    --palette-indigo: #422d9a;
+    --palette-purple: #7a28a3;
+    --palette-magenta: #c23084;
+    --palette-coral: #e15353;
 
-    /* Semantic Component Aliases */
-    --accent-pine: #281d5a;
-    --accent-teal: #4338ca;
-    --accent-emerald: #7c3aed;
-    --accent-emerald-hover: #6d28d9;
-    --accent-sage: #a78bfa;
-    --accent-sage-light: #ddd6fe;
+    /* Brand Accents */
+    --accent-indigo: #422d9a;
+    --accent-purple: #7a28a3;
+    --accent-magenta: #c23084;
+    --accent-coral: #e15353;
+    --accent-lavender: #d4a5f7;
+    --accent-lavender-light: #f3e8ff;
+    --accent-amber: #e15353;
+    --accent-amber-light: #fca5a5;
+
+    /* Semantic Aliases */
+    --accent-pine: #2a1860;
+    --accent-teal: #7a28a3;
+    --accent-emerald: #c23084;
+    --accent-emerald-hover: #a82470;
+    --accent-sage: #f472b6;
+    --accent-sage-light: #fbcfe8;
 
     /* Status Colors */
     --status-online: #34d399;
-    --status-offline: #f87171;
+    --status-offline: #e15353;
     --status-starting: #fbbf24;
 
     /* Button Colors */
     --btn-start: #10b981;
     --btn-start-hover: #059669;
-    --btn-stop: #ef4444;
-    --btn-stop-hover: #dc2626;
-    --btn-restart: #f59e0b;
-    --btn-restart-hover: #d97706;
-    --btn-disabled: #372f5c;
-    --btn-action: #6366f1;
-    --btn-action-hover: #4f46e5;
+    --btn-stop: #e15353;
+    --btn-stop-hover: #c93b3b;
+    --btn-restart: #c23084;
+    --btn-restart-hover: #a6206d;
+    --btn-disabled: #3d2b6b;
+    --btn-action: #7a28a3;
+    --btn-action-hover: #631f85;
 
     --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     --font-mono: "JetBrains Mono", "Fira Code", "Consolas", "Courier New", monospace;
@@ -146,9 +152,9 @@ header {
 
 .nav-link.active {
     color: #ffffff;
-    background: linear-gradient(135deg, #7c3aed, #6366f1);
-    border-color: var(--accent-lavender);
-    box-shadow: 0 2px 12px rgba(124, 58, 237, 0.45);
+    background: linear-gradient(135deg, #7a28a3, #c23084);
+    border-color: #f472b6;
+    box-shadow: 0 2px 14px rgba(194, 48, 132, 0.45);
 }
 
 /* Main Container */
@@ -218,9 +224,9 @@ main {
 }
 
 .status-badge.offline {
-    background-color: rgba(239, 68, 68, 0.15);
+    background-color: rgba(225, 83, 83, 0.15);
     color: var(--status-offline);
-    border: 1px solid rgba(239, 68, 68, 0.35);
+    border: 1px solid rgba(225, 83, 83, 0.35);
 }
 
 .status-badge.online {
@@ -285,9 +291,9 @@ main {
 }
 
 .btn-installed {
-    background-color: #241c48;
-    color: var(--accent-lavender);
-    border-color: #3b2d73;
+    background-color: #2b1754;
+    color: #f472b6;
+    border-color: #49288e;
     cursor: default;
 }
 
@@ -303,15 +309,16 @@ main {
 }
 .btn-restart:hover:not(:disabled) {
     background-color: var(--btn-restart-hover);
+    box-shadow: 0 2px 10px rgba(194, 48, 132, 0.4);
 }
 
 .btn-send {
-    background: linear-gradient(135deg, #6366f1, #7c3aed);
-    border-color: rgba(167, 139, 250, 0.3);
+    background: linear-gradient(135deg, #7a28a3, #c23084);
+    border-color: rgba(244, 114, 182, 0.35);
 }
 .btn-send:hover:not(:disabled) {
-    background: linear-gradient(135deg, #4f46e5, #6d28d9);
-    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.45);
+    background: linear-gradient(135deg, #631f85, #a6206d);
+    box-shadow: 0 2px 14px rgba(194, 48, 132, 0.45);
 }
 
 /* Info Grid */
@@ -422,9 +429,9 @@ input[type="number"] {
 
 /* Muted appearance when inputs/selects are disabled */
 .form-select:disabled, .form-input:disabled {
-    background-color: #0b0817 !important;
-    color: #5d5282 !important;
-    border-color: #1a1433 !important;
+    background-color: #080517 !important;
+    color: #65548d !important;
+    border-color: #21164c !important;
     cursor: not-allowed !important;
     opacity: 0.75;
 }
@@ -435,8 +442,8 @@ input[type="number"] {
 }
 
 .console-input:focus, .form-input:focus, .form-select:focus {
-    border-color: var(--accent-lavender);
-    box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.25);
+    border-color: #c23084;
+    box-shadow: 0 0 0 2px rgba(194, 48, 132, 0.3);
 }
 
 /* Mod Filters & Search */
@@ -494,7 +501,7 @@ input[type="number"] {
 }
 
 .mod-card:hover {
-    border-color: var(--accent-lavender);
+    border-color: #7a28a3;
     background-color: var(--bg-card-hover);
 }
 
@@ -570,7 +577,7 @@ input[type="number"] {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background-color: rgba(5, 18, 23, 0.8);
+    background-color: rgba(12, 8, 32, 0.85);
     backdrop-filter: blur(6px);
     z-index: 1000;
     display: none;
@@ -661,7 +668,7 @@ input[type="number"] {
 }
 
 .installed-card:hover {
-    border-color: var(--accent-lavender);
+    border-color: #7a28a3;
     background-color: var(--bg-card-hover);
 }
 
@@ -710,14 +717,15 @@ input[type="number"] {
 }
 
 .badge-active {
-    background-color: rgba(124, 58, 237, 0.2);
-    color: var(--accent-lavender-light);
-    border: 1px solid rgba(167, 139, 250, 0.35);
+    background-color: rgba(122, 40, 163, 0.25);
+    color: #f472b6;
+    border: 1px solid rgba(194, 48, 132, 0.4);
 }
 
 .badge-disabled {
-    background-color: rgba(239, 68, 68, 0.15);
+    background-color: rgba(225, 83, 83, 0.15);
     color: var(--status-offline);
+    border: 1px solid rgba(225, 83, 83, 0.35);
 }
 
 /* MRPACK Upload Dropzone */
@@ -736,8 +744,8 @@ input[type="number"] {
 }
 
 .dropzone-box:hover, .dropzone-box.dragover {
-    border-color: var(--accent-lavender);
-    background-color: rgba(124, 58, 237, 0.1);
+    border-color: #c23084;
+    background-color: rgba(122, 40, 163, 0.15);
 }
 
 .dropzone-icon {
@@ -777,7 +785,7 @@ input[type="number"] {
 .progress-bar {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #6366f1, #a855f7);
+    background: linear-gradient(90deg, #422d9a, #7a28a3, #c23084, #e15353);
     transition: width 0.3s ease;
 }
 
@@ -869,7 +877,7 @@ input[type="number"] {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #241b4a;
+    background-color: #261a60;
     transition: .3s;
     border-radius: 26px;
     border: 1px solid var(--border-color);
@@ -888,8 +896,8 @@ input[type="number"] {
 }
 
 input:checked + .slider {
-    background: linear-gradient(135deg, #7c3aed, #6366f1);
-    border-color: var(--accent-lavender);
+    background: linear-gradient(135deg, #7a28a3, #c23084);
+    border-color: #f472b6;
 }
 
 input:checked + .slider:before {
@@ -912,9 +920,9 @@ input:checked + .slider:before {
 .ram-val-badge, .setting-badge-val {
     font-size: 0.88rem;
     font-weight: 700;
-    color: var(--accent-lavender-light);
-    background-color: rgba(124, 58, 237, 0.2);
-    border: 1px solid rgba(167, 139, 250, 0.35);
+    color: #fdfaff;
+    background: linear-gradient(135deg, rgba(122, 40, 163, 0.35), rgba(194, 48, 132, 0.35));
+    border: 1px solid rgba(194, 48, 132, 0.45);
     padding: 0.25rem 0.65rem;
     border-radius: 6px;
     font-family: var(--font-mono);
@@ -958,12 +966,12 @@ input:checked + .slider:before {
 }
 
 .stepper-btn:hover {
-    background-color: #281d5a;
+    background-color: #261a60;
     color: var(--text-primary);
 }
 
 .stepper-btn:active {
-    background-color: #7c3aed;
+    background-color: #7a28a3;
     color: white;
 }
 
@@ -988,7 +996,7 @@ input:checked + .slider:before {
 
 .range-input {
     width: 100%;
-    accent-color: #8b5cf6;
+    accent-color: #c23084;
     cursor: pointer;
 }
 
@@ -999,11 +1007,11 @@ input:checked + .slider:before {
     bottom: 2rem;
     right: 2rem;
     background-color: var(--bg-card);
-    border: 1px solid var(--accent-lavender);
+    border: 1px solid #c23084;
     color: var(--text-primary);
     padding: 0.85rem 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(124, 58, 237, 0.2);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(194, 48, 132, 0.3);
     z-index: 1000;
     animation: fadeIn 0.3s ease;
 }
@@ -1027,7 +1035,7 @@ input:checked + .slider:before {
     height: 24px;
     border: 3px solid rgba(255,255,255,0.1);
     border-radius: 50%;
-    border-top-color: var(--accent-lavender);
+    border-top-color: #c23084;
     animation: spin 0.8s linear infinite;
     margin-bottom: 0.5rem;
 }
@@ -1068,7 +1076,7 @@ footer {
 }
 
 .metric-card:hover {
-    border-color: rgba(56, 189, 248, 0.4);
+    border-color: rgba(194, 48, 132, 0.45);
     transform: translateY(-2px);
 }
 
@@ -1127,27 +1135,27 @@ footer {
 }
 
 .fill-online {
-    background-color: #22c55e;
+    background-color: #34d399;
 }
 
 .fill-warning {
-    background-color: #f59e0b;
+    background-color: #fbbf24;
 }
 
 .fill-danger {
-    background-color: #ef4444;
+    background-color: #e15353;
 }
 
 .fill-cpu {
-    background: linear-gradient(90deg, #38bdf8, #22c55e);
+    background: linear-gradient(90deg, #7a28a3, #c23084);
 }
 
 .fill-ram {
-    background: linear-gradient(90deg, #a855f7, #ec4899);
+    background: linear-gradient(90deg, #c23084, #e15353);
 }
 
 .fill-threads {
-    background-color: #6366f1;
+    background-color: #422d9a;
 }
 
 .metric-footer {
