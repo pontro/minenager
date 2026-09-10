@@ -108,24 +108,20 @@ export function initMetricsManager() {
 
             if (points.length === 0) return;
 
-            // Draw Area Fill
-            const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
-            gradient.addColorStop(0, series.fillColorTop || 'rgba(56, 189, 248, 0.3)');
-            gradient.addColorStop(1, series.fillColorBottom || 'rgba(56, 189, 248, 0.0)');
-
+            // Draw Flat Area Fill
             ctx.beginPath();
             ctx.moveTo(points[0].x, padding.top + chartH);
             points.forEach(p => ctx.lineTo(p.x, p.y));
             ctx.lineTo(points[points.length - 1].x, padding.top + chartH);
             ctx.closePath();
-            ctx.fillStyle = gradient;
+            ctx.fillStyle = series.fillColor || 'rgba(118, 141, 152, 0.12)';
             ctx.fill();
 
             // Draw Stroke Line
             ctx.beginPath();
             ctx.moveTo(points[0].x, points[0].y);
             points.forEach(p => ctx.lineTo(p.x, p.y));
-            ctx.strokeStyle = series.strokeColor || '#38bdf8';
+            ctx.strokeStyle = series.strokeColor || '#768d98';
             ctx.lineWidth = 2;
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
@@ -255,14 +251,12 @@ export function initMetricsManager() {
                 {
                     key: 'sys_cpu',
                     strokeColor: '#768d98',
-                    fillColorTop: 'rgba(118, 141, 152, 0.35)',
-                    fillColorBottom: 'rgba(118, 141, 152, 0.0)'
+                    fillColor: 'rgba(118, 141, 152, 0.18)'
                 },
                 {
                     key: 'proc_cpu',
                     strokeColor: '#34d399',
-                    fillColorTop: 'rgba(52, 211, 153, 0.25)',
-                    fillColorBottom: 'rgba(52, 211, 153, 0.0)'
+                    fillColor: 'rgba(52, 211, 153, 0.15)'
                 }
             ], 100, '%');
 
@@ -278,8 +272,7 @@ export function initMetricsManager() {
                 {
                     key: 'proc_ram_mb',
                     strokeColor: '#c6dbd3',
-                    fillColorTop: 'rgba(198, 219, 211, 0.35)',
-                    fillColorBottom: 'rgba(198, 219, 211, 0.0)'
+                    fillColor: 'rgba(198, 219, 211, 0.18)'
                 }
             ], maxMemLimitMb, 'M');
 

@@ -1,58 +1,48 @@
 :root {
-    /* Brand Theme: Minenager Slate Mint (Twilight #211d31, Slate #41475d, Steel Sage #768d98, Mint Mist #c6dbd3) */
+    /* ==========================================================================
+       MINENAGER COLOR PALETTE CONFIGURATION (Flat Solid Colors - No Gradients)
+       Swap these 4 slot values to quickly re-theme the entire website!
+       ========================================================================== */
+    --palette-1: #211d31; /* Base Dark: main containers & deep surfaces */
+    --palette-2: #41475d; /* Slate / Muted: borders, disabled buttons, subtle text */
+    --palette-3: #768d98; /* Sage Steel / Primary: active tabs, action buttons, focus rings */
+    --palette-4: #c6dbd3; /* Mint Mist / Accent: highlights, badges, active toggles */
+
+    /* Core Theme Mapping (Derived from palette) */
     --bg-primary: #151221;
-    --bg-secondary: #211d31;
-    --bg-card: #2a253d;
-    --bg-card-hover: #352e4c;
+    --bg-secondary: var(--palette-1);
+    --bg-card: #2c2740;
+    --bg-card-hover: #37314f;
     --bg-console: #0e0c17;
-    --border-color: #41475d;
-    --border-subtle: #2f2a44;
+    --border-color: var(--palette-2);
+    --border-subtle: #332d4a;
 
-    /* Text Colors */
+    /* Typography */
     --text-primary: #f5f9f8;
-    --text-secondary: #c6dbd3;
-    --text-muted: #768d98;
-    --text-highlight: #c6dbd3;
+    --text-secondary: var(--palette-4);
+    --text-muted: var(--palette-3);
+    --text-highlight: var(--palette-4);
 
-    /* Exact Palette Stripes */
-    --palette-twilight: #211d31;
-    --palette-slate: #41475d;
-    --palette-steelsage: #768d98;
-    --palette-mintmist: #c6dbd3;
+    /* Brand Primary & Accent Actions */
+    --color-primary: var(--palette-3);
+    --color-primary-hover: #5f747e;
+    --color-accent: var(--palette-4);
 
-    /* Brand Accents */
-    --accent-indigo: #41475d;
-    --accent-purple: #41475d;
-    --accent-magenta: #768d98;
-    --accent-coral: #e15353;
-    --accent-lavender: #c6dbd3;
-    --accent-lavender-light: #e4efe9;
-    --accent-amber: #f59e0b;
-    --accent-amber-light: #fef08a;
-
-    /* Semantic Aliases */
-    --accent-pine: #2a253d;
-    --accent-teal: #41475d;
-    --accent-emerald: #768d98;
-    --accent-emerald-hover: #5f757f;
-    --accent-sage: #c6dbd3;
-    --accent-sage-light: #e4efe9;
-
-    /* Status Colors */
+    /* Standard Status Colors */
     --status-online: #34d399;
-    --status-offline: #f87171;
+    --status-offline: #ef4444;
     --status-starting: #fbbf24;
 
-    /* Button Colors */
+    /* Button Colors (Flat solids) */
     --btn-start: #10b981;
     --btn-start-hover: #059669;
     --btn-stop: #ef4444;
     --btn-stop-hover: #dc2626;
-    --btn-restart: #768d98;
-    --btn-restart-hover: #5d737e;
+    --btn-restart: var(--palette-3);
+    --btn-restart-hover: #5f747e;
+    --btn-action: var(--palette-3);
+    --btn-action-hover: #5f747e;
     --btn-disabled: #383447;
-    --btn-action: #41475d;
-    --btn-action-hover: #33384a;
 
     --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     --font-mono: "JetBrains Mono", "Fira Code", "Consolas", "Courier New", monospace;
@@ -152,9 +142,9 @@ header {
 
 .nav-link.active {
     color: #ffffff;
-    background: linear-gradient(135deg, #41475d, #768d98);
-    border-color: #c6dbd3;
-    box-shadow: 0 2px 14px rgba(118, 141, 152, 0.45);
+    background-color: var(--color-primary);
+    border-color: var(--color-accent);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
 /* Main Container */
@@ -291,9 +281,9 @@ main {
 }
 
 .btn-installed {
-    background-color: #2a253d;
-    color: #c6dbd3;
-    border-color: #41475d;
+    background-color: var(--bg-card);
+    color: var(--color-accent);
+    border-color: var(--border-color);
     cursor: default;
 }
 
@@ -309,16 +299,16 @@ main {
 }
 .btn-restart:hover:not(:disabled) {
     background-color: var(--btn-restart-hover);
-    box-shadow: 0 2px 10px rgba(118, 141, 152, 0.4);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
 .btn-send {
-    background: linear-gradient(135deg, #41475d, #768d98);
-    border-color: rgba(198, 219, 211, 0.35);
+    background-color: var(--color-primary);
+    border-color: var(--color-border);
 }
 .btn-send:hover:not(:disabled) {
-    background: linear-gradient(135deg, #4d546e, #869fa9);
-    box-shadow: 0 2px 14px rgba(118, 141, 152, 0.45);
+    background-color: var(--color-primary-hover);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
 /* Info Grid */
@@ -785,7 +775,7 @@ input[type="number"] {
 .progress-bar {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #211d31, #41475d, #768d98, #c6dbd3);
+    background-color: var(--color-primary);
     transition: width 0.3s ease;
 }
 
@@ -877,7 +867,7 @@ input[type="number"] {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #352e4c;
+    background-color: var(--bg-card-hover);
     transition: .3s;
     border-radius: 26px;
     border: 1px solid var(--border-color);
@@ -896,8 +886,8 @@ input[type="number"] {
 }
 
 input:checked + .slider {
-    background: linear-gradient(135deg, #41475d, #768d98);
-    border-color: #c6dbd3;
+    background-color: var(--color-primary);
+    border-color: var(--color-accent);
 }
 
 input:checked + .slider:before {
@@ -920,9 +910,9 @@ input:checked + .slider:before {
 .ram-val-badge, .setting-badge-val {
     font-size: 0.88rem;
     font-weight: 700;
-    color: #f5f9f8;
-    background: linear-gradient(135deg, rgba(65, 71, 93, 0.45), rgba(118, 141, 152, 0.35));
-    border: 1px solid rgba(198, 219, 211, 0.45);
+    color: var(--color-accent);
+    background-color: var(--bg-console);
+    border: 1px solid var(--border-color);
     padding: 0.25rem 0.65rem;
     border-radius: 6px;
     font-family: var(--font-mono);
@@ -966,12 +956,12 @@ input:checked + .slider:before {
 }
 
 .stepper-btn:hover {
-    background-color: #352e4c;
+    background-color: var(--bg-card-hover);
     color: var(--text-primary);
 }
 
 .stepper-btn:active {
-    background-color: #768d98;
+    background-color: var(--color-primary);
     color: white;
 }
 
@@ -996,7 +986,7 @@ input:checked + .slider:before {
 
 .range-input {
     width: 100%;
-    accent-color: #768d98;
+    accent-color: var(--color-primary);
     cursor: pointer;
 }
 
@@ -1007,11 +997,11 @@ input:checked + .slider:before {
     bottom: 2rem;
     right: 2rem;
     background-color: var(--bg-card);
-    border: 1px solid #768d98;
+    border: 1px solid var(--color-primary);
     color: var(--text-primary);
     padding: 0.85rem 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(118, 141, 152, 0.3);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6);
     z-index: 1000;
     animation: fadeIn 0.3s ease;
 }
@@ -1035,7 +1025,7 @@ input:checked + .slider:before {
     height: 24px;
     border: 3px solid rgba(255,255,255,0.1);
     border-radius: 50%;
-    border-top-color: #c6dbd3;
+    border-top-color: var(--color-accent);
     animation: spin 0.8s linear infinite;
     margin-bottom: 0.5rem;
 }
@@ -1076,7 +1066,7 @@ footer {
 }
 
 .metric-card:hover {
-    border-color: rgba(118, 141, 152, 0.45);
+    border-color: var(--color-primary);
     transform: translateY(-2px);
 }
 
@@ -1135,27 +1125,27 @@ footer {
 }
 
 .fill-online {
-    background-color: #34d399;
+    background-color: var(--status-online);
 }
 
 .fill-warning {
-    background-color: #fbbf24;
+    background-color: var(--status-starting);
 }
 
 .fill-danger {
-    background-color: #ef4444;
+    background-color: var(--status-offline);
 }
 
 .fill-cpu {
-    background: linear-gradient(90deg, #41475d, #768d98);
+    background-color: var(--color-primary);
 }
 
 .fill-ram {
-    background: linear-gradient(90deg, #768d98, #c6dbd3);
+    background-color: var(--color-accent);
 }
 
 .fill-threads {
-    background-color: #41475d;
+    background-color: var(--palette-2);
 }
 
 .metric-footer {
