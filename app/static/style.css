@@ -83,6 +83,20 @@ header {
     flex-shrink: 0;
 }
 
+.logo-img {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    transition: transform 0.2s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.04);
+}
+
 .logo-icon {
     font-size: 1.5rem;
 }
@@ -1212,6 +1226,11 @@ footer {
     .logo {
         justify-content: center;
         font-size: 1.15rem;
+    }
+
+    .logo-img {
+        height: 36px;
+        max-width: 100%;
     }
 
     .nav-links {
