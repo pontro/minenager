@@ -1,26 +1,36 @@
 :root {
-    /* Palette Inspired Theme (Deep Spruce, Pine Teal, Jade Emerald, Soft Sage) */
-    --bg-primary: #091a21;
-    --bg-secondary: #0e252f;
-    --bg-card: #13313d;
-    --bg-card-hover: #193d4c;
-    --bg-console: #051217;
-    --border-color: #1c4554;
-    --border-subtle: #153845;
+    /* Brand Theme: Minenager Obsidian, Royal Indigo, Lavender & Sunrise Amber */
+    --bg-primary: #0a0815;
+    --bg-secondary: #110d24;
+    --bg-card: #171231;
+    --bg-card-hover: #1f1840;
+    --bg-console: #06040d;
+    --border-color: #2b2353;
+    --border-subtle: #1e173e;
 
     /* Text Colors */
-    --text-primary: #f2f9f6;
-    --text-secondary: #a8c1b7;
-    --text-muted: #67887d;
-    --text-highlight: #9ecab0;
+    --text-primary: #f5f3ff;
+    --text-secondary: #c4b8e8;
+    --text-muted: #8075a8;
+    --text-highlight: #d8b4fe;
 
-    /* Accent & Brand Colors */
-    --accent-pine: #114e59;
-    --accent-teal: #165e6b;
-    --accent-emerald: #228b74;
-    --accent-emerald-hover: #1b7461;
-    --accent-sage: #8eb89d;
-    --accent-sage-light: #b4d7c0;
+    /* Accent & Brand Colors (Minenager Logo Purple/Indigo & Version 1.0 Amber) */
+    --accent-indigo: #6366f1;
+    --accent-violet: #7c3aed;
+    --accent-purple: #8b5cf6;
+    --accent-purple-hover: #6d28d9;
+    --accent-lavender: #a78bfa;
+    --accent-lavender-light: #ddd6fe;
+    --accent-amber: #f59e0b;
+    --accent-amber-light: #fef08a;
+
+    /* Semantic Component Aliases */
+    --accent-pine: #281d5a;
+    --accent-teal: #4338ca;
+    --accent-emerald: #7c3aed;
+    --accent-emerald-hover: #6d28d9;
+    --accent-sage: #a78bfa;
+    --accent-sage-light: #ddd6fe;
 
     /* Status Colors */
     --status-online: #34d399;
@@ -28,15 +38,15 @@
     --status-starting: #fbbf24;
 
     /* Button Colors */
-    --btn-start: #228b74;
-    --btn-start-hover: #1a705d;
+    --btn-start: #10b981;
+    --btn-start-hover: #059669;
     --btn-stop: #ef4444;
     --btn-stop-hover: #dc2626;
     --btn-restart: #f59e0b;
     --btn-restart-hover: #d97706;
-    --btn-disabled: #3d5852;
-    --btn-action: #1c6e7a;
-    --btn-action-hover: #155761;
+    --btn-disabled: #372f5c;
+    --btn-action: #6366f1;
+    --btn-action-hover: #4f46e5;
 
     --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     --font-mono: "JetBrains Mono", "Fira Code", "Consolas", "Courier New", monospace;
@@ -136,9 +146,9 @@ header {
 
 .nav-link.active {
     color: #ffffff;
-    background-color: var(--accent-emerald);
-    border-color: var(--accent-sage);
-    box-shadow: 0 2px 8px rgba(34, 139, 116, 0.4);
+    background: linear-gradient(135deg, #7c3aed, #6366f1);
+    border-color: var(--accent-lavender);
+    box-shadow: 0 2px 12px rgba(124, 58, 237, 0.45);
 }
 
 /* Main Container */
@@ -172,7 +182,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
 }
 
 .server-header, .card-header {
@@ -210,19 +220,19 @@ main {
 .status-badge.offline {
     background-color: rgba(239, 68, 68, 0.15);
     color: var(--status-offline);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    border: 1px solid rgba(239, 68, 68, 0.35);
 }
 
 .status-badge.online {
-    background-color: rgba(34, 139, 116, 0.2);
-    color: var(--accent-sage-light);
-    border: 1px solid rgba(142, 184, 157, 0.4);
+    background-color: rgba(52, 211, 153, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(52, 211, 153, 0.35);
 }
 
 .status-badge.starting {
     background-color: rgba(245, 158, 11, 0.15);
     color: var(--status-starting);
-    border: 1px solid rgba(245, 158, 11, 0.3);
+    border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
 .status-dot {
@@ -267,17 +277,17 @@ main {
 
 .btn-start, .btn-install {
     background-color: var(--btn-start);
-    border-color: rgba(142, 184, 157, 0.25);
+    border-color: rgba(52, 211, 153, 0.3);
 }
 .btn-start:hover:not(:disabled), .btn-install:hover:not(:disabled) {
     background-color: var(--btn-start-hover);
-    box-shadow: 0 2px 10px rgba(34, 139, 116, 0.4);
+    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
 }
 
 .btn-installed {
-    background-color: #1f3a3f;
-    color: var(--accent-sage);
-    border-color: #2b5057;
+    background-color: #241c48;
+    color: var(--accent-lavender);
+    border-color: #3b2d73;
     cursor: default;
 }
 
@@ -296,12 +306,12 @@ main {
 }
 
 .btn-send {
-    background-color: var(--btn-action);
-    border-color: rgba(142, 184, 157, 0.2);
+    background: linear-gradient(135deg, #6366f1, #7c3aed);
+    border-color: rgba(167, 139, 250, 0.3);
 }
 .btn-send:hover:not(:disabled) {
-    background-color: var(--btn-action-hover);
-    box-shadow: 0 2px 10px rgba(28, 110, 122, 0.4);
+    background: linear-gradient(135deg, #4f46e5, #6d28d9);
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.45);
 }
 
 /* Info Grid */
@@ -371,7 +381,7 @@ main {
     font-family: var(--font-mono);
     font-size: 0.88rem;
     line-height: 1.5;
-    color: #e2f0ea;
+    color: #ede9fe;
     height: 320px;
     overflow-y: auto;
     white-space: pre-wrap;
@@ -379,9 +389,9 @@ main {
 }
 
 .log-time { color: var(--text-muted); }
-.log-info { color: #5eead4; }
+.log-info { color: #c4b8e8; }
 .log-warn { color: #fbbf24; }
-.log-user { color: var(--accent-sage-light); }
+.log-user { color: var(--accent-lavender-light); }
 
 .console-input-form {
     display: flex;
@@ -412,9 +422,9 @@ input[type="number"] {
 
 /* Muted appearance when inputs/selects are disabled */
 .form-select:disabled, .form-input:disabled {
-    background-color: #07151a !important;
-    color: #557069 !important;
-    border-color: #122830 !important;
+    background-color: #0b0817 !important;
+    color: #5d5282 !important;
+    border-color: #1a1433 !important;
     cursor: not-allowed !important;
     opacity: 0.75;
 }
@@ -425,8 +435,8 @@ input[type="number"] {
 }
 
 .console-input:focus, .form-input:focus, .form-select:focus {
-    border-color: var(--accent-sage);
-    box-shadow: 0 0 0 2px rgba(142, 184, 157, 0.2);
+    border-color: var(--accent-lavender);
+    box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.25);
 }
 
 /* Mod Filters & Search */
@@ -484,7 +494,7 @@ input[type="number"] {
 }
 
 .mod-card:hover {
-    border-color: var(--accent-sage);
+    border-color: var(--accent-lavender);
     background-color: var(--bg-card-hover);
 }
 
@@ -651,7 +661,7 @@ input[type="number"] {
 }
 
 .installed-card:hover {
-    border-color: var(--accent-sage);
+    border-color: var(--accent-lavender);
     background-color: var(--bg-card-hover);
 }
 
@@ -700,9 +710,9 @@ input[type="number"] {
 }
 
 .badge-active {
-    background-color: rgba(34, 139, 116, 0.2);
-    color: var(--accent-sage-light);
-    border: 1px solid rgba(142, 184, 157, 0.3);
+    background-color: rgba(124, 58, 237, 0.2);
+    color: var(--accent-lavender-light);
+    border: 1px solid rgba(167, 139, 250, 0.35);
 }
 
 .badge-disabled {
@@ -726,8 +736,8 @@ input[type="number"] {
 }
 
 .dropzone-box:hover, .dropzone-box.dragover {
-    border-color: var(--accent-sage);
-    background-color: rgba(34, 139, 116, 0.08);
+    border-color: var(--accent-lavender);
+    background-color: rgba(124, 58, 237, 0.1);
 }
 
 .dropzone-icon {
@@ -767,7 +777,7 @@ input[type="number"] {
 .progress-bar {
     height: 100%;
     width: 0%;
-    background-color: var(--accent-emerald);
+    background: linear-gradient(90deg, #6366f1, #a855f7);
     transition: width 0.3s ease;
 }
 
@@ -859,9 +869,10 @@ input[type="number"] {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #1a3842;
+    background-color: #241b4a;
     transition: .3s;
     border-radius: 26px;
+    border: 1px solid var(--border-color);
 }
 
 .slider:before {
@@ -870,14 +881,15 @@ input[type="number"] {
     height: 18px;
     width: 18px;
     left: 4px;
-    bottom: 4px;
+    bottom: 3px;
     background-color: white;
     transition: .3s;
     border-radius: 50%;
 }
 
 input:checked + .slider {
-    background-color: var(--accent-emerald);
+    background: linear-gradient(135deg, #7c3aed, #6366f1);
+    border-color: var(--accent-lavender);
 }
 
 input:checked + .slider:before {
@@ -900,9 +912,9 @@ input:checked + .slider:before {
 .ram-val-badge, .setting-badge-val {
     font-size: 0.88rem;
     font-weight: 700;
-    color: var(--accent-sage-light);
-    background-color: rgba(34, 139, 116, 0.2);
-    border: 1px solid rgba(142, 184, 157, 0.3);
+    color: var(--accent-lavender-light);
+    background-color: rgba(124, 58, 237, 0.2);
+    border: 1px solid rgba(167, 139, 250, 0.35);
     padding: 0.25rem 0.65rem;
     border-radius: 6px;
     font-family: var(--font-mono);
@@ -946,12 +958,12 @@ input:checked + .slider:before {
 }
 
 .stepper-btn:hover {
-    background-color: var(--accent-pine);
+    background-color: #281d5a;
     color: var(--text-primary);
 }
 
 .stepper-btn:active {
-    background-color: var(--accent-emerald);
+    background-color: #7c3aed;
     color: white;
 }
 
@@ -976,7 +988,7 @@ input:checked + .slider:before {
 
 .range-input {
     width: 100%;
-    accent-color: var(--accent-emerald);
+    accent-color: #8b5cf6;
     cursor: pointer;
 }
 
@@ -987,11 +999,11 @@ input:checked + .slider:before {
     bottom: 2rem;
     right: 2rem;
     background-color: var(--bg-card);
-    border: 1px solid var(--accent-sage);
+    border: 1px solid var(--accent-lavender);
     color: var(--text-primary);
     padding: 0.85rem 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(124, 58, 237, 0.2);
     z-index: 1000;
     animation: fadeIn 0.3s ease;
 }
@@ -1015,7 +1027,7 @@ input:checked + .slider:before {
     height: 24px;
     border: 3px solid rgba(255,255,255,0.1);
     border-radius: 50%;
-    border-top-color: var(--accent-sage);
+    border-top-color: var(--accent-lavender);
     animation: spin 0.8s linear infinite;
     margin-bottom: 0.5rem;
 }
