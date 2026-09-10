@@ -56,7 +56,7 @@ export function initPlayersManager() {
                             <div class="installed-card-name" style="font-size: 1rem;">
                                 ${escapeHtml(p.name)}
                                 ${p.is_op ? '<span class="installed-badge badge-active" style="margin-left: 0.35rem; font-size: 0.7rem;">OP</span>' : ''}
-                                ${p.is_whitelisted ? '<span class="installed-badge" style="background: rgba(66, 45, 154, 0.35); color: #d4a5f7; border: 1px solid rgba(122, 40, 163, 0.4); margin-left: 0.35rem; font-size: 0.7rem;">Whitelist</span>' : ''}
+                                ${p.is_whitelisted ? '<span class="installed-badge" style="background: rgba(65, 71, 93, 0.4); color: #c6dbd3; border: 1px solid rgba(118, 141, 152, 0.45); margin-left: 0.35rem; font-size: 0.7rem;">Whitelist</span>' : ''}
                             </div>
                         </div>
                     </div>
