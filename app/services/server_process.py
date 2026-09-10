@@ -39,30 +39,16 @@ class MinecraftServerManager:
             })
 
     def _dispatch_discord_event(self, event_type: str, **kwargs):
-        """Safely dispatch async Discord events from background thread."""
+        """Safely and reliably dispatch Discord events in a background worker."""
         try:
             from app.services.discord_bot import discord_bot_manager
-            import asyncio
-            try:
-                loop = asyncio.get_running_loop()
-                if loop and loop.is_running():
-                    asyncio.create_task(discord_bot_manager.broadcast_event(event_type, **kwargs))
-                    return
-            except RuntimeError:
-                pass
-            
-            # Use default loop from main thread
-            try:
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    asyncio.run_coroutine_threadsafe(discord_bot_manager.broadcast_event(event_type, **kwargs), loop)
-            except Exception:
-                pass
-        except Exception:
-            pass
+            discord_bot_manager.broadcast_event_sync(event_type, **kwargs)
+        except Exception as e:
+            self._append_log(f"[Minenager] Discord event dispatch error: {e}")
 
     def _read_stdout(self):
         """Background thread to read server stdout line by line."""
+        server_started_sent = False
         try:
             if not self.process or not self.process.stdout:
                 return
@@ -72,13 +58,16 @@ class MinecraftServerManager:
                     break
                 self._append_log(line)
 
-                # Detect when server is fully loaded and online
-                if self.status == "starting" and ("Done (" in line or "For help, type \"help\"" in line):
-                    with self.lock:
-                        self.status = "online"
-                    dash_settings = settings_service.get_dashboard_settings()
-                    ram_val = f"{dash_settings.get('ram_gb', 4)} GB"
-                    self._dispatch_discord_event("server_start", ram=ram_val)
+                # Detect when server is fully loaded and ready for connections
+                if not server_started_sent and self.status == "starting":
+                    if any(trigger in line for trigger in ["Done (", "For help, type \"help\"", "RCON running on", "Timings reset"]):
+                        server_started_sent = True
+                        with self.lock:
+                            self.status = "online"
+                        dash_settings = settings_service.get_dashboard_settings()
+                        ram_val = f"{dash_settings.get('ram_gb', 4)} GB"
+                        boot_duration = round(time.time() - self.start_time, 1) if self.start_time else None
+                        self._dispatch_discord_event("server_start", ram=ram_val, boot_time=f"{boot_duration}s" if boot_duration else None)
 
                 # Detect player join
                 elif "joined the game" in line:
@@ -103,13 +92,20 @@ class MinecraftServerManager:
         except Exception as e:
             self._append_log(f"[Minenager] Error reading server output: {e}")
         finally:
+            uptime_seconds = int(time.time() - self.start_time) if self.start_time else None
+            exit_code = self.process.poll() if self.process else 0
             with self.lock:
-                if self.process:
-                    self.process.poll()
+                was_running = self.status in ["online", "starting", "stopping"]
+                was_stopping = self.status == "stopping"
                 self.status = "offline"
                 self.start_time = None
-                self._append_log("[Minenager] Minecraft server process has stopped.")
-            self._dispatch_discord_event("server_stop")
+                self._append_log(f"[Minenager] Minecraft server process has stopped (exit code: {exit_code}).")
+
+            if was_running:
+                if was_stopping or exit_code == 0:
+                    self._dispatch_discord_event("server_stop", uptime_seconds=uptime_seconds, exit_code=exit_code)
+                else:
+                    self._dispatch_discord_event("server_crash", exit_code=exit_code, reason=f"Server process terminated unexpectedly (exit code {exit_code})")
 
     def start(self) -> Dict[str, Any]:
         with self.lock:

@@ -77,6 +77,22 @@ def _send_rest_sync(token: str, channel_id: str, payload: Dict[str, Any]) -> tup
     except Exception as e:
         return False, str(e)
 
+def format_duration(seconds: Optional[int]) -> str:
+    if seconds is None or seconds < 0:
+        return "Unknown"
+    if seconds < 60:
+        return f"{seconds}s"
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    secs = seconds % 60
+    if hours > 0:
+        return f"{hours}h {minutes}m"
+    elif minutes > 0 and secs > 0:
+        return f"{minutes}m {secs}s"
+    elif minutes > 0:
+        return f"{minutes}m"
+    return f"{secs}s"
+
 class DiscordBotManager:
     _instance = None
 
@@ -188,68 +204,105 @@ class DiscordBotManager:
         else:
             return {"success": False, "message": f"Failed to send: {self.last_error or 'Check Bot Token & Channel permissions'}"}
 
-    async def broadcast_event(self, event_type: str, **kwargs):
+    def build_event_embed(self, event_type: str, **kwargs) -> Optional[Dict[str, Any]]:
         cfg = get_config()
-        if not cfg.get("enabled"):
-            return
-        channel_id = cfg.get("channel_id", "").strip()
-        if not channel_id:
-            return
-
-        embed = None
         instance = mrpack_service.get_current_instance()
         mc_ver = instance.get("minecraft_version", "1.20.1") if instance else "1.20.1"
         loader = instance.get("loader", "Fabric").capitalize() if instance else "Fabric"
 
         if event_type == "server_start" and cfg.get("notify_server_start", True):
-            embed = {
+            fields = [
+                {"name": "Version", "value": f"Minecraft {mc_ver} ({loader})", "inline": True},
+                {"name": "RAM Allocated", "value": kwargs.get("ram", "4 GB"), "inline": True}
+            ]
+            if kwargs.get("boot_time"):
+                fields.append({"name": "Startup Time", "value": kwargs.get("boot_time"), "inline": True})
+
+            return {
                 "title": "🟢 Minecraft Server is Online!",
-                "description": f"The server is ready for connections on port **25565**.",
-                "color": 3066993,
-                "fields": [
-                    {"name": "Version", "value": f"Minecraft {mc_ver} ({loader})", "inline": True},
-                    {"name": "RAM Allocated", "value": kwargs.get("ram", "4 GB"), "inline": True}
-                ],
+                "description": "The server has successfully loaded and is ready for connections on port **25565**.",
+                "color": 3066993,  # Emerald Green
+                "fields": fields,
                 "footer": {"text": "Minenager • Server Online"}
             }
+
         elif event_type == "server_stop" and cfg.get("notify_server_stop", True):
-            embed = {
-                "title": "🔴 Minecraft Server Stopped",
-                "description": "The Minecraft server process has shut down.",
-                "color": 15158332,
+            fields = []
+            uptime_sec = kwargs.get("uptime_seconds")
+            if uptime_sec and uptime_sec > 0:
+                fields.append({"name": "Session Duration", "value": format_duration(uptime_sec), "inline": True})
+
+            return {
+                "title": "🔴 Minecraft Server is Offline",
+                "description": "The Minecraft server process has cleanly shut down.",
+                "color": 15158332,  # Coral / Red
+                "fields": fields if fields else None,
                 "footer": {"text": "Minenager • Server Offline"}
             }
+
         elif event_type == "player_join" and cfg.get("notify_player_join_leave", True):
             player = kwargs.get("player", "Player")
             count = kwargs.get("count", 1)
-            embed = {
+            return {
                 "title": f"👤 {player} joined the game",
                 "description": f"**{player}** connected to the world.",
                 "color": 3447003,
                 "thumbnail": {"url": f"https://minotar.net/avatar/{player}/64.png"},
                 "footer": {"text": f"Minenager • {count} player(s) online"}
             }
+
         elif event_type == "player_leave" and cfg.get("notify_player_join_leave", True):
             player = kwargs.get("player", "Player")
             count = kwargs.get("count", 0)
-            embed = {
+            return {
                 "title": f"🚪 {player} left the game",
                 "description": f"**{player}** disconnected.",
                 "color": 10070709,
                 "thumbnail": {"url": f"https://minotar.net/avatar/{player}/64.png"},
                 "footer": {"text": f"Minenager • {count} player(s) online"}
             }
+
         elif event_type == "server_crash" and cfg.get("notify_server_crash", True):
             reason = kwargs.get("reason", "Unexpected termination")
-            embed = {
+            exit_code = kwargs.get("exit_code", "Unknown")
+            return {
                 "title": "⚠️ Minecraft Server Crashed",
-                "description": f"The server stopped unexpectedly.\n```\n{reason[:300]}\n```",
+                "description": f"The server stopped unexpectedly (exit code: `{exit_code}`).\n```\n{reason[:300]}\n```",
                 "color": 16744272,
                 "footer": {"text": "Minenager • Crash Alert"}
             }
 
-        if embed:
-            await self.send_rest_message(channel_id, embed=embed)
+        return None
+
+    def _broadcast_worker(self, event_type: str, kwargs: dict):
+        try:
+            cfg = get_config()
+            if not cfg.get("enabled"):
+                return
+            channel_id = cfg.get("channel_id", "").strip()
+            token = cfg.get("token", "").strip()
+            if not channel_id or not token:
+                return
+
+            embed = self.build_event_embed(event_type, **kwargs)
+            if embed:
+                clean_embed = {k: v for k, v in embed.items() if v is not None}
+                ok, err = _send_rest_sync(token, channel_id, {"embeds": [clean_embed]})
+                if not ok:
+                    logger.error(f"Failed to broadcast Discord event '{event_type}': {err}")
+                else:
+                    logger.info(f"Broadcasted Discord event '{event_type}' to channel {channel_id}")
+        except Exception as e:
+            logger.error(f"Error in Discord broadcast worker for '{event_type}': {e}")
+
+    def broadcast_event_sync(self, event_type: str, **kwargs):
+        """Thread-safe event broadcast executed in a background daemon thread."""
+        import threading
+        threading.Thread(target=self._broadcast_worker, args=(event_type, kwargs), daemon=True).start()
+
+    async def broadcast_event(self, event_type: str, **kwargs):
+        """Async broadcast event."""
+        await asyncio.to_thread(self._broadcast_worker, event_type, kwargs)
 
     async def _heartbeat_loop(self, ws, interval_ms: int):
         while not self._stop_requested:
