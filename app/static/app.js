@@ -22,7 +22,35 @@ document.addEventListener('DOMContentLoaded', () => {
         modsManager.loadMods();
     });
 
-    // 2. Tab Navigation
+    // 2. Sidebar Toggle & State Persistence (UX Enhancement 1)
+    const appSidebar = document.getElementById('appSidebar');
+    const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+    const btnMobileMenu = document.getElementById('btnMobileMenu');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    // Restore desktop sidebar collapsed state
+    if (localStorage.getItem('minenager_sidebar_collapsed') === 'true') {
+        appSidebar?.classList.add('collapsed');
+    }
+
+    btnToggleSidebar?.addEventListener('click', () => {
+        appSidebar?.classList.toggle('collapsed');
+        const isCollapsed = appSidebar?.classList.contains('collapsed');
+        localStorage.setItem('minenager_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+    });
+
+    // Mobile Drawer Open / Close
+    btnMobileMenu?.addEventListener('click', () => {
+        appSidebar?.classList.add('mobile-open');
+        sidebarOverlay?.classList.add('active');
+    });
+
+    sidebarOverlay?.addEventListener('click', () => {
+        appSidebar?.classList.remove('mobile-open');
+        sidebarOverlay?.classList.remove('active');
+    });
+
+    // 3. Tab Navigation
     const navButtons = document.querySelectorAll('.nav-link[data-tab]');
     const tabPanes = document.querySelectorAll('.tab-pane');
 
@@ -37,6 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetPane) {
                 targetPane.classList.add('active');
             }
+
+            // Close mobile menu on navigation
+            appSidebar?.classList.remove('mobile-open');
+            sidebarOverlay?.classList.remove('active');
 
             if (targetId === 'tab-server') {
                 playersManager.loadPlayers();

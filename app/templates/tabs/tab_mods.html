@@ -1,125 +1,119 @@
 <!-- Tab 2: Modrinth Mods & .mrpack Integration -->
 <div id="tab-mods" class="tab-pane">
-    <!-- 1. Server Software & Version Installer (Top of Screen) -->
-    <div class="card" id="serverInstallerCard">
-        <div class="card-header">
-            <div>
-                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>⛏️ Server Software &amp; Version</span>
-                    <span id="installerLockBadge" class="status-badge {% if instance %}online{% else %}offline{% endif %}" style="font-size: 0.75rem;">
-                        {% if instance %}● Installed &amp; Locked{% else %}○ Not Configured{% endif %}
-                    </span>
-                </h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
-                    Choose your Minecraft version and mod loader to automatically download and configure <code>server.jar</code>.
-                </p>
+    <!-- 1 & 2. Top Row: Server Software & Compact .mrpack Import Card Side-by-Side -->
+    <div class="mods-top-grid">
+        <!-- 1. Server Software & Version Installer -->
+        <div class="card" id="serverInstallerCard" style="margin-bottom: 0;">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1rem;">
+                        <span>⛏️ Software &amp; Loader</span>
+                        <span id="installerLockBadge" class="status-badge {% if instance %}online{% else %}offline{% endif %}" style="font-size: 0.72rem;">
+                            {% if instance %}● Configured{% else %}○ Not Configured{% endif %}
+                        </span>
+                    </h2>
+                    <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem;">
+                        Select Minecraft version and loader to configure <code>server.jar</code>.
+                    </p>
+                </div>
+                <div id="installerActions" style="display: flex; gap: 0.4rem;">
+                    <button type="button" id="btnChangeInstaller" class="btn btn-sm btn-restart" style="display: {% if instance %}inline-flex{% else %}none{% endif %};">
+                        🔄 Change
+                    </button>
+                    <button type="button" id="btnInstallServer" class="btn btn-sm btn-install" style="display: {% if not instance %}inline-flex{% else %}none{% endif %};">
+                        ⬇ Install
+                    </button>
+                </div>
             </div>
-            <div id="installerActions" style="display: flex; gap: 0.5rem;">
-                <button type="button" id="btnChangeInstaller" class="btn btn-sm btn-restart" style="display: {% if instance %}inline-flex{% else %}none{% endif %};">
-                    🔄 Change
-                </button>
-                <button type="button" id="btnInstallServer" class="btn btn-install" style="display: {% if not instance %}inline-flex{% else %}none{% endif %};">
-                    ⬇ Install Server
-                </button>
+
+            <div class="filter-bar" style="margin-top: 0.25rem;">
+                <div class="filter-group">
+                    <label class="filter-label" for="installerMcVersion">MC Version</label>
+                    <select id="installerMcVersion" class="form-select" {% if instance %}disabled{% endif %}>
+                        {% for v in mc_versions %}
+                            <option value="{{ v }}" {% if v == server.version %}selected{% endif %}>{{ v }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" for="installerLoader">Loader</label>
+                    <select id="installerLoader" class="form-select" {% if instance %}disabled{% endif %}>
+                        {% for l in loaders %}
+                            <option value="{{ l }}" {% if l == server.loader | lower %}selected{% endif %}>{{ l | capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group" style="flex: 1; min-width: 140px;">
+                    <label class="filter-label" for="installerLoaderVersion">Loader Version</label>
+                    <select id="installerLoaderVersion" class="form-select" style="width: 100%;" {% if instance %}disabled{% endif %}>
+                        <option value="{{ instance.loader_version if instance and instance.loader_version else 'latest' }}">{{ instance.loader_version if instance and instance.loader_version else 'Latest Stable' }}</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <div class="filter-bar" style="background-color: var(--bg-card); border-radius: 8px;">
-            <div class="filter-group">
-                <label class="filter-label" for="installerMcVersion">Minecraft Version</label>
-                <select id="installerMcVersion" class="form-select" {% if instance %}disabled{% endif %}>
-                    {% for v in mc_versions %}
-                        <option value="{{ v }}" {% if v == server.version %}selected{% endif %}>{{ v }}</option>
-                    {% endfor %}
-                </select>
+        <!-- 2. Compact .mrpack Modpack Upload Card -->
+        <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column;">
+            <div class="card-header" style="margin-bottom: 0.5rem;">
+                <h2 class="card-title" style="font-size: 1rem;">📦 Import Modpack (.mrpack)</h2>
             </div>
-
-            <div class="filter-group">
-                <label class="filter-label" for="installerLoader">Loader</label>
-                <select id="installerLoader" class="form-select" {% if instance %}disabled{% endif %}>
-                    {% for l in loaders %}
-                        <option value="{{ l }}" {% if l == server.loader | lower %}selected{% endif %}>{{ l | capitalize }}</option>
-                    {% endfor %}
-                </select>
+            <div id="mrpackDropzone" class="dropzone-box compact">
+                <div class="dropzone-icon">📁</div>
+                <div class="dropzone-title">Drop .mrpack file or click to browse</div>
+                <p class="dropzone-sub">Upload a modpack to configure version and mods automatically</p>
+                <button type="button" class="btn btn-sm btn-action" id="btnBrowseMrpack" style="margin-top: 0.25rem; pointer-events: auto;">
+                    📂 Select File
+                </button>
+                <input type="file" id="mrpackFileInput" style="display: none;">
             </div>
-
-            <div class="filter-group" style="flex: 1; min-width: 180px;">
-                <label class="filter-label" for="installerLoaderVersion">Loader Version</label>
-                <select id="installerLoaderVersion" class="form-select" style="width: 100%;" {% if instance %}disabled{% endif %}>
-                    <option value="{{ instance.loader_version if instance and instance.loader_version else 'latest' }}">{{ instance.loader_version if instance and instance.loader_version else 'Latest Stable' }}</option>
-                </select>
+            <div id="mrpackUploadStatus" class="upload-status" style="margin-top: 0.5rem; padding: 0.65rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span id="mrpackStatusText" style="font-weight: 600; font-size: 0.82rem;">Processing .mrpack...</span>
+                    <span id="mrpackPercentText" style="color: var(--text-muted); font-size: 0.78rem;">0%</span>
+                </div>
+                <div class="progress-bar-container" style="margin-top: 0.35rem;">
+                    <div id="mrpackProgressBar" class="progress-bar-fill fill-online" style="width: 0%;"></div>
+                </div>
+                <div id="mrpackDetails" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.35rem;"></div>
             </div>
         </div>
     </div>
 
-    <!-- 2. Installed Mods Summary & Modal Trigger Card -->
-    <div class="card" id="installedModsSummaryCard">
-        <div class="card-header">
-            <div>
-                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>📁 Installed Server Mods</span>
-                    <span id="installedCountBadge" class="status-badge online" style="font-size: 0.75rem;">0 Mods</span>
+    <!-- 2. Browse & Search Modrinth Mods (Responsive Card Grid) -->
+    <div class="card" style="margin-top: 1.25rem;">
+        <div class="card-header" style="flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;">
+            <!-- Left: Card Title -->
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
+                <h2 class="card-title" style="display: flex; align-items: center; gap: 0.4rem; font-size: 1.05rem;">
+                    <span>⚡ Modrinth Mod Store</span>
                 </h2>
-                <p id="installedSummaryText" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
-                    Manage, enable, disable, and remove mods installed in <code>/data/minecraft/mods/</code>.
-                </p>
+                <span id="modsResultCount" style="color: var(--text-muted); font-size: 0.8rem;"></span>
             </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <button type="button" id="btnOpenInstalledModal" class="btn btn-send">
-                    📂 View &amp; Manage Installed Mods
-                </button>
-            </div>
-        </div>
-    </div>
 
-    <!-- 3. .mrpack Modpack Upload Card -->
-    <div class="card">
-        <div class="card-header">
-            <h2 class="card-title" style="font-size: 1.15rem;">📦 Import Modpack (.mrpack)</h2>
-        </div>
-        <div id="mrpackDropzone" class="dropzone-box">
-            <div class="dropzone-icon">📁</div>
-            <div class="dropzone-title">Select a .mrpack file from your device</div>
-            <p class="dropzone-sub">Upload a Modrinth modpack (.mrpack) to automatically install server files, mods, and lock version settings</p>
-            <button type="button" class="btn btn-send" id="btnBrowseMrpack" style="margin-top: 0.5rem; pointer-events: auto;">
-                📂 Browse Device for .mrpack
-            </button>
-            <input type="file" id="mrpackFileInput" style="display: none;">
-        </div>
-        <div id="mrpackUploadStatus" class="upload-status">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span id="mrpackStatusText" style="font-weight: 600;">Processing .mrpack...</span>
-                <span id="mrpackPercentText" style="color: var(--text-muted); font-size: 0.85rem;">0%</span>
-            </div>
-            <div class="progress-bar-container">
-                <div id="mrpackProgressBar" class="progress-bar"></div>
-            </div>
-            <div id="mrpackDetails" style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 0.5rem;"></div>
-        </div>
-    </div>
-
-    <!-- 4. Browse & Search Modrinth Mods Card -->
-    <div class="card">
-        <div class="card-header" style="flex-wrap: wrap; gap: 1rem; align-items: center;">
-            <div>
-                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>📦 Browse &amp; Add Mods</span>
-                </h2>
-                <span id="modsResultCount" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem; display: inline-block;"></span>
-            </div>
-            <div style="flex: 1; min-width: 280px; max-width: 500px; margin-left: auto;">
+            <!-- Middle: Search Mods Input -->
+            <div style="flex: 1; min-width: 240px; max-width: 460px;">
                 <input 
                     type="text" 
                     id="modSearchInput" 
                     class="form-input" 
                     style="width: 100%;"
-                    placeholder="🔍 Search mods (e.g. Sodium, Lithium, Voice Chat)..."
+                    placeholder="🔍 Search mods (e.g. Sodium, FerriteCore, Voice Chat)..."
                     autocomplete="off"
                 >
             </div>
+
+            <!-- Right: View Installed Mods Button -->
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
+                <button type="button" id="btnOpenInstalledModal" class="btn btn-sm btn-send" style="display: inline-flex; align-items: center; gap: 0.45rem;">
+                    <span>📂 View Installed Mods</span>
+                    <span id="installedCountBadge" class="installed-badge" style="background: rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 0.72rem; padding: 0.1rem 0.4rem;">0</span>
+                </button>
+            </div>
         </div>
-        <div id="modsContainer" class="mods-container">
-            <div class="loading-state">
+        <div id="modsContainer" class="mods-grid">
+            <div class="loading-state" style="grid-column: 1 / -1;">
                 <div class="spinner"></div>
                 <div>Loading popular mods...</div>
             </div>

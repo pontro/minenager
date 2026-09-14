@@ -29,8 +29,7 @@ export function initModsManager() {
             const enabledCount = installedMods.filter(m => m.enabled).length;
 
             if (installedCountBadge) {
-                installedCountBadge.textContent = `${count} Mod${count === 1 ? '' : 's'}`;
-                installedCountBadge.className = count > 0 ? 'status-badge online' : 'status-badge offline';
+                installedCountBadge.textContent = `${count}`;
             }
             if (modalModsCountBadge) {
                 modalModsCountBadge.textContent = `${enabledCount}/${count} Active`;
@@ -197,7 +196,7 @@ export function initModsManager() {
             modsContainer.innerHTML = '';
             hits.forEach(mod => {
                 const card = document.createElement('div');
-                card.className = 'mod-card';
+                card.className = 'mod-grid-card';
 
                 const isInstalled = installedMods.some(m => {
                     const clean = m.filename.toLowerCase();
@@ -206,32 +205,41 @@ export function initModsManager() {
                 });
 
                 const iconHtml = mod.icon_url 
-                    ? `<img src="${escapeHtml(mod.icon_url)}" class="mod-icon" alt="${escapeHtml(mod.title)}" loading="lazy">`
-                    : `<div class="mod-icon-placeholder">📦</div>`;
+                    ? `<img src="${escapeHtml(mod.icon_url)}" class="mod-icon-img" alt="${escapeHtml(mod.title)}" loading="lazy">`
+                    : `<div class="mod-icon-fallback">📦</div>`;
 
                 const downloadsFormatted = (mod.downloads || 0).toLocaleString();
                 const followsFormatted = (mod.follows || 0).toLocaleString();
+
+                const categories = (mod.categories || []).slice(0, 2);
+                const pillsHtml = categories.map(c => `<span class="mod-pill">${escapeHtml(c)}</span>`).join('');
 
                 const actionBtnHtml = isInstalled
                     ? `<button class="btn btn-sm btn-installed" disabled>✓ Installed</button>`
                     : `<button class="btn btn-sm btn-install" data-project-id="${escapeHtml(mod.project_id)}" data-slug="${escapeHtml(mod.slug)}" data-title="${escapeHtml(mod.title)}">⬇ Install</button>`;
 
                 card.innerHTML = `
-                    ${iconHtml}
-                    <div class="mod-details">
-                        <div class="mod-title-row">
-                            <h3 class="mod-title">${escapeHtml(mod.title)}</h3>
-                            <span class="mod-author">by ${escapeHtml(mod.author || 'Unknown')}</span>
+                    <div class="mod-card-top">
+                        <div class="mod-icon-wrapper">
+                            ${iconHtml}
                         </div>
-                        <p class="mod-desc">${escapeHtml(mod.description || 'No description provided.')}</p>
-                        <div class="mod-meta">
-                            <span>⬇ ${downloadsFormatted} downloads</span>
-                            <span>⭐ ${followsFormatted} followers</span>
-                            <span>🏷️ ${escapeHtml(mod.categories?.join(', ') || 'Mod')}</span>
+                        <div class="mod-card-info">
+                            <h3 class="mod-card-title" title="${escapeHtml(mod.title)}">${escapeHtml(mod.title)}</h3>
+                            <div class="mod-card-author">by ${escapeHtml(mod.author || 'Mod Creator')}</div>
                         </div>
                     </div>
-                    <div class="mod-actions">
-                        ${actionBtnHtml}
+                    <p class="mod-card-desc">${escapeHtml(mod.description || 'No description available.')}</p>
+                    <div class="mod-card-pills">
+                        ${pillsHtml}
+                    </div>
+                    <div class="mod-card-footer">
+                        <div class="mod-stats">
+                            <span>⬇ ${downloadsFormatted}</span>
+                            <span>⭐ ${followsFormatted}</span>
+                        </div>
+                        <div class="mod-actions">
+                            ${actionBtnHtml}
+                        </div>
                     </div>
                 `;
 

@@ -1,15 +1,16 @@
-<!-- Tab 1: Server Overview -->
+<!-- Tab 1: Server Overview & Upgraded Console -->
 <div id="tab-server" class="tab-pane active">
+    <!-- Hero Server Overview Card -->
     <section class="server-card">
         <div class="server-header">
-            <div class="server-title-group">
-                <h1 class="server-title" id="dashboardPackName">{{ server.pack_name }}</h1>
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <h1 class="server-title" id="dashboardPackName" style="font-size: 1.3rem;">{{ server.pack_name }}</h1>
                 <div id="statusBadge" class="status-badge {{ server.status }}">
                     <span class="status-dot"></span>
                     <span id="statusText">{{ server.status | capitalize }}</span>
                 </div>
             </div>
-            <div class="controls-group">
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                 <button id="btnStart" class="btn btn-start" {% if server.status != 'offline' %}disabled{% endif %}>
                     ▶ Start
                 </button>
@@ -19,7 +20,7 @@
                 <button id="btnStop" class="btn btn-stop" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %}>
                     ⏹ Stop
                 </button>
-                <button id="btnCreateBackup" class="btn btn-send" title="Broadcast 1-min warning, shutdown, create backup, and restart">
+                <button id="btnCreateBackup" class="btn btn-send" title="Broadcast warning, shutdown, backup, and restart">
                     💾 Backup
                 </button>
             </div>
@@ -39,13 +40,80 @@
                 <span class="info-value" id="dashboardRam">{{ server.ram }}</span>
             </div>
             <div class="info-box">
-                <span class="info-label">Players</span>
+                <span class="info-label">Online Players</span>
                 <span class="info-value" id="dashboardPlayers">0 / {{ server.max_players }}</span>
             </div>
             <div class="info-box">
-                <span class="info-label">Port / Address</span>
-                <span class="info-value">localhost:{{ server.port }}</span>
+                <span class="info-label">Server Address</span>
+                <span class="info-value" style="font-size: 0.95rem;">localhost:{{ server.port }}</span>
             </div>
+        </div>
+    </section>
+
+    <!-- Upgraded Live Console Card (UX Enhancement 2) -->
+    <section class="console-card">
+        <div class="console-header" style="margin-bottom: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <h2 class="console-title" style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span>💻 Live Console</span>
+                </h2>
+                <span id="consoleLineCountBadge" class="status-badge" style="background: #27272a; color: var(--text-secondary); font-size: 0.72rem;">0 lines</span>
+            </div>
+        </div>
+
+        <!-- Console Toolbar: Search, Auto-Scroll, Clear -->
+        <div class="console-toolbar">
+            <div class="console-toolbar-left">
+                <input 
+                    type="text" 
+                    id="consoleSearchInput" 
+                    class="console-search-input" 
+                    placeholder="🔍 Filter logs..."
+                    autocomplete="off"
+                >
+            </div>
+            <div class="console-toolbar-right">
+                <label class="console-toggle-label" title="Automatically keep console pinned to newest logs">
+                    <input type="checkbox" id="chkAutoScroll" checked>
+                    <span>Auto-scroll</span>
+                </label>
+                <button type="button" id="btnClearConsole" class="btn btn-sm btn-restart" title="Clear console buffer">
+                    🧹 Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Terminal Output -->
+        <div id="consoleOutput" class="console-output">
+            <div class="log-line">
+                <span class="log-time">[Server thread/INFO]</span>
+                <span class="log-info">Minenager console stream connected.</span>
+            </div>
+        </div>
+
+        <!-- Command Input Form -->
+        <form id="commandForm" class="console-input-form">
+            <span class="console-prompt-prefix">&gt;</span>
+            <input 
+                type="text" 
+                id="commandInput" 
+                class="console-input" 
+                placeholder="Type command (e.g. /help, /tps, /whitelist) or press Up/Down for history..." 
+                autocomplete="off"
+            >
+            <button type="submit" class="btn btn-send" style="padding: 0.5rem 1rem;">
+                Send
+            </button>
+        </form>
+
+        <!-- Quick Command Chips -->
+        <div class="console-quick-chips">
+            <span>Quick:</span>
+            <button type="button" class="chip-btn" data-cmd="/list">/list</button>
+            <button type="button" class="chip-btn" data-cmd="/tps">/tps</button>
+            <button type="button" class="chip-btn" data-cmd="/save-all">/save-all</button>
+            <button type="button" class="chip-btn" data-cmd="/say Server rebooting soon">/say alert</button>
+            <button type="button" class="chip-btn" data-cmd="/help">/help</button>
         </div>
     </section>
 
@@ -53,22 +121,22 @@
     <section class="card">
         <div class="card-header">
             <div>
-                <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                <h2 class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
                     <span>👥 Connected Players &amp; Moderation</span>
                     <span id="onlinePlayersBadge" class="status-badge offline" style="font-size: 0.75rem;">0 Online</span>
                 </h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
-                    Manage permissions and moderate online players with 1-click OP, Kick, Ban, and Whitelist buttons.
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">
+                    1-click OP, Kick, Ban, and Whitelist player moderation.
                 </p>
             </div>
-            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
                 <div style="display: flex; gap: 0.35rem;">
                     <input 
                         type="text" 
                         id="inputQuickPlayer" 
                         class="form-input" 
                         placeholder="Player username..." 
-                        style="width: 160px; padding: 0.4rem 0.75rem; font-size: 0.85rem;"
+                        style="width: 150px; padding: 0.35rem 0.6rem; font-size: 0.82rem;"
                         autocomplete="off"
                     >
                     <button type="button" id="btnQuickWhitelist" class="btn btn-sm btn-send" title="Whitelist a player by username">
@@ -81,30 +149,8 @@
             </div>
         </div>
 
-        <div id="playersList" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.25rem;">
-            <div class="empty-state" style="padding: 1.5rem 1rem;">No players currently online.</div>
+        <div id="playersList" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;">
+            <div class="empty-state" style="padding: 1.25rem 1rem;">No players currently online.</div>
         </div>
-    </section>
-
-    <!-- Quick Console preview on server page -->
-    <section class="console-card">
-        <div class="console-header">
-            <h2 class="console-title">
-                <span>💻 Live Console</span>
-            </h2>
-        </div>
-        <div id="consoleOutput" class="console-output">
-<span class="log-time">[Server thread/INFO]</span> Minecraft Server is currently offline.
-<span class="log-time">[Server thread/INFO]</span> Press "Start" to launch the server.</div>
-        <form id="commandForm" class="console-input-form">
-            <input 
-                type="text" 
-                id="commandInput" 
-                class="console-input" 
-                placeholder="Type a command (e.g. /help, /say Hello) and press Enter..." 
-                autocomplete="off"
-            >
-            <button type="submit" class="btn btn-send">Send</button>
-        </form>
     </section>
 </div>
