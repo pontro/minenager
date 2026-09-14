@@ -623,30 +623,51 @@ class DiscordBotManager:
             active_mods = [m for m in installed if m.get("enabled")]
             disabled_mods = [m for m in installed if not m.get("enabled")]
 
-            json_payload = {
-                "total_mods": len(installed),
-                "active_count": len(active_mods),
-                "disabled_count": len(disabled_mods),
-                "mods": [
-                    {
-                        "filename": m.get("filename"),
-                        "enabled": m.get("enabled", True),
-                        "size_bytes": m.get("size_bytes", 0),
-                        "size_formatted": f"{m.get('size_bytes', 0) / (1024 * 1024):.2f} MB" if m.get('size_bytes', 0) >= 1024 * 1024 else f"{m.get('size_bytes', 0) / 1024:.1f} KB"
-                    }
-                    for m in installed
-                ]
-            }
-            file_bytes = json.dumps(json_payload, indent=2).encode("utf-8")
-            content_msg = f"📦 **Installed Server Mods ({len(installed)})** • `{len(active_mods)}` active • `{len(disabled_mods)}` disabled\nHere is the complete mod list:"
+            lines = []
+            for m in installed:
+                is_on = m.get("enabled", True)
+                status_icon = "🟢" if is_on else "⚪"
+                sz = m.get("size_bytes", 0)
+                size_str = f"{sz / (1024 * 1024):.1f} MB" if sz >= 1024 * 1024 else f"{sz / 1024:.0f} KB"
+                clean_name = m.get("filename", "").replace(".jar.disabled", ".jar")
+                status_suffix = "" if is_on else " *(disabled)*"
+                lines.append(f"{status_icon} `{clean_name}` ({size_str}){status_suffix}")
 
-            ok = await self.send_rest_file(channel_id, filename="mods.json", file_bytes=file_bytes, content=content_msg)
-            if not ok:
-                # Fallback in case Discord file upload encounters permission issues
-                await self.send_rest_message(
-                    channel_id,
-                    f"📦 **Installed Server Mods**: `{len(installed)}` total (`{len(active_mods)}` active, `{len(disabled_mods)}` disabled)."
-                )
+            # Paginate into chunks of max 25 mods or 3500 chars to avoid Discord embed limits
+            pages = []
+            curr_page = []
+            curr_len = 0
+
+            for line in lines:
+                if len(curr_page) >= 25 or (curr_len + len(line) + 1 > 3500):
+                    pages.append(curr_page)
+                    curr_page = [line]
+                    curr_len = len(line)
+                else:
+                    curr_page.append(line)
+                    curr_len += len(line) + 1
+
+            if curr_page:
+                pages.append(curr_page)
+
+            total_pages = len(pages)
+            for idx, page_lines in enumerate(pages, 1):
+                page_desc = "\n".join(page_lines)
+                title = f"📦 Installed Server Mods ({len(installed)})" if total_pages == 1 else f"📦 Installed Server Mods ({len(installed)}) — Page {idx}/{total_pages}"
+                embed = {
+                    "title": title,
+                    "description": page_desc,
+                    "color": 3447003,
+                    "footer": {"text": f"Minenager • {len(active_mods)} active, {len(disabled_mods)} disabled • Total: {len(installed)}"}
+                }
+                if total_pages == 1:
+                    embed["fields"] = [
+                        {"name": "Active Mods", "value": f"`{len(active_mods)}`", "inline": True},
+                        {"name": "Disabled Mods", "value": f"`{len(disabled_mods)}`", "inline": True}
+                    ]
+                await self.send_rest_message(channel_id, embed=embed)
+                if idx < total_pages:
+                    await asyncio.sleep(0.4)
 
         # Helper functions for confirmed actions
         async def _execute_turnoff(chan_id: str):
