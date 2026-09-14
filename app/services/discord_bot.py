@@ -9,7 +9,7 @@ from typing import Dict, Any, Optional, List
 import time
 import websockets
 from app.services.server_process import server_manager
-from app.services import settings as settings_service, mrpack as mrpack_service, players as players_service, backup as backup_service
+from app.services import settings as settings_service, mrpack as mrpack_service, players as players_service, backup as backup_service, modrinth as modrinth_service
 
 logger = logging.getLogger("minenager.discord")
 
@@ -545,6 +545,48 @@ class DiscordBotManager:
                 }
                 await self.send_rest_message(channel_id, embed=embed)
 
+        # 4. Mods Command (!mods / !modlist / !installedmods)
+        elif cmd in ["mods", "modlist", "installedmods"]:
+            if not is_admin and not allow_public_status:
+                await self.send_rest_message(channel_id, "⛔ You do not have permission to view installed mods.")
+                return
+
+            installed = modrinth_service.list_installed_mods()
+            if not installed:
+                await self.send_rest_message(channel_id, "📦 No mods are currently installed in `/data/minecraft/mods/`.")
+                return
+
+            active_mods = [m for m in installed if m.get("enabled")]
+            disabled_mods = [m for m in installed if not m.get("enabled")]
+
+            lines = []
+            for m in installed:
+                is_on = m.get("enabled", True)
+                status_icon = "🟢" if is_on else "⚪"
+                sz = m.get("size_bytes", 0)
+                size_str = f"{sz / (1024 * 1024):.1f} MB" if sz >= 1024 * 1024 else f"{sz / 1024:.0f} KB"
+                clean_name = m.get("filename", "").replace(".jar.disabled", ".jar")
+                status_suffix = "" if is_on else " *(disabled)*"
+                lines.append(f"{status_icon} `{clean_name}` ({size_str}){status_suffix}")
+
+            # Safe length truncation for Discord embed description limit
+            max_displayed = 35
+            desc = "\n".join(lines[:max_displayed])
+            if len(lines) > max_displayed:
+                desc += f"\n*... and {len(lines) - max_displayed} more mods*"
+
+            embed = {
+                "title": f"📦 Installed Server Mods ({len(installed)})",
+                "description": desc,
+                "color": 3447003,  # Discord Blue / Cyan
+                "fields": [
+                    {"name": "Active Mods", "value": f"`{len(active_mods)}`", "inline": True},
+                    {"name": "Disabled Mods", "value": f"`{len(disabled_mods)}`", "inline": True}
+                ],
+                "footer": {"text": "Minenager • Powered by Modrinth"}
+            }
+            await self.send_rest_message(channel_id, embed=embed)
+
         # Helper functions for confirmed actions
         async def _execute_turnoff(chan_id: str):
             curr = server_manager.get_status()["status"]
@@ -698,7 +740,8 @@ class DiscordBotManager:
             fields = [
                 {"name": f"`{prefix}status`", "value": "Check live server status and RAM", "inline": True},
                 {"name": f"`{prefix}metrics`", "value": "Check live CPU %, RAM usage, and TPS", "inline": True},
-                {"name": f"`{prefix}players`", "value": "List all players currently online", "inline": True}
+                {"name": f"`{prefix}players`", "value": "List all players currently online", "inline": True},
+                {"name": f"`{prefix}mods`", "value": "List all installed server mods", "inline": True}
             ]
             if is_admin:
                 fields.extend([
