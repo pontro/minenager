@@ -4,6 +4,7 @@ import logging
 import urllib.request
 import urllib.error
 import ssl
+import uuid
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 import time
@@ -70,6 +71,48 @@ def _send_rest_sync(token: str, channel_id: str, payload: Dict[str, Any]) -> tup
     )
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
+            return True, "OK"
+    except urllib.error.HTTPError as e:
+        err_msg = e.read().decode('utf-8', errors='ignore')
+        return False, f"HTTP {e.code}: {err_msg[:120]}"
+    except Exception as e:
+        return False, str(e)
+
+def _send_rest_file_sync(token: str, channel_id: str, payload: Dict[str, Any], filename: str, file_bytes: bytes) -> tuple:
+    boundary = f"----MinenagerBoundary{uuid.uuid4().hex}"
+    url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
+    
+    body = bytearray()
+    
+    # 1. payload_json part
+    body.extend(f"--{boundary}\r\n".encode("utf-8"))
+    body.extend(b'Content-Disposition: form-data; name="payload_json"\r\n')
+    body.extend(b'Content-Type: application/json\r\n\r\n')
+    body.extend(json.dumps(payload).encode("utf-8"))
+    body.extend(b'\r\n')
+    
+    # 2. files[0] part
+    body.extend(f"--{boundary}\r\n".encode("utf-8"))
+    body.extend(f'Content-Disposition: form-data; name="files[0]"; filename="{filename}"\r\n'.encode("utf-8"))
+    body.extend(b'Content-Type: application/json\r\n\r\n')
+    body.extend(file_bytes)
+    body.extend(b'\r\n')
+    
+    # 3. closing boundary
+    body.extend(f"--{boundary}--\r\n".encode("utf-8"))
+    
+    req = urllib.request.Request(
+        url,
+        data=bytes(body),
+        headers={
+            "Authorization": f"Bot {token}",
+            "Content-Type": f"multipart/form-data; boundary={boundary}",
+            "User-Agent": "MinenagerBot (https://github.com/pontro/minenager, 1.0)"
+        },
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
             return True, "OK"
     except urllib.error.HTTPError as e:
         err_msg = e.read().decode('utf-8', errors='ignore')
@@ -174,6 +217,24 @@ class DiscordBotManager:
         ok, err = await asyncio.to_thread(_send_rest_sync, token, channel_id, payload)
         if not ok:
             logger.error(f"Failed to send Discord message: {err}")
+            self.last_error = err
+        return ok
+
+    async def send_rest_file(self, channel_id: str, filename: str, file_bytes: bytes, content: Optional[str] = None, embed: Optional[Dict[str, Any]] = None) -> bool:
+        cfg = get_config()
+        token = cfg.get("token", "").strip()
+        if not token or not channel_id:
+            return False
+
+        payload: Dict[str, Any] = {}
+        if content:
+            payload["content"] = content
+        if embed:
+            payload["embeds"] = [embed]
+
+        ok, err = await asyncio.to_thread(_send_rest_file_sync, token, channel_id, payload, filename, file_bytes)
+        if not ok:
+            logger.error(f"Failed to send Discord file message: {err}")
             self.last_error = err
         return ok
 
@@ -569,11 +630,14 @@ class DiscordBotManager:
                 status_suffix = "" if is_on else " *(disabled)*"
                 lines.append(f"{status_icon} `{clean_name}` ({size_str}){status_suffix}")
 
-            # Safe length truncation for Discord embed description limit
-            max_displayed = 35
+            wants_json = any(a in ["json", "-j", "--json", "file", "raw"] for a in args)
+            has_many_mods = len(installed) > 30
+
+            # Embed preview
+            max_displayed = 25 if (has_many_mods or wants_json) else 35
             desc = "\n".join(lines[:max_displayed])
             if len(lines) > max_displayed:
-                desc += f"\n*... and {len(lines) - max_displayed} more mods*"
+                desc += f"\n*... and {len(lines) - max_displayed} more mods (full list attached as `mods.json`)*"
 
             embed = {
                 "title": f"📦 Installed Server Mods ({len(installed)})",
@@ -585,7 +649,27 @@ class DiscordBotManager:
                 ],
                 "footer": {"text": "Minenager • Powered by Modrinth"}
             }
-            await self.send_rest_message(channel_id, embed=embed)
+
+            # If there are many mods or user specifically asked for json, attach mods.json
+            if has_many_mods or wants_json:
+                json_payload = {
+                    "total_mods": len(installed),
+                    "active_count": len(active_mods),
+                    "disabled_count": len(disabled_mods),
+                    "mods": [
+                        {
+                            "filename": m.get("filename"),
+                            "enabled": m.get("enabled", True),
+                            "size_bytes": m.get("size_bytes", 0),
+                            "size_formatted": f"{m.get('size_bytes', 0) / (1024 * 1024):.2f} MB" if m.get('size_bytes', 0) >= 1024 * 1024 else f"{m.get('size_bytes', 0) / 1024:.1f} KB"
+                        }
+                        for m in installed
+                    ]
+                }
+                file_bytes = json.dumps(json_payload, indent=2).encode("utf-8")
+                await self.send_rest_file(channel_id, filename="mods.json", file_bytes=file_bytes, embed=embed)
+            else:
+                await self.send_rest_message(channel_id, embed=embed)
 
         # Helper functions for confirmed actions
         async def _execute_turnoff(chan_id: str):
