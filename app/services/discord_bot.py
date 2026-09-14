@@ -78,28 +78,48 @@ def _send_rest_sync(token: str, channel_id: str, payload: Dict[str, Any]) -> tup
     except Exception as e:
         return False, str(e)
 
-import requests
-
 def _send_rest_file_sync(token: str, channel_id: str, payload: Dict[str, Any], filename: str, file_bytes: bytes) -> tuple:
+    boundary = f"----MinenagerBoundary{uuid.uuid4().hex}"
     url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
-    headers = {
-        "Authorization": f"Bot {token}",
-        "User-Agent": "MinenagerBot (https://github.com/pontro/minenager, 1.0)"
-    }
+
     payload_copy = dict(payload)
     payload_copy["attachments"] = [{"id": 0, "filename": filename}]
-    
-    files = {
-        "files[0]": (filename, file_bytes, "application/json")
-    }
-    data = {
-        "payload_json": json.dumps(payload_copy)
-    }
+
+    body = bytearray()
+
+    # Part 1: payload_json
+    body.extend(f"--{boundary}\r\n".encode("utf-8"))
+    body.extend(b'Content-Disposition: form-data; name="payload_json"\r\n')
+    body.extend(b'Content-Type: application/json\r\n\r\n')
+    body.extend(json.dumps(payload_copy).encode("utf-8"))
+    body.extend(b'\r\n')
+
+    # Part 2: files[0]
+    body.extend(f"--{boundary}\r\n".encode("utf-8"))
+    body.extend(f'Content-Disposition: form-data; name="files[0]"; filename="{filename}"\r\n'.encode("utf-8"))
+    body.extend(b'Content-Type: application/json\r\n\r\n')
+    body.extend(file_bytes)
+    body.extend(b'\r\n')
+
+    # Part 3: closing boundary
+    body.extend(f"--{boundary}--\r\n".encode("utf-8"))
+
+    req = urllib.request.Request(
+        url,
+        data=bytes(body),
+        headers={
+            "Authorization": f"Bot {token}",
+            "Content-Type": f"multipart/form-data; boundary={boundary}",
+            "User-Agent": "MinenagerBot (https://github.com/pontro/minenager, 1.0)"
+        },
+        method="POST"
+    )
     try:
-        resp = requests.post(url, headers=headers, data=data, files=files, timeout=15)
-        if resp.status_code in [200, 201]:
+        with urllib.request.urlopen(req, timeout=15) as resp:
             return True, "OK"
-        return False, f"HTTP {resp.status_code}: {resp.text[:120]}"
+    except urllib.error.HTTPError as e:
+        err_msg = e.read().decode('utf-8', errors='ignore')
+        return False, f"HTTP {e.code}: {err_msg[:120]}"
     except Exception as e:
         return False, str(e)
 
