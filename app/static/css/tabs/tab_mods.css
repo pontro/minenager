@@ -1,0 +1,278 @@
+/* ==========================================================================
+   TAB: MODS & MODPACKS (.mrpack Integration & Card Grid)
+   ========================================================================== */
+
+/* Top 2-Column Grid (Side-by-Side) */
+.mods-top-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: stretch;
+}
+
+@media (max-width: 960px) {
+    .mods-top-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.85rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-top: 0.5rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.filter-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+/* Dropzone (.mrpack) */
+.dropzone-box {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background: var(--bg-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropzone-box.compact {
+    padding: 0.9rem 1rem;
+    gap: 0.35rem;
+    height: 100%;
+    justify-content: center;
+}
+
+.dropzone-box.compact .dropzone-icon {
+    font-size: 1.3rem;
+}
+
+.dropzone-box.compact .dropzone-title {
+    font-size: 0.85rem;
+}
+
+.dropzone-box.compact .dropzone-sub {
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+.dropzone-box:hover, .dropzone-box.dragover {
+    border-color: var(--color-primary);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.dropzone-icon {
+    font-size: 2rem;
+}
+
+.dropzone-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.dropzone-sub {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    max-width: 420px;
+}
+
+.upload-status {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+/* Responsive Mod Store Card Grid */
+.mods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+
+.mod-grid-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.75rem;
+    transition: all 0.15s ease;
+}
+
+.mod-grid-card:hover {
+    border-color: #3f3f46;
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+}
+
+.mod-card-top {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.mod-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--bg-console);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.mod-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mod-icon-fallback {
+    font-size: 1.4rem;
+}
+
+.mod-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.mod-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mod-card-author {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.mod-card-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 0.25rem;
+}
+
+.mod-card-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.mod-pill {
+    font-size: 0.68rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    background: #27272a;
+    color: var(--text-secondary);
+    border: 1px solid #3f3f46;
+}
+
+.mod-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 0.6rem;
+    margin-top: auto;
+}
+
+.mod-stats {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Installed Mod Cards */
+.installed-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.6rem 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.installed-card-main {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.installed-card-icon {
+    font-size: 1.2rem;
+}
+
+.installed-card-details {
+    min-width: 0;
+    flex: 1;
+}
+
+.installed-card-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.installed-card-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.installed-badge {
+    font-size: 0.68rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+.badge-active { background: var(--status-online-bg); color: var(--status-online); }
+.badge-disabled { background: #27272a; color: var(--text-muted); }

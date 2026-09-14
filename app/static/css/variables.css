@@ -1,0 +1,56 @@
+/* ==========================================================================
+   MINENAGER DESIGN SYSTEM - VARIABLES & TOKENS
+   ========================================================================== */
+:root {
+    --bg-primary: #09090b;       /* Zinc 950 - Deepest background */
+    --bg-secondary: #121215;     /* Zinc 900 - Sidebar, navigation, bars */
+    --bg-card: #18181b;          /* Zinc 900/800 - Surfaces & cards */
+    --bg-card-hover: #222226;    /* Interactive hover surface */
+    --bg-input: #121215;         /* Form inputs & dropdowns */
+    --bg-console: #0b0b0e;       /* Monospace terminal console */
+    
+    --border-color: #27272a;     /* Zinc 800 - Crisp 1px micro-border */
+    --border-subtle: #1f1f23;    /* Zinc 850 - Very subtle dividers */
+    --border-focus: #52525b;     /* Zinc 600 - Focus ring */
+
+    /* Typography */
+    --text-primary: #fafafa;     /* Zinc 50 - High contrast text */
+    --text-secondary: #a1a1aa;   /* Zinc 400 - Secondary text */
+    --text-muted: #71717a;       /* Zinc 500 - Muted captions/labels */
+    --text-highlight: #ffffff;
+
+    /* Brand & Accent Actions */
+    --color-primary: #3b82f6;    /* Crisp Cobalt Blue */
+    --color-primary-hover: #2563eb;
+    --color-accent: #0ea5e9;
+
+    /* Status Colors */
+    --status-online: #10b981;     /* Emerald */
+    --status-online-bg: rgba(16, 185, 129, 0.12);
+    --status-online-border: rgba(16, 185, 129, 0.3);
+
+    --status-offline: #ef4444;    /* Rose/Red */
+    --status-offline-bg: rgba(239, 68, 68, 0.12);
+    --status-offline-border: rgba(239, 68, 68, 0.3);
+
+    --status-starting: #f59e0b;   /* Amber */
+    --status-starting-bg: rgba(245, 158, 11, 0.12);
+    --status-starting-border: rgba(245, 158, 11, 0.3);
+
+    /* Button Colors */
+    --btn-start: #10b981;
+    --btn-start-hover: #059669;
+    --btn-stop: #ef4444;
+    --btn-stop-hover: #dc2626;
+    --btn-restart: #3f3f46;
+    --btn-restart-hover: #52525b;
+    --btn-action: #27272a;
+    --btn-action-hover: #3f3f46;
+    --btn-disabled: #1c1c20;
+
+    --sidebar-width: 250px;
+    --sidebar-width-collapsed: 68px;
+
+    --font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+}

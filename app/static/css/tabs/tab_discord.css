@@ -1,0 +1,8 @@
+/* ==========================================================================
+   TAB: DISCORD BOT INTEGRATION
+   ========================================================================== */
+/* Discord setup guide and cheat sheet use standard card and settings styles with custom link styling */
+.discord-guide-link {
+    color: var(--color-accent);
+    text-decoration: underline;
+}

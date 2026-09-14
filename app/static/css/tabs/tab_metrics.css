@@ -1,0 +1,125 @@
+/* ==========================================================================
+   TAB: PERFORMANCE & REAL-TIME METRICS
+   ========================================================================== */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.metric-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.metric-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.metric-card-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.metric-main-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+}
+
+.metric-unit {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.metric-sub-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 6px;
+    background: #27272a;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.fill-online { background-color: var(--status-online); }
+.fill-cpu { background-color: #38bdf8; }
+.fill-ram { background-color: #a78bfa; }
+.fill-threads { background-color: #f59e0b; }
+
+.metric-footer {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1rem;
+}
+
+.chart-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.chart-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.chart-legend {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.chart-wrapper {
+    width: 100%;
+    height: 140px;
+}
+
+.chart-wrapper canvas {
+    width: 100% !important;
+    height: 140px !important;
+}
