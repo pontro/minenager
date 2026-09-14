@@ -78,45 +78,28 @@ def _send_rest_sync(token: str, channel_id: str, payload: Dict[str, Any]) -> tup
     except Exception as e:
         return False, str(e)
 
+import requests
+
 def _send_rest_file_sync(token: str, channel_id: str, payload: Dict[str, Any], filename: str, file_bytes: bytes) -> tuple:
-    boundary = f"----MinenagerBoundary{uuid.uuid4().hex}"
     url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
+    headers = {
+        "Authorization": f"Bot {token}",
+        "User-Agent": "MinenagerBot (https://github.com/pontro/minenager, 1.0)"
+    }
+    payload_copy = dict(payload)
+    payload_copy["attachments"] = [{"id": 0, "filename": filename}]
     
-    body = bytearray()
-    
-    # 1. payload_json part
-    body.extend(f"--{boundary}\r\n".encode("utf-8"))
-    body.extend(b'Content-Disposition: form-data; name="payload_json"\r\n')
-    body.extend(b'Content-Type: application/json\r\n\r\n')
-    body.extend(json.dumps(payload).encode("utf-8"))
-    body.extend(b'\r\n')
-    
-    # 2. files[0] part
-    body.extend(f"--{boundary}\r\n".encode("utf-8"))
-    body.extend(f'Content-Disposition: form-data; name="files[0]"; filename="{filename}"\r\n'.encode("utf-8"))
-    body.extend(b'Content-Type: application/json\r\n\r\n')
-    body.extend(file_bytes)
-    body.extend(b'\r\n')
-    
-    # 3. closing boundary
-    body.extend(f"--{boundary}--\r\n".encode("utf-8"))
-    
-    req = urllib.request.Request(
-        url,
-        data=bytes(body),
-        headers={
-            "Authorization": f"Bot {token}",
-            "Content-Type": f"multipart/form-data; boundary={boundary}",
-            "User-Agent": "MinenagerBot (https://github.com/pontro/minenager, 1.0)"
-        },
-        method="POST"
-    )
+    files = {
+        "files[0]": (filename, file_bytes, "application/json")
+    }
+    data = {
+        "payload_json": json.dumps(payload_copy)
+    }
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
+        resp = requests.post(url, headers=headers, data=data, files=files, timeout=15)
+        if resp.status_code in [200, 201]:
             return True, "OK"
-    except urllib.error.HTTPError as e:
-        err_msg = e.read().decode('utf-8', errors='ignore')
-        return False, f"HTTP {e.code}: {err_msg[:120]}"
+        return False, f"HTTP {resp.status_code}: {resp.text[:120]}"
     except Exception as e:
         return False, str(e)
 
@@ -620,56 +603,30 @@ class DiscordBotManager:
             active_mods = [m for m in installed if m.get("enabled")]
             disabled_mods = [m for m in installed if not m.get("enabled")]
 
-            lines = []
-            for m in installed:
-                is_on = m.get("enabled", True)
-                status_icon = "🟢" if is_on else "⚪"
-                sz = m.get("size_bytes", 0)
-                size_str = f"{sz / (1024 * 1024):.1f} MB" if sz >= 1024 * 1024 else f"{sz / 1024:.0f} KB"
-                clean_name = m.get("filename", "").replace(".jar.disabled", ".jar")
-                status_suffix = "" if is_on else " *(disabled)*"
-                lines.append(f"{status_icon} `{clean_name}` ({size_str}){status_suffix}")
-
-            wants_json = any(a in ["json", "-j", "--json", "file", "raw"] for a in args)
-            has_many_mods = len(installed) > 30
-
-            # Embed preview
-            max_displayed = 25 if (has_many_mods or wants_json) else 35
-            desc = "\n".join(lines[:max_displayed])
-            if len(lines) > max_displayed:
-                desc += f"\n*... and {len(lines) - max_displayed} more mods (full list attached as `mods.json`)*"
-
-            embed = {
-                "title": f"📦 Installed Server Mods ({len(installed)})",
-                "description": desc,
-                "color": 3447003,  # Discord Blue / Cyan
-                "fields": [
-                    {"name": "Active Mods", "value": f"`{len(active_mods)}`", "inline": True},
-                    {"name": "Disabled Mods", "value": f"`{len(disabled_mods)}`", "inline": True}
-                ],
-                "footer": {"text": "Minenager • Powered by Modrinth"}
+            json_payload = {
+                "total_mods": len(installed),
+                "active_count": len(active_mods),
+                "disabled_count": len(disabled_mods),
+                "mods": [
+                    {
+                        "filename": m.get("filename"),
+                        "enabled": m.get("enabled", True),
+                        "size_bytes": m.get("size_bytes", 0),
+                        "size_formatted": f"{m.get('size_bytes', 0) / (1024 * 1024):.2f} MB" if m.get('size_bytes', 0) >= 1024 * 1024 else f"{m.get('size_bytes', 0) / 1024:.1f} KB"
+                    }
+                    for m in installed
+                ]
             }
+            file_bytes = json.dumps(json_payload, indent=2).encode("utf-8")
+            content_msg = f"📦 **Installed Server Mods ({len(installed)})** • `{len(active_mods)}` active • `{len(disabled_mods)}` disabled\nHere is the complete mod list:"
 
-            # If there are many mods or user specifically asked for json, attach mods.json
-            if has_many_mods or wants_json:
-                json_payload = {
-                    "total_mods": len(installed),
-                    "active_count": len(active_mods),
-                    "disabled_count": len(disabled_mods),
-                    "mods": [
-                        {
-                            "filename": m.get("filename"),
-                            "enabled": m.get("enabled", True),
-                            "size_bytes": m.get("size_bytes", 0),
-                            "size_formatted": f"{m.get('size_bytes', 0) / (1024 * 1024):.2f} MB" if m.get('size_bytes', 0) >= 1024 * 1024 else f"{m.get('size_bytes', 0) / 1024:.1f} KB"
-                        }
-                        for m in installed
-                    ]
-                }
-                file_bytes = json.dumps(json_payload, indent=2).encode("utf-8")
-                await self.send_rest_file(channel_id, filename="mods.json", file_bytes=file_bytes, embed=embed)
-            else:
-                await self.send_rest_message(channel_id, embed=embed)
+            ok = await self.send_rest_file(channel_id, filename="mods.json", file_bytes=file_bytes, content=content_msg)
+            if not ok:
+                # Fallback in case Discord file upload encounters permission issues
+                await self.send_rest_message(
+                    channel_id,
+                    f"📦 **Installed Server Mods**: `{len(installed)}` total (`{len(active_mods)}` active, `{len(disabled_mods)}` disabled)."
+                )
 
         # Helper functions for confirmed actions
         async def _execute_turnoff(chan_id: str):
