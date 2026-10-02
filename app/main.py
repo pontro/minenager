@@ -3,8 +3,8 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.routers import mods, mrpack, settings, installer, process, backup, players, storage, discord, metrics, system
-from app.services import modrinth, mrpack as mrpack_service, settings as settings_service, backup as backup_service, updater as updater_service
+from app.routers import mods, mrpack, settings, installer, process, backup, players, storage, discord, metrics, system, account
+from app.services import modrinth, mrpack as mrpack_service, settings as settings_service, backup as backup_service, updater as updater_service, license as license_service
 from app.services.server_process import server_manager
 from app.services.discord_bot import discord_bot_manager, get_config as get_discord_config
 from app.services.metrics import metrics_service
@@ -70,6 +70,7 @@ app.include_router(storage.router)
 app.include_router(discord.router)
 app.include_router(metrics.router)
 app.include_router(system.router)
+app.include_router(account.router)
 
 @app.get("/")
 async def index(request: Request):
@@ -77,6 +78,7 @@ async def index(request: Request):
     all_settings = settings_service.get_all_settings()
     props = all_settings["properties"]
     live_status = server_manager.get_status()["status"]
+    account_info = license_service.get_account_status()
     
     current_version = instance["minecraft_version"] if instance else "1.20.1"
     current_loader = instance["loader"].capitalize() if instance else "Fabric"
@@ -118,6 +120,7 @@ async def index(request: Request):
                 "config": discord_cfg,
                 "status": discord_stat
             },
-            "app_version": app_version
+            "app_version": app_version,
+            "account": account_info
         }
     )

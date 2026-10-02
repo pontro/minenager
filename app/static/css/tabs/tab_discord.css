@@ -1,7 +1,46 @@
 /* ==========================================================================
    TAB: DISCORD BOT INTEGRATION
    ========================================================================== */
-/* Discord setup guide and cheat sheet use standard card and settings styles with custom link styling */
+.discord-tab-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.discord-pro-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(9, 9, 11, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 50;
+    border-radius: 8px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    animation: fadeIn 0.2s ease;
+}
+
+.discord-pro-overlay.active {
+    display: flex;
+}
+
+.discord-pro-card {
+    background: rgba(24, 24, 27, 0.95);
+    border: 1px solid rgba(217, 119, 6, 0.4);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(217, 119, 6, 0.15);
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    animation: slideUp 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 .discord-guide-link {
     color: var(--color-accent);
     text-decoration: underline;

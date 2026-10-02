@@ -230,26 +230,35 @@ input:checked + .slider:before {
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(4px);
+    background: rgba(9, 9, 11, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 200;
+    z-index: 999;
     padding: 1rem;
+    animation: fadeIn 0.18s ease;
+}
+
+.modal-overlay.active {
+    display: flex !important;
 }
 
 .modal-dialog {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    background: rgba(24, 24, 27, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
     width: 100%;
     max-width: 620px;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
     overflow: hidden;
+    animation: slideUp 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .modal-header {

@@ -1,0 +1,66 @@
+<!-- Account / Minenager Pro Modal -->
+<div id="modalAccount" class="modal-overlay">
+    <div class="modal-dialog" style="max-width: 440px;">
+        <div class="modal-header">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <h3 class="modal-title">Account &amp; Subscription</h3>
+                <span id="accountBadgePro" class="version-pill" style="background: #3b2a05; color: #fbbf24; border-color: #d97706; display: none; font-weight: 700;">PRO</span>
+                <span id="accountBadgeFree" class="version-pill" style="background: #27272a; color: var(--text-secondary); border-color: #3f3f46;">FREE</span>
+            </div>
+            <button type="button" id="btnCloseAccountModal" class="modal-close-btn" title="Close window">&times;</button>
+        </div>
+        
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Unauthenticated / Login View -->
+            <div id="accountAuthSection" style="display: flex; flex-direction: column; gap: 1rem;">
+                <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4;">
+                    Sign in to your Minenager account to activate <strong>Minenager Pro</strong>, unlocking zero-portforward tunnels, Discord bot control, and cloud backups.
+                </p>
+
+                <form id="formAccountLogin" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div>
+                        <label class="filter-label" for="accountEmailInput" style="margin-bottom: 0.35rem; display: block;">Email Address</label>
+                        <input type="email" id="accountEmailInput" class="form-input" placeholder="you@example.com" style="width: 100%;" required>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <button type="button" id="btnAccountSignIn" class="btn btn-start" style="flex: 1; justify-content: center;">
+                            Sign In / Activate Pro
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Pro Benefits List -->
+                <div style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.9rem;">
+                    <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Minenager Pro ($3.99/mo) Includes:</div>
+                    <ul style="font-size: 0.78rem; color: var(--text-secondary); padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                        <li>Zero-portforward custom game domain (e.g. <code>myserver.minenager.net</code>)</li>
+                        <li>Full Discord Bot integration &amp; remote commands</li>
+                        <li>Automatic cloud backup sync</li>
+                        <li>Mobile &amp; remote web management</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Authenticated View -->
+            <div id="accountProfileSection" style="display: none; flex-direction: column; gap: 1rem;">
+                <div style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: 0.6rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Account</span>
+                        <span id="accountProfileTier" class="status-badge online" style="font-size: 0.72rem;">Pro Active</span>
+                    </div>
+                    <div id="accountProfileEmail" style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary); word-break: break-all;">user@example.com</div>
+                    <div style="font-size: 0.78rem; color: var(--text-secondary);">
+                        Assigned Domain: <strong id="accountProfileDomain" style="color: #38bdf8;">user-smp.minenager.net</strong>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                    <button type="button" id="btnAccountLogout" class="btn btn-stop" style="font-size: 0.82rem;">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

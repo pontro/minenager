@@ -6,10 +6,12 @@ import { initSettingsManager } from './js/settings.js?v=7';
 import { initPlayersManager } from './js/players.js?v=7';
 import { initDiscordManager } from './js/discord.js?v=7';
 import { initMetricsManager } from './js/metrics.js?v=7';
+import { initAccountManager } from './js/account.js?v=4';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize Subsystems
     initServerManager();
+    const accountManager = initAccountManager();
     const installer = initInstaller();
     const modsManager = initModsManager();
     const settingsManager = initSettingsManager();

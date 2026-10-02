@@ -40,6 +40,14 @@ async def get_discord_info():
 
 @router.post("")
 async def update_discord_config(payload: SaveDiscordConfigRequest):
+    from app.services import license as license_service
+    acc = license_service.get_account_status()
+    if not acc.get("is_pro"):
+        raise HTTPException(
+            status_code=403,
+            detail="Discord Bot integration is a Minenager Pro feature. Please upgrade to Pro to enable."
+        )
+
     try:
         data = payload.dict()
         # If token was not changed (e.g. user submitted existing or empty when already saved)

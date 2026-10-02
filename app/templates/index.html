@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/style.css?v=13">
+    <link rel="stylesheet" href="/static/style.css?v=20">
 </head>
 <body>
     <div class="app-container">
@@ -81,7 +81,18 @@
             </nav>
 
             <div class="sidebar-footer">
-                <span class="sidebar-hide-on-collapse">Minenager &bull; Modrinth</span>
+                <button type="button" class="sidebar-footer-btn" id="btnOpenAccountModal" title="Account &amp; License">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span class="nav-text" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span id="sidebarAccountLabel">{% if account.logged_in %}Account{% else %}Login{% endif %}</span>
+                        <span id="sidebarTierBadge" class="version-pill" style="{% if account.is_pro %}background: #3b2a05; color: #fbbf24; border-color: #d97706;{% else %}background: #27272a; color: var(--text-secondary);{% endif %} font-weight: 700; font-size: 0.6rem;">
+                            {% if account.is_pro %}PRO{% else %}FREE{% endif %}
+                        </span>
+                    </span>
+                </button>
             </div>
         </aside>
 
@@ -126,10 +137,11 @@
 
     <!-- Components & Modals -->
     {% include "components/modal_installed_mods.html" %}
+    {% include "components/modal_account.html" %}
 
     <!-- Floating Toast for Confirmations -->
     <div id="toast" class="toast-msg">Action completed successfully!</div>
 
-    <script type="module" src="/static/app.js?v=10"></script>
+    <script type="module" src="/static/app.js?v=14"></script>
 </body>
 </html>
