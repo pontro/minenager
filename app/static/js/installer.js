@@ -79,7 +79,7 @@ export function initInstaller() {
         }
 
         btnInstallServer.disabled = true;
-        btnInstallServer.textContent = '⏳ Installing...';
+        btnInstallServer.textContent = 'Installing...';
 
         try {
             const res = await fetch('/api/installer/install', {
@@ -97,7 +97,7 @@ export function initInstaller() {
             const loaderName = (data.loader || data.instance?.loader || loader || 'Minecraft').toUpperCase();
             const verName = data.version || data.minecraft_version || data.instance?.minecraft_version || mc;
 
-            showToast(`✔ Server ${loaderName} ${verName} installed!`);
+            showToast(`Server ${loaderName} ${verName} installed!`);
 
             if (installerMcVersion) installerMcVersion.disabled = true;
             if (installerLoader) installerLoader.disabled = true;
@@ -112,8 +112,10 @@ export function initInstaller() {
 
             const dashMc = document.getElementById('dashboardMcVersion');
             const dashLoader = document.getElementById('dashboardLoader');
+            const sidebarPackInfo = document.getElementById('sidebarPackInfo');
             if (dashMc) dashMc.textContent = verName;
             if (dashLoader) dashLoader.textContent = loaderName;
+            if (sidebarPackInfo) sidebarPackInfo.textContent = `${loaderName} ${verName}`;
 
         } catch (err) {
             alert(`Installation error: ${err.message}`);

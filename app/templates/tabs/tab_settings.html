@@ -4,13 +4,13 @@
         <div class="card" style="margin-bottom: 1.25rem;">
             <div class="card-header">
                 <div>
-                    <h2 class="card-title">⚙️ Server Settings &amp; Configuration</h2>
+                    <h2 class="card-title">Server Settings &amp; Configuration</h2>
                     <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
                         Edit memory allocation and common options in <code>server.properties</code>.
                     </p>
                 </div>
                 <button type="submit" id="btnSaveSettingsTop" class="btn btn-start">
-                    💾 Save Settings
+                    Save Settings
                 </button>
             </div>
         </div>
@@ -18,7 +18,7 @@
         <div class="settings-grid">
             <!-- Memory (RAM) Configuration -->
             <div class="settings-card">
-                <h3 class="settings-card-title">⚡ RAM Allocation</h3>
+                <h3 class="settings-card-title">RAM Allocation</h3>
                 
                 <!-- Maximum RAM (-Xmx) Slider -->
                 <div class="ram-slider-wrapper">
@@ -69,7 +69,7 @@
 
             <!-- Gameplay Rules -->
             <div class="settings-card">
-                <h3 class="settings-card-title">🎮 Gameplay &amp; World</h3>
+                <h3 class="settings-card-title">Gameplay &amp; World</h3>
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-name">Gamemode</span>
@@ -129,7 +129,7 @@
 
             <!-- Security & Online Mode -->
             <div class="settings-card">
-                <h3 class="settings-card-title">🛡️ Security &amp; Access</h3>
+                <h3 class="settings-card-title">Security &amp; Access</h3>
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-name">Online Mode</span>
@@ -177,7 +177,7 @@
 
             <!-- Performance & Entity Spawning -->
             <div class="settings-card">
-                <h3 class="settings-card-title">🚀 Performance &amp; Distance</h3>
+                <h3 class="settings-card-title">Performance &amp; Distance</h3>
                 <div class="setting-slider-item">
                     <div class="setting-slider-header">
                         <div class="setting-info">
@@ -253,7 +253,7 @@
 
             <!-- MOTD & Network info (Occupies 2 columns under Gameplay and Security) -->
             <div class="settings-card span-2">
-                <h3 class="settings-card-title">📡 Message of the Day &amp; Ports</h3>
+                <h3 class="settings-card-title">Message of the Day &amp; Ports</h3>
                 <div class="setting-item">
                     <div class="setting-info">
                         <span class="setting-name">Server MOTD</span>
@@ -295,7 +295,7 @@
         <div class="card-header">
             <div>
                 <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>💾 World Backups (/data/backups)</span>
+                    <span>World Backups (/data/backups)</span>
                     <span id="backupCountBadge" class="status-badge online" style="font-size: 0.75rem;">{{ backups | length }} / 7 Saved</span>
                 </h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
@@ -303,7 +303,7 @@
                 </p>
             </div>
             <div style="display: flex; gap: 0.5rem;">
-                <button type="button" id="btnRefreshBackups" class="btn btn-sm btn-send">🔄 Reload Backups</button>
+                <button type="button" id="btnRefreshBackups" class="btn btn-sm btn-send">Reload Backups</button>
             </div>
         </div>
 
@@ -324,7 +324,7 @@
         <div class="card-header">
             <div>
                 <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>📊 Storage Usage &amp; Disk Space Saver</span>
+                    <span>Storage Usage &amp; Disk Space Saver</span>
                     <span id="storageTotalBadge" class="status-badge online" style="font-size: 0.75rem;">Calculating...</span>
                 </h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
@@ -333,33 +333,33 @@
             </div>
             <div style="display: flex; gap: 0.5rem;">
                 <button type="button" id="btnCleanLogs" class="btn btn-sm btn-restart" title="Delete old .log.gz archives and crash dumps">
-                    🧹 Clean Old Logs &amp; Dumps
+                    Clean Old Logs &amp; Dumps
                 </button>
                 <button type="button" id="btnRefreshStorage" class="btn btn-sm btn-send">
-                    🔄 Refresh
+                    Refresh
                 </button>
             </div>
         </div>
 
         <div class="info-grid" style="margin-top: 0.5rem;">
             <div class="info-box">
-                <span class="info-label">🌍 World Data</span>
+                <span class="info-label">World Data</span>
                 <span class="info-value" id="storageWorld">--</span>
             </div>
             <div class="info-box">
-                <span class="info-label">💾 Backups</span>
+                <span class="info-label">Backups</span>
                 <span class="info-value" id="storageBackups">--</span>
             </div>
             <div class="info-box">
-                <span class="info-label">📦 Installed Mods</span>
+                <span class="info-label">Installed Mods</span>
                 <span class="info-value" id="storageMods">--</span>
             </div>
             <div class="info-box">
-                <span class="info-label">📜 Logs &amp; Dumps</span>
+                <span class="info-label">Logs &amp; Dumps</span>
                 <span class="info-value" id="storageLogs">--</span>
             </div>
             <div class="info-box">
-                <span class="info-label">💿 Free Disk Space</span>
+                <span class="info-label">Free Disk Space</span>
                 <span class="info-value" id="storageFreeDisk" style="color: var(--status-online);">--</span>
             </div>
         </div>
@@ -370,7 +370,7 @@
         <div class="card-header">
             <div>
                 <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>🔄 Software &amp; Dashboard Updates</span>
+                    <span>Software &amp; Dashboard Updates</span>
                     <span id="appVersionBadge" class="status-badge online" style="font-family: var(--font-mono); font-size: 0.75rem;">v{{ app_version.commit if app_version else 'main' }}</span>
                 </h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
@@ -379,10 +379,10 @@
             </div>
             <div style="display: flex; gap: 0.5rem;">
                 <button type="button" id="btnCheckUpdate" class="btn btn-sm btn-send">
-                    🔍 Check for Updates
+                    Check for Updates
                 </button>
                 <button type="button" id="btnApplyUpdate" class="btn btn-sm btn-start" style="display: none;">
-                    🚀 Update Now
+                    Update Now
                 </button>
             </div>
         </div>
@@ -404,7 +404,7 @@
             </div>
             <div id="updateDiffBox" style="display: none; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-color);">
                 <div style="color: var(--status-starting); font-weight: 600; margin-bottom: 0.25rem;" id="updateDiffTitle">
-                    ✨ New updates available!
+                    New updates available!
                 </div>
                 <ul id="updateCommitList" style="margin: 0; padding-left: 1.25rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary);">
                 </ul>
@@ -417,14 +417,14 @@
         <div class="card-header">
             <div>
                 <h2 class="card-title" style="color: var(--status-starting); font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>🌍 World Reset</span>
+                    <span>World Reset</span>
                 </h2>
                 <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">
                     Delete only the world save data (overworld <code>world/</code>, Nether, The End, player inventories, and advancements). <strong>Does NOT touch your server .jar, installed mods, or configuration.</strong> A fresh world will generate upon next startup.
                 </p>
             </div>
             <button type="button" id="btnDeleteWorld" class="btn btn-restart" style="padding: 0.75rem 1.5rem; white-space: nowrap;">
-                🗑️ Delete World Data
+                Delete World Data
             </button>
         </div>
     </div>
@@ -434,14 +434,14 @@
         <div class="card-header">
             <div>
                 <h2 class="card-title" style="color: var(--status-offline); font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span>⚠️ Danger Zone</span>
+                    <span>Danger Zone</span>
                 </h2>
                 <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">
                     Completely wipe all server data in <code>/data/minecraft/</code> (mods, world, configuration, server .jar) to start from scratch. Backups in <code>/data/backups/</code> will be preserved.
                 </p>
             </div>
             <button type="button" id="btnResetServer" class="btn btn-danger" style="padding: 0.75rem 1.5rem; white-space: nowrap;">
-                🗑️ Delete All &amp; Start from 0
+                Delete All &amp; Start from 0
             </button>
         </div>
     </div>

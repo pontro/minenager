@@ -75,7 +75,7 @@ export function initModsManager() {
 
             item.innerHTML = `
                 <div class="installed-card-main">
-                    <span class="installed-card-icon">📦</span>
+                    <span class="installed-card-icon"></span>
                     <div class="installed-card-details">
                         <div class="installed-card-name">${escapeHtml(m.filename)}</div>
                         <div class="installed-card-meta">
@@ -110,7 +110,7 @@ export function initModsManager() {
                 const res = await fetch(`/api/mods/installed/${encodeURIComponent(filename)}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.detail || 'Failed to delete mod');
-                showToast(`🗑️ ${filename} removed`);
+                showToast(`${filename} removed`);
                 await loadInstalledMods();
                 loadMods();
             } catch (err) {
@@ -126,7 +126,7 @@ export function initModsManager() {
                 const res = await fetch(endpoint, { method: 'POST' });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.detail || `Failed to ${action} mod`);
-                showToast(`✔ Mod ${action}d!`);
+                showToast(`Mod ${action}d!`);
                 await loadInstalledMods();
             } catch (err) {
                 alert(`Error: ${err.message}`);
@@ -206,7 +206,7 @@ export function initModsManager() {
 
                 const iconHtml = mod.icon_url 
                     ? `<img src="${escapeHtml(mod.icon_url)}" class="mod-icon-img" alt="${escapeHtml(mod.title)}" loading="lazy">`
-                    : `<div class="mod-icon-fallback">📦</div>`;
+                    : `<div class="mod-icon-fallback"></div>`;
 
                 const downloadsFormatted = (mod.downloads || 0).toLocaleString();
                 const followsFormatted = (mod.follows || 0).toLocaleString();
@@ -215,8 +215,8 @@ export function initModsManager() {
                 const pillsHtml = categories.map(c => `<span class="mod-pill">${escapeHtml(c)}</span>`).join('');
 
                 const actionBtnHtml = isInstalled
-                    ? `<button class="btn btn-sm btn-installed" disabled>✓ Installed</button>`
-                    : `<button class="btn btn-sm btn-install" data-project-id="${escapeHtml(mod.project_id)}" data-slug="${escapeHtml(mod.slug)}" data-title="${escapeHtml(mod.title)}">⬇ Install</button>`;
+                    ? `<button class="btn btn-sm btn-installed" disabled>Installed</button>`
+                    : `<button class="btn btn-sm btn-install" data-project-id="${escapeHtml(mod.project_id)}" data-slug="${escapeHtml(mod.slug)}" data-title="${escapeHtml(mod.title)}">Install</button>`;
 
                 card.innerHTML = `
                     <div class="mod-card-top">
@@ -234,8 +234,8 @@ export function initModsManager() {
                     </div>
                     <div class="mod-card-footer">
                         <div class="mod-stats">
-                            <span>⬇ ${downloadsFormatted}</span>
-                            <span>⭐ ${followsFormatted}</span>
+                            <span>${downloadsFormatted} downloads</span>
+                            <span>${followsFormatted} stars</span>
                         </div>
                         <div class="mod-actions">
                             ${actionBtnHtml}
@@ -261,7 +261,7 @@ export function initModsManager() {
         const loader = installerLoader?.value;
 
         btn.disabled = true;
-        btn.textContent = '⏳ Installing...';
+        btn.textContent = 'Installing...';
 
         try {
             const res = await fetch(`/api/mods/install/${encodeURIComponent(projectId)}?mc_version=${encodeURIComponent(mc)}&loader=${encodeURIComponent(loader)}`, {
@@ -272,16 +272,16 @@ export function initModsManager() {
 
             const depsCount = (data.installed_dependencies || []).length;
             const depMsg = depsCount > 0 ? ` (+${depsCount} dependencies installed)` : '';
-            showToast(`✔ Installed ${title}${depMsg}!`);
+            showToast(`Installed ${title}${depMsg}!`);
 
             btn.className = 'btn btn-sm btn-installed';
-            btn.textContent = '✓ Installed';
+            btn.textContent = 'Installed';
 
             await loadInstalledMods();
         } catch (err) {
             alert(`Install error: ${err.message}`);
             btn.disabled = false;
-            btn.textContent = '⬇ Install';
+            btn.textContent = 'Install';
         }
     });
 

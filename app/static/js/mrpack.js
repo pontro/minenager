@@ -77,7 +77,7 @@ export function initMrpackUploader(onPackInstalled) {
             }
 
             mrpackProgressBar.style.width = '100%';
-            mrpackStatusText.textContent = `✔ Successfully installed "${result.name}"!`;
+            mrpackStatusText.textContent = `Successfully installed "${result.name}"!`;
             mrpackPercentText.textContent = '100%';
 
             let detailsHtml = `<strong>Pack:</strong> ${result.name} (${result.version_id || 'v1.0'})<br>`;
@@ -122,11 +122,14 @@ export function initMrpackUploader(onPackInstalled) {
             const dashName = document.getElementById('dashboardPackName');
             const dashMc = document.getElementById('dashboardMcVersion');
             const dashLoader = document.getElementById('dashboardLoader');
+            const sidebarPackInfo = document.getElementById('sidebarPackInfo');
+            const formattedLoader = result.loader.charAt(0).toUpperCase() + result.loader.slice(1);
             if (dashName) dashName.textContent = result.name;
             if (dashMc) dashMc.textContent = result.game_version;
-            if (dashLoader) dashLoader.textContent = result.loader;
+            if (dashLoader) dashLoader.textContent = formattedLoader;
+            if (sidebarPackInfo) sidebarPackInfo.textContent = `${formattedLoader} ${result.game_version}`;
 
-            showToast(`✔ Modpack "${result.name}" installed successfully!`);
+            showToast(`Modpack "${result.name}" installed successfully!`);
 
             if (onPackInstalled) onPackInstalled();
 
@@ -134,7 +137,7 @@ export function initMrpackUploader(onPackInstalled) {
             console.error('Error uploading mrpack:', err);
             mrpackProgressBar.style.width = '100%';
             mrpackProgressBar.style.backgroundColor = 'var(--status-offline)';
-            mrpackStatusText.textContent = `❌ Error: ${err.message}`;
+            mrpackStatusText.textContent = `Error: ${err.message}`;
             mrpackPercentText.textContent = 'Failed';
             mrpackDetails.innerHTML = '<span style="color: var(--status-offline);">Please ensure this is a valid Modrinth .mrpack bundle file.</span>';
         }

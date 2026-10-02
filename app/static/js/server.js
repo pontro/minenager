@@ -16,13 +16,16 @@ export function initServerManager() {
     const statusBadge = document.getElementById('statusBadge');
     const statusText = document.getElementById('statusText');
 
-    // Sidebar controls
+    // Sidebar status & version
     const sidebarStatusBadge = document.getElementById('sidebarStatusBadge');
     const sidebarStatusText = document.getElementById('sidebarStatusText');
-    const sidebarBtnStart = document.getElementById('sidebarBtnStart');
-    const sidebarBtnStop = document.getElementById('sidebarBtnStop');
-    const sidebarBtnRestart = document.getElementById('sidebarBtnRestart');
+    const sidebarPackInfo = document.getElementById('sidebarPackInfo');
     const mobileStatusBadge = document.getElementById('mobileStatusBadge');
+
+    // Overview Card DOM elements
+    const dashboardPackName = document.getElementById('dashboardPackName');
+    const dashboardMcVersion = document.getElementById('dashboardMcVersion');
+    const dashboardLoader = document.getElementById('dashboardLoader');
 
     // Upgraded Console Controls
     const consoleSearchInput = document.getElementById('consoleSearchInput');
@@ -30,7 +33,7 @@ export function initServerManager() {
     const btnClearConsole = document.getElementById('btnClearConsole');
     const consoleLineCountBadge = document.getElementById('consoleLineCountBadge');
 
-    function updateStatusUI(st) {
+    function updateStatusUI(st, info = null) {
         const formatted = st.charAt(0).toUpperCase() + st.slice(1);
         
         if (statusBadge && statusText) {
@@ -38,9 +41,18 @@ export function initServerManager() {
             statusText.textContent = formatted;
         }
 
-        if (sidebarStatusBadge && sidebarStatusText) {
+        if (sidebarStatusBadge) {
             sidebarStatusBadge.className = `status-badge ${st}`;
-            sidebarStatusText.textContent = formatted;
+            sidebarStatusBadge.title = `Status: ${formatted}`;
+            if (sidebarStatusText) sidebarStatusText.textContent = formatted;
+        }
+
+        if (info && info.loader && info.version) {
+            const formattedLoader = info.loader.charAt(0).toUpperCase() + info.loader.slice(1);
+            if (sidebarPackInfo) sidebarPackInfo.textContent = `${formattedLoader} ${info.version}`;
+            if (dashboardMcVersion) dashboardMcVersion.textContent = info.version;
+            if (dashboardLoader) dashboardLoader.textContent = formattedLoader;
+            if (dashboardPackName && info.pack_name) dashboardPackName.textContent = info.pack_name;
         }
 
         if (mobileStatusBadge) {
@@ -49,15 +61,10 @@ export function initServerManager() {
 
         const isOffline = (st === 'offline');
         const isStopping = (st === 'stopping');
-        const isRunning = (!isOffline && !isStopping);
 
         if (btnStart) btnStart.disabled = !isOffline;
         if (btnStop) btnStop.disabled = (isOffline || isStopping);
         if (btnRestart) btnRestart.disabled = (isOffline || isStopping);
-
-        if (sidebarBtnStart) sidebarBtnStart.disabled = !isOffline;
-        if (sidebarBtnStop) sidebarBtnStop.disabled = (isOffline || isStopping);
-        if (sidebarBtnRestart) sidebarBtnRestart.disabled = (isOffline || isStopping);
     }
 
     function renderAllLogs() {
@@ -114,11 +121,11 @@ export function initServerManager() {
 
     async function pollServerStatusAndLogs() {
         try {
-            // 1. Fetch live status
+            // 1. Fetch live status & metadata
             const statusRes = await fetch('/api/server/status');
             const statusData = await statusRes.json();
             const st = statusData.status || 'offline';
-            updateStatusUI(st);
+            updateStatusUI(st, statusData);
 
             // 2. Fetch incremental live logs
             const logsRes = await fetch(`/api/server/logs?start_index=${logStartIndex}`);
@@ -144,7 +151,7 @@ export function initServerManager() {
             const res = await fetch('/api/server/start', { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Failed to start server');
-            showToast('🚀 Minecraft server launching...');
+            showToast('Minecraft server launching...');
             pollServerStatusAndLogs();
         } catch (err) {
             alert(`Start error: ${err.message}`);
@@ -158,7 +165,7 @@ export function initServerManager() {
             const res = await fetch('/api/server/stop', { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Failed to stop server');
-            showToast('⏹ Minecraft server stopping...');
+            showToast('Minecraft server stopping...');
             pollServerStatusAndLogs();
         } catch (err) {
             alert(`Stop error: ${err.message}`);
@@ -172,7 +179,7 @@ export function initServerManager() {
             const res = await fetch('/api/server/restart', { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Failed to restart server');
-            showToast('🔄 Minecraft server restarting...');
+            showToast('Minecraft server restarting...');
             pollServerStatusAndLogs();
         } catch (err) {
             alert(`Restart error: ${err.message}`);
@@ -181,13 +188,8 @@ export function initServerManager() {
     }
 
     btnStart?.addEventListener('click', handleStart);
-    sidebarBtnStart?.addEventListener('click', handleStart);
-
     btnStop?.addEventListener('click', handleStop);
-    sidebarBtnStop?.addEventListener('click', handleStop);
-
     btnRestart?.addEventListener('click', handleRestart);
-    sidebarBtnRestart?.addEventListener('click', handleRestart);
 
     async function sendConsoleCommand(cmd) {
         if (!cmd || !cmd.trim()) return;

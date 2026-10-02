@@ -253,12 +253,17 @@ class MinecraftServerManager:
             uptime_seconds = int(time.time() - self.start_time)
 
         dash_settings = settings_service.get_dashboard_settings()
+        from app.services import mrpack as mrpack_service
+        instance = mrpack_service.get_current_instance()
 
         return {
             "status": self.status,
             "pid": self.process.pid if self.process and self.process.poll() is None else None,
             "uptime_seconds": uptime_seconds,
-            "ram_allocated": f"{dash_settings.get('ram_gb', 4)} GB"
+            "ram_allocated": f"{dash_settings.get('ram_gb', 4)} GB",
+            "loader": instance["loader"].capitalize() if instance and instance.get("loader") else "Fabric",
+            "version": instance["minecraft_version"] if instance and instance.get("minecraft_version") else "1.20.1",
+            "pack_name": instance["name"] if instance and instance.get("name") else "Custom Server"
         }
 
     def get_logs(self, start_index: int = 0) -> Dict[str, Any]:

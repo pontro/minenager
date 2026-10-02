@@ -14,10 +14,10 @@ export function initDiscordManager() {
         if (!discordToken) return;
         if (discordToken.type === 'password') {
             discordToken.type = 'text';
-            btnToggleTokenVisibility.textContent = '🔒';
+            btnToggleTokenVisibility.textContent = 'Hide';
         } else {
             discordToken.type = 'password';
-            btnToggleTokenVisibility.textContent = '👁️';
+            btnToggleTokenVisibility.textContent = 'Show';
         }
     });
 
@@ -30,7 +30,7 @@ export function initDiscordManager() {
 
         if (btnSaveDiscord) {
             btnSaveDiscord.disabled = true;
-            btnSaveDiscord.textContent = '⏳ Saving...';
+            btnSaveDiscord.textContent = 'Saving...';
         }
 
         const enabled = document.getElementById('discord_enabled')?.checked || false;
@@ -72,7 +72,7 @@ export function initDiscordManager() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Failed to save Discord settings');
 
-            showToast('✔ Discord Bot settings saved!');
+            showToast('Discord Bot settings saved!');
 
             if (discordToken && token) {
                 discordToken.value = '';
@@ -90,7 +90,7 @@ export function initDiscordManager() {
         } finally {
             if (btnSaveDiscord) {
                 btnSaveDiscord.disabled = false;
-                btnSaveDiscord.textContent = '💾 Save Discord Settings';
+                btnSaveDiscord.textContent = 'Save Discord Settings';
             }
         }
     }
@@ -101,19 +101,19 @@ export function initDiscordManager() {
     // Send Test Message
     btnTestDiscord?.addEventListener('click', async () => {
         btnTestDiscord.disabled = true;
-        btnTestDiscord.textContent = '⏳ Sending...';
+        btnTestDiscord.textContent = 'Sending...';
 
         try {
             const res = await fetch('/api/discord/test', { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Test notification failed');
 
-            showToast(`✔ ${data.message || 'Test message sent to Discord!'}`);
+            showToast(`${data.message || 'Test message sent to Discord!'}`);
         } catch (err) {
             alert(`Discord Test Error:\n\n${err.message}`);
         } finally {
             btnTestDiscord.disabled = false;
-            btnTestDiscord.textContent = '🧪 Send Test Message';
+            btnTestDiscord.textContent = 'Send Test Message';
             loadDiscordStatus();
         }
     });
@@ -140,7 +140,7 @@ export function initDiscordManager() {
                 discordStatusBadge.textContent = '◐ Connecting...';
             } else if (status.status === 'error') {
                 discordStatusBadge.className = 'status-badge offline';
-                discordStatusBadge.textContent = `⚠️ Error: ${status.last_error ? status.last_error.slice(0, 25) : 'Disconnected'}`;
+                discordStatusBadge.textContent = `Error: ${status.last_error ? status.last_error.slice(0, 25) : 'Disconnected'}`;
             } else {
                 discordStatusBadge.className = 'status-badge offline';
                 discordStatusBadge.textContent = '○ Offline / Disconnected';

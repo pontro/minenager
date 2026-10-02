@@ -102,7 +102,7 @@ export function initSettingsManager() {
             const dashPlayers = document.getElementById('dashboardPlayers');
             if (dashPlayers) dashPlayers.textContent = `0 / ${properties['max-players']}`;
 
-            showToast('✔ Server settings saved successfully!');
+            showToast('Server settings saved successfully!');
         } catch (err) {
             alert(`Error saving settings: ${err.message}`);
         } finally {
@@ -122,19 +122,19 @@ export function initSettingsManager() {
         const statusBadge = document.getElementById('statusBadge');
         const isOnline = (statusBadge && statusBadge.classList.contains('online'));
         const msg = isOnline
-            ? '💾 Start Backup Routine?\n\nThe server will:\n1. Broadcast a 1-minute countdown in game chat\n2. Save world and cleanly shut down\n3. Create world backup in /data/backups/ (CDMX time)\n4. Automatically reopen the server\n\nContinue?'
-            : '💾 Create a backup of the world in /data/backups/ now?';
+            ? 'Start Backup Routine?\n\nThe server will:\n1. Broadcast a 1-minute countdown in game chat\n2. Save world and cleanly shut down\n3. Create world backup in /data/backups/ (CDMX time)\n4. Automatically reopen the server\n\nContinue?'
+            : 'Create a backup of the world in /data/backups/ now?';
 
         if (!confirm(msg)) return;
 
         btnCreateBackup.disabled = true;
-        showToast('⏳ Backup routine initiated! Check live console.');
+        showToast('Backup routine initiated! Check live console.');
 
         try {
             const res = await fetch('/api/backups/create', { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Failed to start backup');
-            showToast('✔ Backup running in background!');
+            showToast('Backup running in background!');
             loadBackups();
         } catch (err) {
             alert(`Backup error: ${err.message}`);
@@ -147,11 +147,11 @@ export function initSettingsManager() {
 
     btnRefreshBackups?.addEventListener('click', async () => {
         btnRefreshBackups.disabled = true;
-        btnRefreshBackups.textContent = '⏳ Reloading...';
+        btnRefreshBackups.textContent = 'Reloading...';
         await loadBackups();
         btnRefreshBackups.disabled = false;
-        btnRefreshBackups.textContent = '🔄 Reload Backups';
-        showToast('✔ Backups list reloaded');
+        btnRefreshBackups.textContent = 'Reload Backups';
+        showToast('Backups list reloaded');
     });
 
     async function loadBackups() {
@@ -190,21 +190,21 @@ export function initSettingsManager() {
 
                 item.innerHTML = `
                     <div class="installed-card-main">
-                        <span class="installed-card-icon">💾</span>
+                        <span class="installed-card-icon"></span>
                         <div class="installed-card-details">
                             <div class="installed-card-name">${escapeHtml(b.filename)}</div>
                             <div class="installed-card-meta">
-                                <span>📅 ${escapeHtml(b.created_at)}</span>
-                                <span>📦 ${escapeHtml(b.size_formatted)}</span>
+                                <span>${escapeHtml(b.created_at)}</span>
+                                <span>${escapeHtml(b.size_formatted)}</span>
                             </div>
                         </div>
                     </div>
                     <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
                         <button class="btn btn-sm btn-restart" data-action="restore-backup" data-file="${escapeHtml(b.filename)}">
-                            🔄 Restore
+                            Restore
                         </button>
                         <button class="btn btn-sm btn-danger" data-action="delete-backup" data-file="${escapeHtml(b.filename)}">
-                            🗑️ Delete
+                            Delete
                         </button>
                     </div>
                 `;
@@ -223,11 +223,11 @@ export function initSettingsManager() {
         const filename = btn.getAttribute('data-file');
 
         if (action === 'restore-backup') {
-            const confirmed = confirm(`⚠️ RESTORE WORLD BACKUP?\n\nFile: ${filename}\n\nThe server will:\n1. Stop the server safely (if running)\n2. Replace current world terrain/inventories with this backup\n3. Automatically reopen the server\n\nContinue?`);
+            const confirmed = confirm(`RESTORE WORLD BACKUP?\n\nFile: ${filename}\n\nThe server will:\n1. Stop the server safely (if running)\n2. Replace current world terrain/inventories with this backup\n3. Automatically reopen the server\n\nContinue?`);
             if (!confirmed) return;
 
             btn.disabled = true;
-            showToast(`⏳ Restoring backup "${filename}"...`);
+            showToast(`Restoring backup "${filename}"...`);
 
             try {
                 const res = await fetch('/api/backups/restore', {
@@ -237,7 +237,7 @@ export function initSettingsManager() {
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.detail || 'Failed to restore backup');
-                showToast('✔ Backup restore routine initiated! Check live console.');
+                showToast('Backup restore routine initiated! Check live console.');
                 loadBackups();
             } catch (err) {
                 alert(`Restore error: ${err.message}`);
@@ -250,7 +250,7 @@ export function initSettingsManager() {
                 const res = await fetch(`/api/backups/delete?filename=${encodeURIComponent(filename)}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.detail || 'Failed to delete backup');
-                showToast(`🗑️ Backup "${filename}" deleted.`);
+                showToast(`Backup "${filename}" deleted.`);
                 loadBackups();
             } catch (err) {
                 alert(`Delete error: ${err.message}`);
@@ -262,37 +262,37 @@ export function initSettingsManager() {
     // --- Delete World Data ---
     const btnDeleteWorld = document.getElementById('btnDeleteWorld');
     btnDeleteWorld?.addEventListener('click', async () => {
-        const confirmed = confirm('🌍 Are you sure you want to delete the world save data? This will reset all world terrain, player inventories, and advancements, but will KEEP your installed mods, loader, and server configuration.');
+        const confirmed = confirm('Are you sure you want to delete the world save data? This will reset all world terrain, player inventories, and advancements, but will KEEP your installed mods, loader, and server configuration.');
         if (!confirmed) return;
 
         btnDeleteWorld.disabled = true;
-        btnDeleteWorld.textContent = '⏳ Deleting world...';
+        btnDeleteWorld.textContent = 'Deleting world...';
 
         try {
             const res = await fetch('/api/settings/delete-world', { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Failed to delete world data');
 
-            showToast('🌍 World data deleted! A new world will generate on next start.');
+            showToast('World data deleted! A new world will generate on next start.');
         } catch (err) {
             alert(`World reset error: ${err.message}`);
         } finally {
             btnDeleteWorld.disabled = false;
-            btnDeleteWorld.textContent = '🗑️ Delete World Data';
+            btnDeleteWorld.textContent = 'Delete World Data';
         }
     });
 
     // --- Delete All & Start from 0 ---
     const btnResetServer = document.getElementById('btnResetServer');
     btnResetServer?.addEventListener('click', async () => {
-        const firstConfirm = confirm('⚠️ DANGER: DELETE ALL SERVER DATA?\n\nThis will completely erase all installed mods, server .jar, world terrain, configs, and instance configuration.\n\nBackups in /data/backups/ will NOT be touched.\n\nAre you sure you want to proceed?');
+        const firstConfirm = confirm('DANGER: DELETE ALL SERVER DATA?\n\nThis will completely erase all installed mods, server .jar, world terrain, configs, and instance configuration.\n\nBackups in /data/backups/ will NOT be touched.\n\nAre you sure you want to proceed?');
         if (!firstConfirm) return;
 
-        const secondConfirm = confirm('🚨 FINAL CONFIRMATION: Type YES in your mind and press OK to permanently wipe /data/minecraft/ and start from zero.');
+        const secondConfirm = confirm('FINAL CONFIRMATION: Type YES in your mind and press OK to permanently wipe /data/minecraft/ and start from zero.');
         if (!secondConfirm) return;
 
         btnResetServer.disabled = true;
-        btnResetServer.textContent = '⏳ Wiping all server files...';
+        btnResetServer.textContent = 'Wiping all server files...';
 
         try {
             const res = await fetch('/api/settings/reset', { method: 'POST' });
@@ -304,7 +304,7 @@ export function initSettingsManager() {
         } catch (err) {
             alert(`Reset error: ${err.message}`);
             btnResetServer.disabled = false;
-            btnResetServer.textContent = '🗑️ Delete All & Start from 0';
+            btnResetServer.textContent = 'Delete All & Start from 0';
         }
     });
 
@@ -336,20 +336,20 @@ export function initSettingsManager() {
     }
 
     btnCleanLogs?.addEventListener('click', async () => {
-        if (!confirm('🧹 Clean old log archives (.log.gz) and crash dumps to free up disk space?')) return;
+        if (!confirm('Clean old log archives (.log.gz) and crash dumps to free up disk space?')) return;
         btnCleanLogs.disabled = true;
-        btnCleanLogs.textContent = '⏳ Cleaning...';
+        btnCleanLogs.textContent = 'Cleaning...';
         try {
             const res = await fetch('/api/storage/clean-logs', { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Clean failed');
-            showToast(`✔ ${data.message}`);
+            showToast(`${data.message}`);
             await loadStorage();
         } catch (err) {
             alert(`Clean error: ${err.message}`);
         } finally {
             btnCleanLogs.disabled = false;
-            btnCleanLogs.textContent = '🧹 Clean Old Logs & Dumps';
+            btnCleanLogs.textContent = 'Clean Old Logs & Dumps';
         }
     });
 
@@ -357,7 +357,7 @@ export function initSettingsManager() {
         btnRefreshStorage.disabled = true;
         await loadStorage();
         btnRefreshStorage.disabled = false;
-        showToast('✔ Storage usage updated');
+        showToast('Storage usage updated');
     });
 
     // --- 1-Click Update System ---
@@ -374,7 +374,7 @@ export function initSettingsManager() {
     async function checkUpdates(silent = false) {
         if (!btnCheckUpdate) return;
         btnCheckUpdate.disabled = true;
-        btnCheckUpdate.textContent = '⏳ Checking...';
+        btnCheckUpdate.textContent = 'Checking...';
 
         try {
             const res = await fetch('/api/system/check-update');
@@ -391,7 +391,7 @@ export function initSettingsManager() {
             if (data.has_update) {
                 if (btnApplyUpdate) btnApplyUpdate.style.display = 'inline-flex';
                 if (updateDiffBox) updateDiffBox.style.display = 'block';
-                if (updateDiffTitle) updateDiffTitle.textContent = `✨ ${data.commits_count} new commit${data.commits_count > 1 ? 's' : ''} available on origin/main!`;
+                if (updateDiffTitle) updateDiffTitle.textContent = `${data.commits_count} new commit${data.commits_count > 1 ? 's' : ''} available on origin/main!`;
 
                 if (updateCommitList) {
                     updateCommitList.innerHTML = '';
@@ -401,46 +401,46 @@ export function initSettingsManager() {
                         updateCommitList.appendChild(li);
                     });
                 }
-                showToast(`✨ ${data.commits_count} new update(s) available!`);
+                showToast(`${data.commits_count} new update(s) available!`);
             } else {
                 if (btnApplyUpdate) btnApplyUpdate.style.display = 'none';
                 if (updateDiffBox) updateDiffBox.style.display = 'none';
-                if (!silent) showToast('✔ Minenager is already up to date!');
+                if (!silent) showToast('Minenager is already up to date!');
             }
         } catch (err) {
             console.error('Update check error:', err);
             if (!silent) alert(`Failed to check for updates: ${err.message}`);
         } finally {
             btnCheckUpdate.disabled = false;
-            btnCheckUpdate.textContent = '🔍 Check for Updates';
+            btnCheckUpdate.textContent = 'Check for Updates';
         }
     }
 
     btnCheckUpdate?.addEventListener('click', () => checkUpdates(false));
 
     btnApplyUpdate?.addEventListener('click', async () => {
-        if (!confirm('🚀 APPLY UPDATE?\n\nThis will:\n1. Pull the latest code from GitHub (git pull origin main)\n2. Gracefully reload Minenager\n3. Refresh your browser in 5 seconds\n\nYour Minecraft world and settings in /data/ will NOT be affected.\n\nContinue?')) {
+        if (!confirm('APPLY UPDATE?\n\nThis will:\n1. Pull the latest code from GitHub (git pull origin main)\n2. Gracefully reload Minenager\n3. Refresh your browser in 5 seconds\n\nYour Minecraft world and settings in /data/ will NOT be affected.\n\nContinue?')) {
             return;
         }
 
         btnApplyUpdate.disabled = true;
         btnCheckUpdate.disabled = true;
-        btnApplyUpdate.textContent = '⏳ Updating...';
-        showToast('🚀 Pulling updates from GitHub...');
+        btnApplyUpdate.textContent = 'Updating...';
+        showToast('Pulling updates from GitHub...');
 
         try {
             const res = await fetch('/api/system/update', { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Update failed');
 
-            showToast('✔ Update applied! Reloading dashboard in 5s...');
+            showToast('Update applied! Reloading dashboard in 5s...');
 
             let countdown = 5;
-            btnApplyUpdate.textContent = `🔄 Reloading (${countdown}s)...`;
+            btnApplyUpdate.textContent = `Reloading (${countdown}s)...`;
             const interval = setInterval(() => {
                 countdown--;
                 if (countdown > 0) {
-                    btnApplyUpdate.textContent = `🔄 Reloading (${countdown}s)...`;
+                    btnApplyUpdate.textContent = `Reloading (${countdown}s)...`;
                 } else {
                     clearInterval(interval);
                     window.location.reload();
@@ -450,7 +450,7 @@ export function initSettingsManager() {
             alert(`Update error: ${err.message}`);
             btnApplyUpdate.disabled = false;
             btnCheckUpdate.disabled = false;
-            btnApplyUpdate.textContent = '🚀 Update Now';
+            btnApplyUpdate.textContent = 'Update Now';
         }
     });
 

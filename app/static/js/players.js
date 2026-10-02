@@ -42,11 +42,11 @@ export function initPlayersManager() {
                 item.className = 'installed-card';
                 item.style.padding = '0.75rem 1rem';
 
-                const opBtnText = p.is_op ? '👑 Revoke OP' : '👑 Make OP';
+                const opBtnText = p.is_op ? 'Revoke OP' : 'Make OP';
                 const opAction = p.is_op ? 'deop' : 'op';
                 const opBtnClass = p.is_op ? 'btn-restart' : 'btn-start';
 
-                const wlBtnText = p.is_whitelisted ? '🛡️ Unwhitelist' : '🛡️ Whitelist';
+                const wlBtnText = p.is_whitelisted ? 'Unwhitelist' : 'Whitelist';
                 const wlAction = p.is_whitelisted ? 'whitelist_remove' : 'whitelist_add';
 
                 item.innerHTML = `
@@ -68,10 +68,10 @@ export function initPlayersManager() {
                             ${wlBtnText}
                         </button>
                         <button class="btn btn-sm btn-restart" data-player-action="kick" data-player-name="${escapeHtml(p.name)}">
-                            👢 Kick
+                            Kick
                         </button>
                         <button class="btn btn-sm btn-danger" data-player-action="ban" data-player-name="${escapeHtml(p.name)}">
-                            🔨 Ban
+                            Ban
                         </button>
                     </div>
                 `;
@@ -110,7 +110,7 @@ export function initPlayersManager() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || `Action failed.`);
 
-            showToast(`✔ ${data.message}`);
+            showToast(`${data.message}`);
             setTimeout(loadPlayers, 800);
         } catch (err) {
             alert(`Player action error: ${err.message}`);
@@ -122,7 +122,7 @@ export function initPlayersManager() {
         btnRefreshPlayers.disabled = true;
         await loadPlayers();
         btnRefreshPlayers.disabled = false;
-        showToast('✔ Player list updated');
+        showToast('Player list updated');
     });
 
     btnQuickWhitelist?.addEventListener('click', async () => {
@@ -145,7 +145,7 @@ export function initPlayersManager() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.detail || 'Failed to whitelist player.');
 
-            showToast(`✔ Player "${player}" added to whitelist!`);
+            showToast(`Player "${player}" added to whitelist!`);
             if (inputQuickPlayer) inputQuickPlayer.value = '';
             loadPlayers();
         } catch (err) {

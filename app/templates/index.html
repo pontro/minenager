@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/style.css?v=9">
+    <link rel="stylesheet" href="/static/style.css?v=13">
 </head>
 <body>
     <div class="app-container">
@@ -25,25 +25,14 @@
                 </button>
             </div>
 
-            <!-- Server Quick-Status & Power HUD in Sidebar -->
+            <!-- Server Quick-Status & Version in Sidebar -->
             <div class="server-power-hud">
                 <div class="server-power-hud-header">
-                    <div id="sidebarStatusBadge" class="status-badge {{ server.status }}">
+                    <div id="sidebarStatusBadge" class="status-badge {{ server.status }}" title="Status: {{ server.status | capitalize }}">
                         <span class="status-dot"></span>
                         <span id="sidebarStatusText">{{ server.status | capitalize }}</span>
                     </div>
                     <span class="server-power-hud-info" id="sidebarPackInfo">{{ server.loader }} {{ server.version }}</span>
-                </div>
-                <div class="server-power-hud-btns">
-                    <button id="sidebarBtnStart" class="btn btn-start btn-sm" {% if server.status != 'offline' %}disabled{% endif %} title="Start Server">
-                        ▶ Start
-                    </button>
-                    <button id="sidebarBtnRestart" class="btn btn-restart btn-sm" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %} title="Restart Server">
-                        🔄
-                    </button>
-                    <button id="sidebarBtnStop" class="btn btn-stop btn-sm" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %} title="Stop Server">
-                        ⏹
-                    </button>
                 </div>
             </div>
 
@@ -139,8 +128,8 @@
     {% include "components/modal_installed_mods.html" %}
 
     <!-- Floating Toast for Confirmations -->
-    <div id="toast" class="toast-msg">✔ Action completed successfully!</div>
+    <div id="toast" class="toast-msg">Action completed successfully!</div>
 
-    <script type="module" src="/static/app.js?v=9"></script>
+    <script type="module" src="/static/app.js?v=10"></script>
 </body>
 </html>

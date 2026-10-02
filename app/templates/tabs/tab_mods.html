@@ -7,7 +7,7 @@
             <div class="card-header">
                 <div>
                     <h2 class="card-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1rem;">
-                        <span>⛏️ Software &amp; Loader</span>
+                        <span>Software &amp; Loader</span>
                         <span id="installerLockBadge" class="status-badge {% if instance %}online{% else %}offline{% endif %}" style="font-size: 0.72rem;">
                             {% if instance %}● Configured{% else %}○ Not Configured{% endif %}
                         </span>
@@ -18,10 +18,10 @@
                 </div>
                 <div id="installerActions" style="display: flex; gap: 0.4rem;">
                     <button type="button" id="btnChangeInstaller" class="btn btn-sm btn-restart" style="display: {% if instance %}inline-flex{% else %}none{% endif %};">
-                        🔄 Change
+                        Change
                     </button>
                     <button type="button" id="btnInstallServer" class="btn btn-sm btn-install" style="display: {% if not instance %}inline-flex{% else %}none{% endif %};">
-                        ⬇ Install
+                        Install
                     </button>
                 </div>
             </div>
@@ -57,14 +57,14 @@
         <!-- 2. Compact .mrpack Modpack Upload Card -->
         <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column;">
             <div class="card-header" style="margin-bottom: 0.5rem;">
-                <h2 class="card-title" style="font-size: 1rem;">📦 Import Modpack (.mrpack)</h2>
+                <h2 class="card-title" style="font-size: 1rem;">Import Modpack (.mrpack)</h2>
             </div>
             <div id="mrpackDropzone" class="dropzone-box compact">
-                <div class="dropzone-icon">📁</div>
+                <div class="dropzone-icon"></div>
                 <div class="dropzone-title">Drop .mrpack file or click to browse</div>
                 <p class="dropzone-sub">Upload a modpack to configure version and mods automatically</p>
                 <button type="button" class="btn btn-sm btn-action" id="btnBrowseMrpack" style="margin-top: 0.25rem; pointer-events: auto;">
-                    📂 Select File
+                    Select File
                 </button>
                 <input type="file" id="mrpackFileInput" style="display: none;">
             </div>
@@ -87,7 +87,7 @@
             <!-- Left: Card Title -->
             <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
                 <h2 class="card-title" style="display: flex; align-items: center; gap: 0.4rem; font-size: 1.05rem;">
-                    <span>⚡ Modrinth Mod Store</span>
+                    <span>Modrinth Mod Store</span>
                 </h2>
                 <span id="modsResultCount" style="color: var(--text-muted); font-size: 0.8rem;"></span>
             </div>
@@ -99,7 +99,7 @@
                     id="modSearchInput" 
                     class="form-input" 
                     style="width: 100%;"
-                    placeholder="🔍 Search mods (e.g. Sodium, FerriteCore, Voice Chat)..."
+                    placeholder="Search mods (e.g. Sodium, FerriteCore, Voice Chat)..."
                     autocomplete="off"
                 >
             </div>
@@ -107,7 +107,7 @@
             <!-- Right: View Installed Mods Button -->
             <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
                 <button type="button" id="btnOpenInstalledModal" class="btn btn-sm btn-send" style="display: inline-flex; align-items: center; gap: 0.45rem;">
-                    <span>📂 View Installed Mods</span>
+                    <span>View Installed Mods</span>
                     <span id="installedCountBadge" class="installed-badge" style="background: rgba(255, 255, 255, 0.2); color: #ffffff; font-size: 0.72rem; padding: 0.1rem 0.4rem;">0</span>
                 </button>
             </div>

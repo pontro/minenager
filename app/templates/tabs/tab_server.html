@@ -12,16 +12,16 @@
             </div>
             <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                 <button id="btnStart" class="btn btn-start" {% if server.status != 'offline' %}disabled{% endif %}>
-                    ▶ Start
+                    Start
                 </button>
                 <button id="btnRestart" class="btn btn-restart" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %}>
-                    🔄 Restart
+                    Restart
                 </button>
                 <button id="btnStop" class="btn btn-stop" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %}>
-                    ⏹ Stop
+                    Stop
                 </button>
                 <button id="btnCreateBackup" class="btn btn-send" title="Broadcast warning, shutdown, backup, and restart">
-                    💾 Backup
+                    Backup
                 </button>
             </div>
         </div>
@@ -55,7 +55,7 @@
         <div class="console-header" style="margin-bottom: 0.5rem;">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <h2 class="console-title" style="display: flex; align-items: center; gap: 0.4rem;">
-                    <span>💻 Live Console</span>
+                    <span>Live Console</span>
                 </h2>
                 <span id="consoleLineCountBadge" class="status-badge" style="background: #27272a; color: var(--text-secondary); font-size: 0.72rem;">0 lines</span>
             </div>
@@ -68,7 +68,7 @@
                     type="text" 
                     id="consoleSearchInput" 
                     class="console-search-input" 
-                    placeholder="🔍 Filter logs..."
+                    placeholder="Filter logs..."
                     autocomplete="off"
                 >
             </div>
@@ -78,7 +78,7 @@
                     <span>Auto-scroll</span>
                 </label>
                 <button type="button" id="btnClearConsole" class="btn btn-sm btn-restart" title="Clear console buffer">
-                    🧹 Clear
+                    Clear
                 </button>
             </div>
         </div>
@@ -122,7 +122,7 @@
         <div class="card-header">
             <div>
                 <h2 class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span>👥 Connected Players &amp; Moderation</span>
+                    <span>Connected Players &amp; Moderation</span>
                     <span id="onlinePlayersBadge" class="status-badge offline" style="font-size: 0.75rem;">0 Online</span>
                 </h2>
                 <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.25rem;">
@@ -140,11 +140,11 @@
                         autocomplete="off"
                     >
                     <button type="button" id="btnQuickWhitelist" class="btn btn-sm btn-send" title="Whitelist a player by username">
-                        🛡️ Whitelist
+                        Whitelist
                     </button>
                 </div>
                 <button type="button" id="btnRefreshPlayers" class="btn btn-sm btn-restart">
-                    🔄 Refresh
+                    Refresh
                 </button>
             </div>
         </div>

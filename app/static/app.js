@@ -1,11 +1,11 @@
-import { initServerManager } from './js/server.js?v=6';
-import { initInstaller } from './js/installer.js?v=6';
-import { initModsManager } from './js/mods.js?v=6';
-import { initMrpackUploader } from './js/mrpack.js?v=6';
-import { initSettingsManager } from './js/settings.js?v=6';
-import { initPlayersManager } from './js/players.js?v=6';
-import { initDiscordManager } from './js/discord.js?v=6';
-import { initMetricsManager } from './js/metrics.js?v=6';
+import { initServerManager } from './js/server.js?v=7';
+import { initInstaller } from './js/installer.js?v=7';
+import { initModsManager } from './js/mods.js?v=7';
+import { initMrpackUploader } from './js/mrpack.js?v=7';
+import { initSettingsManager } from './js/settings.js?v=7';
+import { initPlayersManager } from './js/players.js?v=7';
+import { initDiscordManager } from './js/discord.js?v=7';
+import { initMetricsManager } from './js/metrics.js?v=7';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize Subsystems

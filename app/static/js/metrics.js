@@ -187,8 +187,7 @@ export function initMetricsManager() {
             metricTpsBar.className = `progress-bar-fill ${tps >= 19.0 ? 'fill-online' : tps >= 15.0 ? 'fill-warning' : 'fill-danger'}`;
         }
         if (metricTpsStatusText) {
-            const icon = tps >= 19.0 ? '🟢' : tps >= 15.0 ? '🟡' : '🔴';
-            metricTpsStatusText.textContent = `${icon} ${data.tps.status} (budget: 50.0ms)`;
+            metricTpsStatusText.textContent = `${data.tps.status} (budget: 50.0ms)`;
         }
 
         // 2. CPU

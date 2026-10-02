@@ -6,7 +6,7 @@
             <div class="card-header" style="flex-wrap: wrap; gap: 1rem; align-items: center;">
                 <div>
                     <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <span>💬 Discord Bot &amp; Remote Control</span>
+                        <span>Discord Bot &amp; Remote Control</span>
                         <span id="discordStatusBadge" class="status-badge {% if discord.status.status == 'connected' %}online{% elif discord.status.status == 'connecting' %}starting{% else %}offline{% endif %}" style="font-size: 0.75rem;">
                             {% if discord.status.status == 'connected' %}
                                 ● Connected {% if discord.status.bot_user %}as {{ discord.status.bot_user.username }}{% endif %}
@@ -25,10 +25,10 @@
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
                     <button type="button" id="btnTestDiscord" class="btn btn-sm btn-send" title="Send a test embed to your configured Discord channel">
-                        🧪 Send Test Message
+                        Send Test Message
                     </button>
                     <button type="submit" id="btnSaveDiscord" class="btn btn-start">
-                        💾 Save Discord Settings
+                        Save Discord Settings
                     </button>
                 </div>
             </div>
@@ -37,7 +37,7 @@
         <div class="settings-grid">
             <!-- 2. Bot Credentials & Connection Setup -->
             <div class="settings-card span-2">
-                <h3 class="settings-card-title">🤖 Bot Credentials &amp; Channel</h3>
+                <h3 class="settings-card-title">Bot Credentials &amp; Channel</h3>
 
                 <div class="setting-item">
                     <div class="setting-info">
@@ -55,7 +55,7 @@
                         <span class="setting-name">
                             Discord Bot Token
                             <span id="tokenSavedBadge" class="status-badge online" style="font-size: 0.7rem; padding: 0.15rem 0.4rem; margin-left: 0.5rem; {% if not discord.config.token %}display:none;{% endif %}">
-                                ✔ Saved
+                                Saved
                             </span>
                         </span>
                         <span class="setting-desc">Secret token from Discord Developer Portal (Bot tab)</span>
@@ -70,7 +70,7 @@
                             autocomplete="off"
                         >
                         <button type="button" id="btnToggleTokenVisibility" class="btn btn-sm btn-restart" style="padding: 0 0.75rem;">
-                            👁️
+                            Show
                         </button>
                     </div>
                 </div>
@@ -108,7 +108,7 @@
 
             <!-- 3. Security & Access Control -->
             <div class="settings-card">
-                <h3 class="settings-card-title">🛡️ Security &amp; Permissions</h3>
+                <h3 class="settings-card-title">Security &amp; Permissions</h3>
 
                 <div class="setting-item">
                     <div class="setting-info">
@@ -154,7 +154,7 @@
 
             <!-- 4. Game Event Notifications -->
             <div class="settings-card">
-                <h3 class="settings-card-title">🔔 Automatic Game Alerts</h3>
+                <h3 class="settings-card-title">Automatic Game Alerts</h3>
 
                 <div class="setting-item">
                     <div class="setting-info">
@@ -195,12 +195,12 @@
     <!-- 5. Setup Guide & Commands Cheat Sheet Card -->
     <div class="card" style="margin-top: 1.5rem;">
         <div class="card-header">
-            <h2 class="card-title" style="font-size: 1.15rem;">📖 Setup Guide &amp; Bot Commands Reference</h2>
+            <h2 class="card-title" style="font-size: 1.15rem;">Setup Guide &amp; Bot Commands Reference</h2>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 0.5rem;">
             <!-- Setup Guide Column -->
             <div style="background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                <h4 style="color: var(--color-accent); margin-bottom: 0.75rem; font-size: 0.95rem;">⚡ 3-Step Setup Guide</h4>
+                <h4 style="color: var(--color-accent); margin-bottom: 0.75rem; font-size: 0.95rem;">3-Step Setup Guide</h4>
                 <ol style="padding-left: 1.25rem; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
                     <li>Go to <a href="https://discord.com/developers/applications" target="_blank" style="color: var(--color-accent); text-decoration: underline;">Discord Developer Portal</a> ➔ Create an Application.</li>
                     <li>In the <strong>Bot</strong> tab:
@@ -222,7 +222,7 @@
 
             <!-- Commands Reference Column -->
             <div style="background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                <h4 style="color: var(--color-accent); margin-bottom: 0.75rem; font-size: 0.95rem;">⌨️ Available Discord Commands</h4>
+                <h4 style="color: var(--color-accent); margin-bottom: 0.75rem; font-size: 0.95rem;">Available Discord Commands</h4>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
                     <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.35rem;">
                         <code>!turnon</code> / <code>!start</code>
