@@ -77,9 +77,10 @@ def check_for_updates() -> Dict[str, Any]:
     """Fetch remote repository and check if new commits are available."""
     repo_dir = _get_repo_dir()
     current = get_current_version()
+    branch = get_current_branch() or "main"
 
-    # 1. Fetch remote origin
-    code, fetch_out = _run_git_command(["fetch", "origin", "main"], cwd=repo_dir)
+    # 1. Fetch remote origin for current branch
+    code, fetch_out = _run_git_command(["fetch", "origin", branch], cwd=repo_dir)
     if code != 0:
         return {
             "success": False,
@@ -90,13 +91,13 @@ def check_for_updates() -> Dict[str, Any]:
 
     # 2. Check commit difference
     code_local, local_hash = _run_git_command(["rev-parse", "HEAD"], cwd=repo_dir)
-    code_remote, remote_hash = _run_git_command(["rev-parse", "origin/main"], cwd=repo_dir)
+    code_remote, remote_hash = _run_git_command(["rev-parse", f"origin/{branch}"], cwd=repo_dir)
 
     has_update = (code_local == 0 and code_remote == 0 and local_hash != remote_hash)
 
     commits_behind = []
     if has_update:
-        code_log, log_out = _run_git_command(["log", "HEAD..origin/main", "--oneline", "-n", "10"], cwd=repo_dir)
+        code_log, log_out = _run_git_command(["log", f"HEAD..origin/{branch}", "--oneline", "-n", "10"], cwd=repo_dir)
         if code_log == 0 and log_out:
             commits_behind = log_out.splitlines()
 
@@ -110,11 +111,12 @@ def check_for_updates() -> Dict[str, Any]:
     }
 
 def perform_update() -> Dict[str, Any]:
-    """Pull latest changes from origin/main and trigger restart."""
+    """Pull latest changes from origin for current branch and trigger restart."""
     repo_dir = _get_repo_dir()
+    branch = get_current_branch() or "main"
 
-    # 1. Execute git pull
-    code, out = _run_git_command(["pull", "origin", "main"], cwd=repo_dir)
+    # 1. Execute git pull for current branch
+    code, out = _run_git_command(["pull", "origin", branch], cwd=repo_dir)
     if code != 0:
         raise Exception(f"Git pull failed: {out}")
 

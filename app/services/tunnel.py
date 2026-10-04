@@ -7,7 +7,17 @@ from typing import Dict, Any, Optional
 from app.services import license as license_service
 from app.services import players as players_service
 
-FRPC_BINARY = Path("/code/app/bin/frpc")
+def _resolve_frpc_path() -> Path:
+    candidates = [
+        Path("/usr/local/bin/frpc"),
+        Path("/code/app/bin/frpc"),
+        Path(__file__).resolve().parent.parent / "bin" / "frpc"
+    ]
+    for c in candidates:
+        if c.exists() and os.access(c, os.X_OK):
+            return c
+    return Path("/usr/local/bin/frpc")
+
 CONFIG_DIR = Path("/data/minecraft")
 FRPC_CONFIG_FILE = CONFIG_DIR / "frpc.toml"
 
@@ -87,8 +97,9 @@ class TunnelManager:
             if not account.get("logged_in") or not account.get("is_pro"):
                 return {"success": False, "message": "Tunnel requires Minenager Pro."}
 
-            if not FRPC_BINARY.exists():
-                self.last_error = f"Tunnel binary not found at {FRPC_BINARY}"
+            frpc_path = _resolve_frpc_path()
+            if not frpc_path.exists():
+                self.last_error = f"Tunnel binary not found at {frpc_path}"
                 print(f"[Minenager Tunnel] {self.last_error}")
                 return {"success": False, "message": self.last_error}
 
@@ -128,7 +139,7 @@ remotePort = {remote_port}
                 cfg_f.write(config_content)
 
             try:
-                cmd = [str(FRPC_BINARY), "-c", str(FRPC_CONFIG_FILE)]
+                cmd = [str(frpc_path), "-c", str(FRPC_CONFIG_FILE)]
                 self.process = subprocess.Popen(
                     cmd,
                     stdout=subprocess.PIPE,

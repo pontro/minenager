@@ -5,7 +5,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     default-jre-headless \
     curl \
     git \
+    tar \
     && rm -rf /var/lib/apt/lists/*
+
+# Automatically install frpc binary for the container's architecture
+RUN ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "amd64" ]; then FRP_ARCH="amd64"; \
+    elif [ "$ARCH" = "arm64" ]; then FRP_ARCH="arm64"; \
+    else FRP_ARCH="amd64"; fi && \
+    curl -sSL "https://github.com/fatedier/frp/releases/download/v0.56.0/frp_0.56.0_linux_${FRP_ARCH}.tar.gz" -o /tmp/frp.tar.gz && \
+    tar -xzf /tmp/frp.tar.gz -C /tmp && \
+    mv /tmp/frp_0.56.0_linux_${FRP_ARCH}/frpc /usr/local/bin/frpc && \
+    chmod +x /usr/local/bin/frpc && \
+    rm -rf /tmp/frp*
 
 WORKDIR /code
 

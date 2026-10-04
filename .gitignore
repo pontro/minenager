@@ -27,3 +27,8 @@ Thumbs.db
 
 # Environment variables
 .env
+
+# Application binaries
+app/bin/
+app/bin/*
+
