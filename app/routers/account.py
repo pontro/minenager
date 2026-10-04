@@ -1,14 +1,21 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from app.services import license as license_service
 
 router = APIRouter(prefix="/api/account", tags=["account"])
 
 class LoginRequest(BaseModel):
+    username_or_email: str
+    password: str
+
+class RegisterRequest(BaseModel):
+    username: str
     email: str
-    password: Optional[str] = None
-    tier: Optional[str] = "pro"
+    password: str
+
+class LicenseActivationRequest(BaseModel):
+    license_key: str
 
 @router.get("/status")
 async def get_status():
@@ -16,16 +23,47 @@ async def get_status():
 
 @router.post("/login")
 async def login(payload: LoginRequest):
+    if not payload.username_or_email or not payload.password:
+        raise HTTPException(status_code=400, detail="Username/email and password are required.")
+    try:
+        res = license_service.authenticate_account(
+            identifier=payload.username_or_email,
+            password=payload.password
+        )
+        return res
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+
+@router.post("/register")
+async def register(payload: RegisterRequest):
+    if not payload.username or len(payload.username.strip()) < 3:
+        raise HTTPException(status_code=400, detail="Username must be at least 3 characters.")
     if not payload.email or "@" not in payload.email:
-        raise HTTPException(status_code=400, detail="Invalid email address.")
-    
-    # In Phase 1 local simulation, logging in grants Pro status to preview and test all features
-    res = license_service.save_account_session(
-        email=payload.email.strip(),
-        tier=payload.tier or "pro"
-    )
-    return res
+        raise HTTPException(status_code=400, detail="A valid email address is required.")
+    if not payload.password or len(payload.password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters.")
+
+    try:
+        res = license_service.register_account(
+            username=payload.username,
+            email=payload.email,
+            password=payload.password
+        )
+        return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/license/activate")
+async def activate_license(payload: LicenseActivationRequest):
+    if not payload.license_key:
+        raise HTTPException(status_code=400, detail="License key is required.")
+    try:
+        res = license_service.activate_license(payload.license_key)
+        return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/logout")
 async def logout():
     return license_service.clear_account_session()
+

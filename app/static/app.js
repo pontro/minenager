@@ -6,7 +6,7 @@ import { initSettingsManager } from './js/settings.js?v=7';
 import { initPlayersManager } from './js/players.js?v=7';
 import { initDiscordManager } from './js/discord.js?v=7';
 import { initMetricsManager } from './js/metrics.js?v=7';
-import { initAccountManager } from './js/account.js?v=4';
+import { initAccountManager } from './js/account.js?v=6';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize Subsystems
