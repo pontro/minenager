@@ -48,11 +48,6 @@ export function initAccountManager() {
     const proActiveCard = document.getElementById('proActiveCard');
     const btnAccountLogout = document.getElementById('btnAccountLogout');
 
-    // Stripe Checkout UI
-    const btnOpenStripeCheckout = document.getElementById('btnOpenStripeCheckout');
-    const stripeCheckoutContainer = document.getElementById('stripeCheckoutContainer');
-    const btnCloseStripeCheckout = document.getElementById('btnCloseStripeCheckout');
-
     // Sidebar elements
     const sidebarAccountLabel = document.getElementById('sidebarAccountLabel');
     const sidebarTierBadge = document.getElementById('sidebarTierBadge');
@@ -332,110 +327,6 @@ export function initAccountManager() {
             btnSignUpSubmit.disabled = false;
             btnSignUpSubmit.textContent = originalText;
         }
-    });
-
-    // --- Embedded Stripe Checkout Form (Dahlia SDK) ---
-    let stripeFormMounted = false;
-
-    async function launchStripeCheckout() {
-        if (!window.Stripe) {
-            alert('Stripe library failed to load. Please check your internet connection.');
-            return;
-        }
-
-        btnOpenStripeCheckout.disabled = true;
-        btnOpenStripeCheckout.textContent = 'Loading Stripe Checkout...';
-
-        try {
-            // 1. Fetch publishable key
-            const cfgRes = await fetch('/api/account/billing/config');
-            const cfgData = await cfgRes.json();
-            const publishableKey = cfgData.publishable_key;
-
-            if (!publishableKey) {
-                throw new Error('Stripe publishable key is not configured.');
-            }
-
-            // 2. Initialize Stripe with Dahlia beta flag as specified
-            const stripe = window.Stripe(publishableKey, {
-                betas: ['custom_checkout_payment_form_1']
-            });
-
-            // 3. Fetch Checkout client_secret from server
-            const clientSecret = await fetch('/api/account/billing/create-checkout-session', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to create checkout session.');
-                return res.json();
-            })
-            .then(data => data.client_secret);
-
-            // 4. Configure appearance matching Minenager dark theme
-            const appearance = {
-                "theme": "night",
-                "labels": "auto",
-                "inputs": "spaced",
-                "variables": {
-                    "borderRadius": "6px",
-                    "colorBackground": "#18181b",
-                    "colorDanger": "#ef4444",
-                    "colorPrimary": "#8b5cf6",
-                    "colorSuccess": "#10b981",
-                    "colorText": "#f4f4f5",
-                    "fontFamily": "default",
-                    "fontSizeBase": "15px",
-                    "spacingUnit": "4px"
-                }
-            };
-
-            // 5. Initialize Checkout Form SDK and mount
-            const checkout = stripe.initCheckoutFormSdk({ clientSecret, appearance });
-            const form = checkout.createForm({ layout: 'expanded' });
-
-            const checkoutFormEl = document.getElementById('checkout-form');
-            if (checkoutFormEl) {
-                checkoutFormEl.innerHTML = '';
-            }
-
-            form.mount('#checkout-form');
-            stripeCheckoutContainer.style.display = 'flex';
-            stripeFormMounted = true;
-
-            // 6. Wire confirm event
-            const loadActionsResult = await checkout.loadActions();
-            if (loadActionsResult.type === 'success') {
-                form.on('confirm', async (event) => {
-                    try {
-                        const confirmRes = await loadActionsResult.actions.confirm({ formConfirmEvent: event });
-                        if (confirmRes && confirmRes.type === 'success') {
-                            showToast('Payment successful! Upgrading to Minenager Pro...');
-                            setTimeout(async () => {
-                                await fetchAccountStatus();
-                                stripeCheckoutContainer.style.display = 'none';
-                            }, 1500);
-                        }
-                    } catch (error) {
-                        console.error('Payment confirmation error:', error);
-                        showError(error.message || 'Payment confirmation failed.');
-                    }
-                });
-            }
-
-        } catch (err) {
-            console.error('Stripe Checkout Error:', err);
-            alert(`Stripe Error: ${err.message}`);
-        } finally {
-            btnOpenStripeCheckout.disabled = false;
-            btnOpenStripeCheckout.textContent = '⚡ Subscribe with Card (Stripe)';
-        }
-    }
-
-    btnOpenStripeCheckout?.addEventListener('click', launchStripeCheckout);
-
-    btnCloseStripeCheckout?.addEventListener('click', () => {
-        if (stripeCheckoutContainer) stripeCheckoutContainer.style.display = 'none';
     });
 
     // Sign Out
