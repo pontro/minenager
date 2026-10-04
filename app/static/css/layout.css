@@ -54,8 +54,7 @@
 }
 
 .app-sidebar.collapsed .nav-link {
-    padding: 0;
-    justify-content: center;
+    padding: 0 17px;
     gap: 0;
 }
 
@@ -64,17 +63,16 @@
     padding: 0;
     background: transparent;
     border-color: transparent;
-    align-items: center;
-    justify-content: center;
 }
 
 .app-sidebar.collapsed .server-power-hud-header {
-    justify-content: center;
+    justify-content: flex-start;
     width: 100%;
 }
 
 .app-sidebar.collapsed #sidebarStatusBadge {
     padding: 0;
+    width: 58px;
     gap: 0;
     border: none;
     background: transparent;
@@ -234,7 +232,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0 0.75rem;
+    padding: 0 17px;
     border-radius: 6px;
     color: var(--text-secondary);
     background: transparent;
@@ -242,7 +240,7 @@
     font-size: 0.88rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, padding 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), gap 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     text-align: left;
     width: 100%;
     box-sizing: border-box;
@@ -310,7 +308,7 @@
     display: flex;
     align-items: center;
     gap: 0.65rem;
-    padding: 0 0.65rem;
+    padding: 0 17px;
     border-radius: 6px;
     color: var(--text-secondary);
     background: transparent;
@@ -318,7 +316,7 @@
     font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, padding 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
     box-sizing: border-box;
     user-select: none;
     text-align: left;
@@ -330,13 +328,20 @@
     border-color: var(--border-color);
 }
 
+.sidebar-footer-btn .nav-text {
+    flex: 1;
+    max-width: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .app-sidebar.collapsed .sidebar-footer {
     padding: 0.35rem 0.5rem;
 }
 
 .app-sidebar.collapsed .sidebar-footer-btn {
-    padding: 0;
-    justify-content: center;
+    padding: 0 17px;
     gap: 0;
 }
 

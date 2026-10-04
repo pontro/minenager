@@ -26,17 +26,30 @@ export function initServerManager() {
     const dashboardPackName = document.getElementById('dashboardPackName');
     const dashboardMcVersion = document.getElementById('dashboardMcVersion');
     const dashboardLoader = document.getElementById('dashboardLoader');
+    const dashboardLocalIp = document.getElementById('dashboardLocalIp');
+    const btnCopyLocalIp = document.getElementById('btnCopyLocalIp');
     const dashboardPublicIp = document.getElementById('dashboardPublicIp');
     const dashboardVanillaIp = document.getElementById('dashboardVanillaIp');
     const tunnelStatusBadge = document.getElementById('tunnelStatusBadge');
     const btnCopyPublicIp = document.getElementById('btnCopyPublicIp');
     const btnCopyVanillaIp = document.getElementById('btnCopyVanillaIp');
 
+    btnCopyLocalIp?.addEventListener('click', () => {
+        const text = dashboardLocalIp?.textContent?.trim();
+        if (text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Address copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy address');
+            });
+        }
+    });
+
     btnCopyVanillaIp?.addEventListener('click', () => {
         const text = dashboardVanillaIp?.textContent?.trim();
-        if (text && text !== 'Offline' && text !== 'Upgrade to Pro') {
+        if (text && text !== 'Offline') {
             navigator.clipboard.writeText(text).then(() => {
-                showToast('Vanilla domain copied to clipboard!');
+                showToast('Address copied to clipboard!');
             }).catch(() => {
                 showToast('Failed to copy address');
             });
@@ -82,27 +95,22 @@ export function initServerManager() {
             if (dashboardPackName && info.pack_name) dashboardPackName.textContent = info.pack_name;
         }
 
-        // Tunnel info update
+        // Address / Tunnel info update
         if (tunnelStatusBadge) {
             if (info && info.tunnel && info.tunnel.active && info.tunnel.public_address) {
                 if (dashboardVanillaIp) dashboardVanillaIp.textContent = info.tunnel.vanilla_address || 'eloi.minenager.net';
-                if (dashboardPublicIp) dashboardPublicIp.textContent = info.tunnel.public_address;
                 tunnelStatusBadge.textContent = 'Online';
                 tunnelStatusBadge.style.background = '#065f46';
                 tunnelStatusBadge.style.color = '#34d399';
             } else if (info && info.tunnel && info.tunnel.error) {
                 if (dashboardVanillaIp) dashboardVanillaIp.textContent = 'Error';
-                if (dashboardPublicIp) {
-                    dashboardPublicIp.textContent = 'Error';
-                    dashboardPublicIp.title = info.tunnel.error;
-                }
                 tunnelStatusBadge.textContent = 'Error';
                 tunnelStatusBadge.style.background = '#7f1d1d';
                 tunnelStatusBadge.style.color = '#f87171';
             } else {
-                if (dashboardVanillaIp) dashboardVanillaIp.textContent = 'Offline';
-                if (dashboardPublicIp) dashboardPublicIp.textContent = 'Offline';
-                tunnelStatusBadge.textContent = 'Inactive';
+                const port = (info && info.port) || 25565;
+                if (dashboardVanillaIp) dashboardVanillaIp.textContent = `localhost:${port}`;
+                tunnelStatusBadge.textContent = 'Local';
                 tunnelStatusBadge.style.background = '#27272a';
                 tunnelStatusBadge.style.color = '#a1a1aa';
             }

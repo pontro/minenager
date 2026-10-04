@@ -8,6 +8,8 @@ Built with **FastAPI**, **Docker**, and modern vanilla JavaScript & CSS with no 
 
 ## ✨ Features
 
+- 🌐 **Zero-Portforward Reverse Tunnels (Pro)**: Share your server with friends using custom subdomains (e.g. `yourname.minenager.net`) without opening ports on your home router.
+- 🔐 **Account & Authentication**: Integrated cloud account login, registration, and Pro plan upgrades.
 - 🚀 **1-Click Software & Version Installer**: Easily install Vanilla, Fabric, or Quilt across versions with automatic loader resolution and EULA handling.
 - 💬 **Discord Bot & Remote Control**: Manage your server directly from Discord (`!turnon`, `!turnoff`, `!restart`, `!status`, `!players`, `!cmd`) with automated game event broadcasts (server start/stop, player joins/leaves with avatars, crash alerts).
 - 📦 **Modrinth Integration**:

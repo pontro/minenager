@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/static/style.css?v=28">
+    <link rel="stylesheet" href="/static/style.css?v=30">
 </head>
 <body>
     <div class="app-container">
@@ -88,7 +88,7 @@
                     </svg>
                     <span class="nav-text" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <span id="sidebarAccountLabel">{% if account.logged_in %}{{ account.username or 'Account' }}{% else %}Login{% endif %}</span>
-                        <span id="sidebarTierBadge" class="version-pill {% if not account.logged_in %}badge-guest{% elif account.is_pro %}badge-pro{% else %}badge-free{% endif %}" style="font-weight: 700; font-size: 0.6rem;">
+                        <span id="sidebarTierBadge" class="version-pill {% if not account.logged_in %}badge-guest{% elif account.is_pro %}badge-pro{% else %}badge-free{% endif %}" style="font-weight: 700; font-size: 0.6rem; margin-left: auto;">
                             {% if not account.logged_in %}GUEST{% elif account.is_pro %}PRO{% else %}FREE{% endif %}
                         </span>
                     </span>
@@ -142,6 +142,6 @@
     <!-- Floating Toast for Confirmations -->
     <div id="toast" class="toast-msg">Action completed successfully!</div>
 
-    <script type="module" src="/static/app.js?v=21"></script>
+    <script type="module" src="/static/app.js?v=23"></script>
 </body>
 </html>
