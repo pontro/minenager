@@ -59,6 +59,7 @@ export function initAccountManager() {
 
     // Discord Lock Overlay
     const discordProOverlay = document.getElementById('discordProOverlay');
+    const discordContentWrapper = document.getElementById('discordContentWrapper');
     const btnSaveDiscord = document.getElementById('btnSaveDiscord');
     const btnTestDiscord = document.getElementById('btnTestDiscord');
 
@@ -219,10 +220,12 @@ export function initAccountManager() {
         // Discord Feature Lock Status
         if (isPro) {
             if (discordProOverlay) discordProOverlay.classList.remove('active');
+            if (discordContentWrapper) discordContentWrapper.classList.remove('is-locked');
             if (btnSaveDiscord) btnSaveDiscord.disabled = false;
             if (btnTestDiscord) btnTestDiscord.disabled = false;
         } else {
             if (discordProOverlay) discordProOverlay.classList.add('active');
+            if (discordContentWrapper) discordContentWrapper.classList.add('is-locked');
             if (btnSaveDiscord) btnSaveDiscord.disabled = true;
             if (btnTestDiscord) btnTestDiscord.disabled = true;
         }

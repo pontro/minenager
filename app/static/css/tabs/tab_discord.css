@@ -1,44 +1,96 @@
 /* ==========================================================================
    TAB: DISCORD BOT INTEGRATION
    ========================================================================== */
-.discord-tab-wrapper {
+
+/* Wrapper for Discord tab content */
+.discord-locked-wrapper {
     position: relative;
     width: 100%;
+    transform: translateZ(0);
+    transition: opacity 0.4s ease;
 }
 
+/* When locked, smoothly fade and blur the content */
+.tab-pane.active .discord-locked-wrapper.is-locked {
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.35;
+    filter: blur(5px);
+    -webkit-filter: blur(5px);
+}
+
+/* Pro Feature Overlay: Fixed within the viewport, never overlaps or blocks sidebar */
 .discord-pro-overlay {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(9, 9, 11, 0.72);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    z-index: 50;
-    border-radius: 8px;
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    z-index: 90;
     display: none;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 1.5rem;
+    box-sizing: border-box;
     text-align: center;
-    animation: fadeIn 0.2s ease;
+    pointer-events: auto;
+    transition: left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.discord-pro-overlay.active {
+/* When active and Discord tab is displayed, fade in overlay */
+.tab-pane.active .discord-pro-overlay.active {
     display: flex;
+    animation: fadeInDiscordOverlay 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.discord-pro-card {
-    background: rgba(24, 24, 27, 0.95);
-    border: 1px solid rgba(217, 119, 6, 0.4);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(217, 119, 6, 0.15);
-    border-radius: 12px;
-    padding: 2rem 2.5rem;
-    max-width: 460px;
+@keyframes fadeInDiscordOverlay {
+    0% {
+        background-color: rgba(9, 9, 11, 0);
+    }
+    100% {
+        background-color: rgba(9, 9, 11, 0.72);
+    }
+}
+
+/* Adjust overlay when sidebar is collapsed */
+.app-sidebar.collapsed ~ .app-main-wrapper .discord-pro-overlay {
+    left: var(--sidebar-width-collapsed);
+}
+
+/* Adjust overlay on mobile/narrow screens where sidebar is hidden/drawer */
+@media (max-width: 900px) {
+    .discord-pro-overlay {
+        left: 0;
+    }
+}
+
+/* Pro Upgrade Card centered in viewport */
+.tab-pane.active .discord-pro-card {
+    background: rgba(24, 24, 27, 0.98);
+    border: 1px solid rgba(217, 119, 6, 0.45);
+    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.95), 0 0 35px rgba(217, 119, 6, 0.2);
+    border-radius: 14px;
+    padding: 2.25rem 2.5rem;
+    max-width: 480px;
+    width: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    animation: slideUp 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    gap: 1.25rem;
+    animation: popInDiscordCard 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes popInDiscordCard {
+    0% {
+        opacity: 0;
+        transform: translateY(18px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .discord-guide-link {

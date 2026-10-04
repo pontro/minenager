@@ -1,26 +1,7 @@
 <!-- Tab 5: Discord Bot Integration & Remote Commands -->
 <div id="tab-discord" class="tab-pane">
-    <div class="discord-tab-wrapper">
-        <!-- Pro Feature Frosted Glass Overlay (active when Free tier) -->
-        <div id="discordProOverlay" class="discord-pro-overlay {% if not account.is_pro %}active{% endif %}">
-            <div class="discord-pro-card">
-                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(217, 119, 6, 0.15); border: 1px solid rgba(217, 119, 6, 0.4); display: flex; align-items: center; justify-content: center; color: #fbbf24;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                </div>
-                <div>
-                    <h3 style="font-size: 1.15rem; font-weight: 700; color: #fbbf24; margin-bottom: 0.35rem;">Minenager Pro Feature</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.45;">
-                        Discord Bot integration allows remote server control (<code>!turnon</code>, <code>!turnoff</code>) and live chat alerts. Activate <strong>Minenager Pro</strong> to unlock.
-                    </p>
-                </div>
-                <button type="button" class="btn btn-start btnTriggerAccountModal" style="background: #d97706; border-color: #b45309; color: #ffffff; font-weight: 600; padding: 0.6rem 1.4rem;">
-                    Unlock with Pro ($3.99/mo)
-                </button>
-            </div>
-        </div>
-
+    <!-- Main Discord Tab Content Wrapper -->
+    <div id="discordContentWrapper" class="discord-locked-wrapper {% if not account.is_pro %}is-locked{% endif %}">
         <form id="discordForm" novalidate onsubmit="return false;">
         <!-- 1. Top Header & Action Controls -->
         <div class="card" style="margin-bottom: 1.25rem;">
@@ -289,5 +270,26 @@
             </div>
         </div>
     </div>
+    </div>
+    <!-- /discordContentWrapper -->
+
+    <!-- Pro Feature Overlay (Centered on visible screen, never covers sidebar) -->
+    <div id="discordProOverlay" class="discord-pro-overlay {% if not account.is_pro %}active{% endif %}">
+        <div class="discord-pro-card">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(217, 119, 6, 0.15); border: 1px solid rgba(217, 119, 6, 0.4); display: flex; align-items: center; justify-content: center; color: #fbbf24;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+            </div>
+            <div>
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: #fbbf24; margin-bottom: 0.35rem;">Minenager Pro Feature</h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.45;">
+                    Discord Bot integration allows remote server control (<code>!turnon</code>, <code>!turnoff</code>) and live chat alerts. Activate <strong>Minenager Pro</strong> to unlock.
+                </p>
+            </div>
+            <button type="button" class="btn btn-start btnTriggerAccountModal" style="background: #d97706; border-color: #b45309; color: #ffffff; font-weight: 600; padding: 0.6rem 1.4rem;">
+                Unlock with Pro ($2.50/mo)
+            </button>
+        </div>
     </div>
 </div>
