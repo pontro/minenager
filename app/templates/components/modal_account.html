@@ -13,10 +13,15 @@
                     <h3 class="modal-title" id="authModalTitle" style="font-size: 1.05rem; font-weight: 700; margin: 0;">Minenager Panel</h3>
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span id="accountBadgeGuest" class="version-pill badge-guest" style="font-size: 0.65rem; font-weight: 700;">GUEST</span>
-                <span id="accountBadgeFree" class="version-pill badge-free" style="font-size: 0.65rem; font-weight: 700; display: none;">FREE</span>
-                <span id="accountBadgePro" class="version-pill badge-pro" style="font-size: 0.65rem; font-weight: 700; display: none;">PRO</span>
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <button type="button" id="btnAccountLogout" class="btn btn-stop" style="font-size: 0.78rem; padding: 0.35rem 0.65rem; display: none;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.25rem;">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Sign Out
+                </button>
                 <button type="button" id="btnCloseAccountModal" class="modal-close-btn" title="Close window">&times;</button>
             </div>
         </div>
@@ -160,7 +165,7 @@
                         Unlock zero-portforward game tunnels with custom subdomains (e.g. <code>yourname.minenager.net</code>) and Discord Bot remote controls.
                     </p>
 
-                    <a href="https://minenager.com/upgrade" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border: none; font-weight: 700; font-size: 0.85rem; padding: 0.6rem 1rem; text-decoration: none; justify-content: center;">
+                    <a href="https://minenager.com/upgrade" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="font-weight: 600; font-size: 0.85rem; padding: 0.6rem 1rem; text-decoration: none; justify-content: center;">
                         Upgrade Plan on Web Portal &rarr;
                     </a>
                 </div>
@@ -176,17 +181,6 @@
                     <div style="font-size: 0.8rem; color: var(--text-secondary);">
                         Tunnels &amp; Discord Bot remote controls unlocked.
                     </div>
-                </div>
-
-                <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
-                    <button type="button" id="btnAccountLogout" class="btn btn-stop" style="font-size: 0.82rem;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.35rem;">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                            <polyline points="16 17 21 12 16 7"></polyline>
-                            <line x1="21" y1="12" x2="9" y2="12"></line>
-                        </svg>
-                        Sign Out
-                    </button>
                 </div>
             </div>
         </div>

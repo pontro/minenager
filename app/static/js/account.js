@@ -11,11 +11,6 @@ export function initAccountManager() {
     const accountAuthSection = document.getElementById('accountAuthSection');
     const accountProfileSection = document.getElementById('accountProfileSection');
 
-    // Badges in Modal Header
-    const accountBadgeGuest = document.getElementById('accountBadgeGuest');
-    const accountBadgeFree = document.getElementById('accountBadgeFree');
-    const accountBadgePro = document.getElementById('accountBadgePro');
-
     // Alert
     const authAlertError = document.getElementById('authAlertError');
     const authAlertErrorText = document.getElementById('authAlertErrorText');
@@ -167,11 +162,8 @@ export function initAccountManager() {
                 profileAvatar.textContent = username.slice(0, 2).toUpperCase();
             }
 
-            // Modal Header Badges
-            if (accountBadgeGuest) accountBadgeGuest.style.display = 'none';
+            if (btnAccountLogout) btnAccountLogout.style.display = 'inline-flex';
             if (isPro) {
-                if (accountBadgePro) accountBadgePro.style.display = 'inline-block';
-                if (accountBadgeFree) accountBadgeFree.style.display = 'none';
                 if (profileTierTag) {
                     profileTierTag.textContent = 'PRO';
                     profileTierTag.className = 'version-pill badge-pro';
@@ -179,8 +171,6 @@ export function initAccountManager() {
                 if (proLicenseCard) proLicenseCard.style.display = 'none';
                 if (proActiveCard) proActiveCard.style.display = 'flex';
             } else {
-                if (accountBadgePro) accountBadgePro.style.display = 'none';
-                if (accountBadgeFree) accountBadgeFree.style.display = 'inline-block';
                 if (profileTierTag) {
                     profileTierTag.textContent = 'FREE';
                     profileTierTag.className = 'version-pill badge-free';
@@ -198,11 +188,7 @@ export function initAccountManager() {
         } else {
             if (accountAuthSection) accountAuthSection.style.display = 'flex';
             if (accountProfileSection) accountProfileSection.style.display = 'none';
-
-            // Modal Header Badges
-            if (accountBadgeGuest) accountBadgeGuest.style.display = 'inline-block';
-            if (accountBadgeFree) accountBadgeFree.style.display = 'none';
-            if (accountBadgePro) accountBadgePro.style.display = 'none';
+            if (btnAccountLogout) btnAccountLogout.style.display = 'none';
 
             // Sidebar
             if (sidebarAccountLabel) sidebarAccountLabel.textContent = 'Login';
