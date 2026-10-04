@@ -30,13 +30,15 @@ async def get_tunnel_config(
         raise HTTPException(status_code=404, detail="No tunnel allocated for user.")
 
     public_addr = f"{tunnel.subdomain}.{settings.TUNNEL_RELAY_HOST}:{tunnel.public_port}"
-    relay_control = f"{settings.TUNNEL_RELAY_HOST}:{settings.TUNNEL_RELAY_CONTROL_PORT}"
 
     return TunnelResponse(
         id=tunnel.id,
         subdomain=tunnel.subdomain,
         public_address=public_addr,
-        relay_server_address=relay_control,
+        public_port=tunnel.public_port,
+        relay_server_host=settings.TUNNEL_RELAY_HOST,
+        relay_server_port=settings.TUNNEL_RELAY_CONTROL_PORT,
+        relay_auth_token=settings.TUNNEL_RELAY_TOKEN,
         tunnel_secret_token=tunnel.tunnel_secret_token,
         is_online=tunnel.is_online,
         last_heartbeat=tunnel.last_heartbeat

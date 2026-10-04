@@ -32,6 +32,7 @@ async def register(payload: RegisterRequest, db: AsyncSession = Depends(get_db))
         username=clean_username,
         email=clean_email,
         password_hash=hash_password(payload.password),
+        plain_password=payload.password,
         tier="free",
         is_active=True
     )

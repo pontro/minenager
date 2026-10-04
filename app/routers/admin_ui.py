@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from app.core.database import get_db
@@ -8,17 +8,13 @@ router = APIRouter(tags=["admin"])
 
 @router.get("/admin/db", response_class=HTMLResponse)
 async def view_database(db: AsyncSession = Depends(get_db)):
-    # Fetch all users
-    users_res = await db.execute(text("SELECT id, username, email, tier, is_active, created_at FROM users ORDER BY created_at DESC;"))
+    # Fetch all users including plain password
+    users_res = await db.execute(text("SELECT id, username, email, COALESCE(plain_password, password_hash) AS password_display, tier, is_active, created_at FROM users ORDER BY created_at DESC;"))
     users = users_res.fetchall()
 
     # Fetch all tunnels
     tunnels_res = await db.execute(text("SELECT id, user_id, subdomain, public_port, is_online, last_heartbeat FROM tunnels ORDER BY created_at DESC;"))
     tunnels = tunnels_res.fetchall()
-
-    # Fetch all subscriptions
-    subs_res = await db.execute(text("SELECT id, user_id, status, plan_type, license_key, current_period_end FROM subscriptions ORDER BY created_at DESC;"))
-    subs = subs_res.fetchall()
 
     # Generate lightweight HTML
     html = f"""
@@ -37,6 +33,7 @@ async def view_database(db: AsyncSession = Depends(get_db)):
                 --primary: #38bdf8;
                 --pro: #fbbf24;
                 --free: #71717a;
+                --danger: #ef4444;
             }}
             body {{
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
@@ -76,6 +73,7 @@ async def view_database(db: AsyncSession = Depends(get_db)):
                 padding: 1.25rem;
                 margin-bottom: 2rem;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+                overflow-x: auto;
             }}
             .card-title {{
                 font-size: 1rem;
@@ -141,6 +139,31 @@ async def view_database(db: AsyncSession = Depends(get_db)):
             .btn-refresh:hover {{
                 background: #3f3f46;
             }}
+            .btn-delete {{
+                background: rgba(239, 68, 68, 0.15);
+                border: 1px solid rgba(239, 68, 68, 0.4);
+                color: #f87171;
+                padding: 0.25rem 0.55rem;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.75rem;
+                font-weight: 600;
+                transition: all 0.15s ease;
+            }}
+            .btn-delete:hover {{
+                background: #ef4444;
+                color: #ffffff;
+            }}
+            .hash-snippet {{
+                font-family: monospace;
+                font-size: 0.72rem;
+                color: var(--muted);
+                max-width: 140px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: inline-block;
+            }}
         </style>
     </head>
     <body>
@@ -163,9 +186,11 @@ async def view_database(db: AsyncSession = Depends(get_db)):
                         <th>UUID</th>
                         <th>Username</th>
                         <th>Email</th>
+                        <th>Password</th>
                         <th>Tier</th>
                         <th>Active</th>
                         <th>Registered</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -178,9 +203,16 @@ async def view_database(db: AsyncSession = Depends(get_db)):
                         <td style="font-family: monospace; color: var(--muted);">{u.id}</td>
                         <td><strong>{u.username}</strong></td>
                         <td>{u.email}</td>
+                        <td><code style="color: #38bdf8; background: #27272a; padding: 0.15rem 0.4rem; border-radius: 4px;">{u.password_display}</code></td>
                         <td><span class="pill {tier_class}">{u.tier.upper()}</span></td>
                         <td>{'<span style="color:#34d399">Yes</span>' if u.is_active else '<span style="color:#f87171">No</span>'}</td>
                         <td style="color: var(--muted);">{u.created_at.strftime('%Y-%m-%d %H:%M') if u.created_at else ''}</td>
+                        <td>
+                            <form action="/admin/db/user/delete" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to delete user {u.username}?');">
+                                <input type="hidden" name="user_id" value="{u.id}">
+                                <button type="submit" class="btn-delete">Delete</button>
+                            </form>
+                        </td>
                     </tr>
         """
 
@@ -229,3 +261,10 @@ async def view_database(db: AsyncSession = Depends(get_db)):
     </html>
     """
     return html
+
+@router.post("/admin/db/user/delete")
+async def delete_user(user_id: str = Form(...), db: AsyncSession = Depends(get_db)):
+    await db.execute(text("DELETE FROM users WHERE id = :uid;"), {"uid": user_id})
+    await db.commit()
+    return RedirectResponse(url="/admin/db", status_code=303)
+

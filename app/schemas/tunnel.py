@@ -7,7 +7,10 @@ class TunnelResponse(BaseModel):
     id: UUID
     subdomain: str
     public_address: str
-    relay_server_address: str
+    public_port: int
+    relay_server_host: str
+    relay_server_port: int
+    relay_auth_token: str
     tunnel_secret_token: str
     is_online: bool
     last_heartbeat: Optional[datetime] = None

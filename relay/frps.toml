@@ -1,0 +1,11 @@
+# Minenager Cloud Relay Server Configuration
+bindPort = 2333
+kcpBindPort = 2333
+
+# Auth token shared with Minenager Cloud infrastructure
+auth.token = "minenager_tunnel_dev_secret_token_12345"
+
+# Allow public Minecraft server ports
+allowPorts = [
+  { start = 25565, end = 25600 }
+]

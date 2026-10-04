@@ -15,7 +15,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("JWT_EXPIRATION_MINUTES", "43200"))  # 30 days
     
-    TUNNEL_RELAY_HOST: str = os.getenv("TUNNEL_RELAY_HOST", "relay.minenager.net")
+    TUNNEL_RELAY_HOST: str = os.getenv("TUNNEL_RELAY_HOST", "127.0.0.1")
     TUNNEL_RELAY_CONTROL_PORT: int = int(os.getenv("TUNNEL_RELAY_CONTROL_PORT", "2333"))
+    TUNNEL_RELAY_TOKEN: str = os.getenv("TUNNEL_RELAY_TOKEN", "minenager_tunnel_dev_secret_token_12345")
 
 settings = Settings()

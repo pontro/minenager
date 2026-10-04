@@ -12,6 +12,7 @@ class User(Base):
     username = Column(String(32), unique=True, nullable=False, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
+    plain_password = Column(String(255), nullable=True)
     tier = Column(String(16), nullable=False, default="free")
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)

@@ -35,6 +35,20 @@ services:
       postgres:
         condition: service_healthy
 
+  relay:
+    build:
+      context: ./relay
+      dockerfile: Dockerfile
+    container_name: minenager-cloud-relay
+    restart: unless-stopped
+    ports:
+      - "2333:2333"
+      - "2333:2333/udp"
+      - "25566:25566"
+      - "25567:25567"
+      - "25568:25568"
+
 volumes:
   pgdata:
+
 
