@@ -6,7 +6,7 @@ import { initSettingsManager } from './js/settings.js?v=7';
 import { initPlayersManager } from './js/players.js?v=7';
 import { initDiscordManager } from './js/discord.js?v=7';
 import { initMetricsManager } from './js/metrics.js?v=7';
-import { initAccountManager } from './js/account.js?v=8';
+import { initAccountManager } from './js/account.js?v=9';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize Subsystems
@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 metricsManager.onTabActivated();
             } else if (targetId === 'tab-discord') {
                 discordManager.loadDiscordStatus();
+                accountManager.triggerDiscordLockSequence();
                 metricsManager.onTabDeactivated();
             } else {
                 metricsManager.onTabDeactivated();

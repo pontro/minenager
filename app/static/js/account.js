@@ -218,17 +218,36 @@ export function initAccountManager() {
         }
 
         // Discord Feature Lock Status
+        _isProUser = isPro;
         if (isPro) {
             if (discordProOverlay) discordProOverlay.classList.remove('active');
             if (discordContentWrapper) discordContentWrapper.classList.remove('is-locked');
             if (btnSaveDiscord) btnSaveDiscord.disabled = false;
             if (btnTestDiscord) btnTestDiscord.disabled = false;
         } else {
-            if (discordProOverlay) discordProOverlay.classList.add('active');
-            if (discordContentWrapper) discordContentWrapper.classList.add('is-locked');
             if (btnSaveDiscord) btnSaveDiscord.disabled = true;
             if (btnTestDiscord) btnTestDiscord.disabled = true;
         }
+    }
+
+    let _isProUser = false;
+    let _discordLockTimeout = null;
+
+    function triggerDiscordLockSequence() {
+        if (_isProUser) return;
+        // Reset state so tab content renders completely normal and clear initially
+        if (discordContentWrapper) discordContentWrapper.classList.remove('is-locked');
+        if (discordProOverlay) discordProOverlay.classList.remove('active');
+
+        if (_discordLockTimeout) clearTimeout(_discordLockTimeout);
+
+        // After a 600ms pause allowing tab layout and viewport to settle cleanly:
+        _discordLockTimeout = setTimeout(() => {
+            if (!_isProUser && document.getElementById('tab-discord')?.classList.contains('active')) {
+                if (discordContentWrapper) discordContentWrapper.classList.add('is-locked');
+                if (discordProOverlay) discordProOverlay.classList.add('active');
+            }
+        }, 600);
     }
 
     // Sign In Submission
@@ -435,6 +454,6 @@ export function initAccountManager() {
     // Initial check
     fetchAccountStatus();
 
-    return { fetchAccountStatus, openModal };
+    return { fetchAccountStatus, openModal, triggerDiscordLockSequence };
 }
 

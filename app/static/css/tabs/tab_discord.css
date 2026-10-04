@@ -7,11 +7,11 @@
     position: relative;
     width: 100%;
     transform: translateZ(0);
-    transition: opacity 0.4s ease;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s cubic-bezier(0.16, 1, 0.3, 1), -webkit-filter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* When locked, smoothly fade and blur the content */
-.tab-pane.active .discord-locked-wrapper.is-locked {
+.discord-locked-wrapper.is-locked {
     pointer-events: none;
     user-select: none;
     opacity: 0.35;
