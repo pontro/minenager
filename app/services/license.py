@@ -1,108 +1,92 @@
 import json
 import os
-import hashlib
-import secrets
+import urllib.request
+import urllib.error
 from pathlib import Path
 from typing import Dict, Any, Optional
 from datetime import datetime
 
 DATA_DIR = Path("/data/minecraft")
 SESSION_FILE = DATA_DIR / "session.json"
-ACCOUNTS_FILE = DATA_DIR / "accounts.json"
+CLOUD_API_URL = os.getenv("CLOUD_API_URL", "http://host.docker.internal:8080/api/v1")
 
-def _hash_password(password: str, salt: Optional[str] = None) -> tuple[str, str]:
-    """Generate salted sha256 hash."""
-    if not salt:
-        salt = secrets.token_hex(16)
-    hashed = hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
-    return hashed, salt
+def _call_cloud_api(endpoint: str, method: str = "GET", data: Optional[Dict[str, Any]] = None, token: Optional[str] = None) -> Dict[str, Any]:
+    url = f"{CLOUD_API_URL}{endpoint}"
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "Minenager-Desktop/1.0"
+    }
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
 
-def _verify_password(password: str, hashed: str, salt: str) -> bool:
-    """Verify password against stored salt and hash."""
-    test_hash, _ = _hash_password(password, salt)
-    return secrets.compare_digest(test_hash, hashed)
+    body = json.dumps(data).encode("utf-8") if data else None
+    req = urllib.request.Request(url, data=body, headers=headers, method=method)
 
-def _load_accounts() -> Dict[str, Any]:
-    if not ACCOUNTS_FILE.exists():
-        return {}
     try:
-        with open(ACCOUNTS_FILE, "r") as f:
-            return json.load(f)
-    except Exception:
-        return {}
-
-def _save_accounts(accounts: Dict[str, Any]):
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    with open(ACCOUNTS_FILE, "w") as f:
-        json.dump(accounts, f, indent=2)
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        error_detail = "Request failed"
+        try:
+            err_body = json.loads(e.read().decode("utf-8"))
+            error_detail = err_body.get("detail", str(e))
+        except Exception:
+            pass
+        raise ValueError(error_detail)
+    except Exception as e:
+        raise ValueError(f"Unable to connect to Minenager Cloud ({str(e)})")
 
 def register_account(username: str, email: str, password: str) -> Dict[str, Any]:
-    """Register a new local account and create a session."""
-    username = username.strip().lower()
-    email = email.strip().lower()
-    accounts = _load_accounts()
-
-    if username in accounts:
-        raise ValueError("Username is already taken.")
-    
-    for _, acc in accounts.items():
-        if acc.get("email") == email:
-            raise ValueError("Email is already registered.")
-
-    hashed, salt = _hash_password(password)
-    accounts[username] = {
-        "username": username,
-        "email": email,
-        "password_hash": hashed,
-        "salt": salt,
-        "tier": "free",
-        "created_at": datetime.utcnow().isoformat()
-    }
-    _save_accounts(accounts)
-
-    return _create_session(username, accounts[username])
+    """Register account on Central Cloud API and save returned session."""
+    res = _call_cloud_api(
+        endpoint="/auth/register",
+        method="POST",
+        data={
+            "username": username,
+            "email": email,
+            "password": password
+        }
+    )
+    user_info = res.get("user", {})
+    return _save_cloud_session(
+        token=res.get("access_token"),
+        user_info=user_info
+    )
 
 def authenticate_account(identifier: str, password: str) -> Dict[str, Any]:
-    """Authenticate via username or email and return session."""
-    identifier = identifier.strip().lower()
-    accounts = _load_accounts()
+    """Authenticate with Cloud API and save returned session."""
+    res = _call_cloud_api(
+        endpoint="/auth/login",
+        method="POST",
+        data={
+            "username_or_email": identifier,
+            "password": password
+        }
+    )
+    user_info = res.get("user", {})
+    return _save_cloud_session(
+        token=res.get("access_token"),
+        user_info=user_info
+    )
 
-    target_user = None
-    target_username = None
-
-    if identifier in accounts:
-        target_user = accounts[identifier]
-        target_username = identifier
-    else:
-        for u, acc in accounts.items():
-            if acc.get("email") == identifier:
-                target_user = acc
-                target_username = u
-                break
-
-    if not target_user:
-        raise ValueError("Account not found.")
-
-    if not _verify_password(password, target_user.get("password_hash", ""), target_user.get("salt", "")):
-        raise ValueError("Invalid password.")
-
-    return _create_session(target_username, target_user)
-
-def _create_session(username: str, account_data: Dict[str, Any]) -> Dict[str, Any]:
+def _save_cloud_session(token: str, user_info: Dict[str, Any]) -> Dict[str, Any]:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+    username = user_info.get("username", "user")
     session_data = {
         "logged_in": True,
+        "token": token,
+        "user_id": str(user_info.get("id")),
         "username": username,
-        "email": account_data.get("email", ""),
-        "tier": account_data.get("tier", "free"),
+        "email": user_info.get("email"),
+        "tier": user_info.get("tier", "free"),
         "subdomain": f"{username}-smp",
-        "token": secrets.token_hex(24),
         "logged_in_at": datetime.utcnow().isoformat()
     }
     with open(SESSION_FILE, "w") as f:
         json.dump(session_data, f, indent=2)
 
     return get_account_status()
+
 
 def activate_license(license_key: str) -> Dict[str, Any]:
     """Activate a Minenager Pro license key for the currently logged-in account."""
