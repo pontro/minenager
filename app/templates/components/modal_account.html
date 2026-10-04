@@ -146,22 +146,32 @@
                 </div>
 
                 <!-- Pro Activation Card (For Free Users) -->
-                <div id="proLicenseCard" class="license-box" style="display: flex; flex-direction: column; gap: 0.6rem;">
+                <div id="proLicenseCard" class="license-box" style="display: flex; flex-direction: column; gap: 0.8rem;">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem;">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2">
+                        <span style="font-size: 0.88rem; font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 0.4rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2">
                                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                             </svg>
-                            Activate Minenager Pro
+                            Upgrade to Minenager Pro
                         </span>
-                        <span style="font-size: 0.72rem; color: #fbbf24; font-weight: 600;">Optional</span>
+                        <span style="font-size: 0.75rem; color: #34d399; font-weight: 700; background: rgba(52, 211, 153, 0.15); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(52, 211, 153, 0.3);">$2.50 / mo</span>
                     </div>
-                    <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.35;">
-                        Purchased Minenager Pro? Enter your license key to unlock Discord Bot remote control and automatic game tunnels.
+                    <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
+                        Unlock zero-portforward game tunnels with custom subdomains (e.g. <code>yourname.minenager.net</code>) and Discord Bot remote controls.
                     </p>
-                    <div style="display: flex; gap: 0.5rem; margin-top: 0.2rem;">
-                        <input type="text" id="licenseKeyInput" class="form-input" placeholder="MPRO-XXXX-XXXX-XXXX" style="flex: 1; font-family: monospace; font-size: 0.82rem;">
-                        <button type="button" id="btnActivateLicense" class="btn btn-secondary" style="font-size: 0.8rem; font-weight: 600;">Activate</button>
+
+                    <!-- Stripe Checkout Launch Button -->
+                    <button type="button" id="btnOpenStripeCheckout" class="btn btn-primary" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border: none; font-weight: 700; font-size: 0.85rem; padding: 0.55rem 1rem;">
+                        ⚡ Subscribe with Card (Stripe)
+                    </button>
+
+                    <!-- Embedded Stripe Dahlia Checkout Form Container -->
+                    <div id="stripeCheckoutContainer" style="display: none; flex-direction: column; gap: 0.75rem; padding: 0.75rem; background: #09090b; border: 1px solid #27272a; border-radius: 6px; margin-top: 0.2rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span style="font-size: 0.78rem; font-weight: 600; color: var(--text-secondary);">Secure Checkout (Stripe)</span>
+                            <button type="button" id="btnCloseStripeCheckout" style="background: none; border: none; color: #a1a1aa; cursor: pointer; font-size: 0.75rem;">Cancel</button>
+                        </div>
+                        <div id="checkout-form"></div>
                     </div>
                 </div>
 

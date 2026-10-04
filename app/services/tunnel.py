@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 from typing import Dict, Any, Optional
 from app.services import license as license_service
+from app.services import players as players_service
 
 FRPC_BINARY = Path("/code/app/bin/frpc")
 CONFIG_DIR = Path("/data/minecraft")
@@ -26,11 +27,15 @@ class TunnelManager:
         self.process: Optional[subprocess.Popen] = None
         self.is_running: bool = False
         self.public_address: Optional[str] = None
+        self.vanilla_address: Optional[str] = None
         self.subdomain: Optional[str] = None
         self.public_port: Optional[int] = None
+        self.tunnel_token: Optional[str] = None
         self.last_error: Optional[str] = None
         self.lock = threading.Lock()
         self._log_thread: Optional[threading.Thread] = None
+        self._heartbeat_thread: Optional[threading.Thread] = None
+        self._stop_heartbeat = threading.Event()
 
     def get_status(self) -> Dict[str, Any]:
         """Returns the current status of the tunnel agent."""
@@ -44,10 +49,32 @@ class TunnelManager:
             return {
                 "active": self.is_running,
                 "public_address": self.public_address if self.is_running else None,
+                "vanilla_address": self.vanilla_address if self.is_running else None,
                 "subdomain": self.subdomain,
                 "public_port": self.public_port,
                 "error": self.last_error
             }
+
+    def _heartbeat_worker(self):
+        """Periodically reports tunnel health and online players back to the Cloud API."""
+        while not self._stop_heartbeat.wait(timeout=15):
+            if not self.is_running or not self.tunnel_token:
+                continue
+
+            try:
+                # Count current online players
+                current_players = len(players_service.get_online_players())
+            except Exception:
+                current_players = 0
+
+            try:
+                license_service.send_tunnel_heartbeat(
+                    tunnel_token=self.tunnel_token,
+                    is_online=self.is_running,
+                    peak_players=current_players
+                )
+            except Exception as e:
+                print(f"[Minenager Tunnel] Heartbeat error: {e}")
 
     def start(self, local_port: int = 25565) -> Dict[str, Any]:
         """Starts the reverse tunnel if user is Pro and tunnel config is available."""
@@ -76,6 +103,7 @@ class TunnelManager:
             relay_token = tunnel_cfg.get("relay_auth_token", "")
             remote_port = tunnel_cfg.get("public_port")
             subdomain = tunnel_cfg.get("subdomain", "server")
+            secret_token = tunnel_cfg.get("tunnel_secret_token", "")
             proxy_name = f"mc-{subdomain}"
 
             if relay_host in ["127.0.0.1", "localhost"]:
@@ -111,7 +139,9 @@ remotePort = {remote_port}
                 self.is_running = True
                 self.subdomain = subdomain
                 self.public_port = remote_port
+                self.tunnel_token = secret_token
                 self.public_address = tunnel_cfg.get("public_address", f"{subdomain}:{remote_port}")
+                self.vanilla_address = tunnel_cfg.get("vanilla_address", f"{subdomain}.minenager.net")
 
                 def _monitor_logs():
                     try:
@@ -131,6 +161,21 @@ remotePort = {remote_port}
                 self._log_thread = threading.Thread(target=_monitor_logs, daemon=True)
                 self._log_thread.start()
 
+                # Start heartbeat worker thread
+                self._stop_heartbeat.clear()
+                self._heartbeat_thread = threading.Thread(target=self._heartbeat_worker, daemon=True)
+                self._heartbeat_thread.start()
+
+                # Immediate heartbeat to mark tunnel online
+                try:
+                    license_service.send_tunnel_heartbeat(
+                        tunnel_token=self.tunnel_token,
+                        is_online=True,
+                        peak_players=0
+                    )
+                except Exception:
+                    pass
+
                 print(f"[Minenager Tunnel] Started reverse tunnel: {self.public_address} -> 127.0.0.1:{local_port}")
                 return {
                     "success": True,
@@ -148,6 +193,20 @@ remotePort = {remote_port}
     def stop(self) -> Dict[str, Any]:
         """Stops the reverse tunnel process cleanly."""
         with self.lock:
+            # Stop heartbeat worker
+            self._stop_heartbeat.set()
+
+            # Send final heartbeat marking offline
+            if self.tunnel_token:
+                try:
+                    license_service.send_tunnel_heartbeat(
+                        tunnel_token=self.tunnel_token,
+                        is_online=False,
+                        peak_players=0
+                    )
+                except Exception:
+                    pass
+
             if not self.process or self.process.poll() is not None:
                 self.is_running = False
                 self.process = None

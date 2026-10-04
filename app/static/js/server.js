@@ -27,14 +27,27 @@ export function initServerManager() {
     const dashboardMcVersion = document.getElementById('dashboardMcVersion');
     const dashboardLoader = document.getElementById('dashboardLoader');
     const dashboardPublicIp = document.getElementById('dashboardPublicIp');
+    const dashboardVanillaIp = document.getElementById('dashboardVanillaIp');
     const tunnelStatusBadge = document.getElementById('tunnelStatusBadge');
     const btnCopyPublicIp = document.getElementById('btnCopyPublicIp');
+    const btnCopyVanillaIp = document.getElementById('btnCopyVanillaIp');
+
+    btnCopyVanillaIp?.addEventListener('click', () => {
+        const text = dashboardVanillaIp?.textContent?.trim();
+        if (text && text !== 'Offline' && text !== 'Upgrade to Pro') {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Vanilla domain copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy address');
+            });
+        }
+    });
 
     btnCopyPublicIp?.addEventListener('click', () => {
         const text = dashboardPublicIp?.textContent?.trim();
         if (text && text !== 'Offline' && text !== 'Upgrade to Pro') {
             navigator.clipboard.writeText(text).then(() => {
-                showToast('Public address copied to clipboard!');
+                showToast('Direct address copied to clipboard!');
             }).catch(() => {
                 showToast('Failed to copy address');
             });
@@ -70,20 +83,25 @@ export function initServerManager() {
         }
 
         // Tunnel info update
-        if (dashboardPublicIp && tunnelStatusBadge) {
+        if (tunnelStatusBadge) {
             if (info && info.tunnel && info.tunnel.active && info.tunnel.public_address) {
-                dashboardPublicIp.textContent = info.tunnel.public_address;
+                if (dashboardVanillaIp) dashboardVanillaIp.textContent = info.tunnel.vanilla_address || 'eloi.minenager.net';
+                if (dashboardPublicIp) dashboardPublicIp.textContent = info.tunnel.public_address;
                 tunnelStatusBadge.textContent = 'Online';
                 tunnelStatusBadge.style.background = '#065f46';
                 tunnelStatusBadge.style.color = '#34d399';
             } else if (info && info.tunnel && info.tunnel.error) {
-                dashboardPublicIp.textContent = 'Error';
-                dashboardPublicIp.title = info.tunnel.error;
+                if (dashboardVanillaIp) dashboardVanillaIp.textContent = 'Error';
+                if (dashboardPublicIp) {
+                    dashboardPublicIp.textContent = 'Error';
+                    dashboardPublicIp.title = info.tunnel.error;
+                }
                 tunnelStatusBadge.textContent = 'Error';
                 tunnelStatusBadge.style.background = '#7f1d1d';
                 tunnelStatusBadge.style.color = '#f87171';
             } else {
-                dashboardPublicIp.textContent = 'Offline';
+                if (dashboardVanillaIp) dashboardVanillaIp.textContent = 'Offline';
+                if (dashboardPublicIp) dashboardPublicIp.textContent = 'Offline';
                 tunnelStatusBadge.textContent = 'Inactive';
                 tunnelStatusBadge.style.background = '#27272a';
                 tunnelStatusBadge.style.color = '#a1a1aa';

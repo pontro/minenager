@@ -14,9 +14,6 @@ class RegisterRequest(BaseModel):
     email: str
     password: str
 
-class LicenseActivationRequest(BaseModel):
-    license_key: str
-
 @router.get("/status")
 async def get_status():
     return license_service.get_account_status()
@@ -53,17 +50,21 @@ async def register(payload: RegisterRequest):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.post("/license/activate")
-async def activate_license(payload: LicenseActivationRequest):
-    if not payload.license_key:
-        raise HTTPException(status_code=400, detail="License key is required.")
-    try:
-        res = license_service.activate_license(payload.license_key)
-        return res
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
 @router.post("/logout")
 async def logout():
     return license_service.clear_account_session()
+
+@router.get("/billing/config")
+async def get_billing_config():
+    try:
+        return license_service.get_billing_config()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/billing/create-checkout-session")
+async def create_checkout_session():
+    try:
+        return license_service.create_stripe_checkout_session()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 

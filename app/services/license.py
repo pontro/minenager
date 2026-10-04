@@ -88,37 +88,8 @@ def _save_cloud_session(token: str, user_info: Dict[str, Any]) -> Dict[str, Any]
     return get_account_status()
 
 
-def activate_license(license_key: str) -> Dict[str, Any]:
-    """Activate a Minenager Pro license key for the currently logged-in account."""
-    status = get_account_status()
-    if not status.get("logged_in"):
-        raise ValueError("You must be logged in to activate a license.")
-
-    key = license_key.strip().upper()
-    if not key or len(key) < 8:
-        raise ValueError("Invalid license key format.")
-
-    # Upgrade the stored account
-    accounts = _load_accounts()
-    username = status.get("username")
-    if username in accounts:
-        accounts[username]["tier"] = "pro"
-        accounts[username]["license_key"] = key
-        accounts[username]["pro_activated_at"] = datetime.utcnow().isoformat()
-        _save_accounts(accounts)
-
-    # Update session
-    if SESSION_FILE.exists():
-        with open(SESSION_FILE, "r") as f:
-            session = json.load(f)
-        session["tier"] = "pro"
-        with open(SESSION_FILE, "w") as f:
-            json.dump(session, f, indent=2)
-
-    return get_account_status()
-
 def get_account_status() -> Dict[str, Any]:
-    """Retrieve the current account and license status."""
+    """Retrieve the current account status."""
     if not SESSION_FILE.exists():
         return {
             "logged_in": False,
@@ -174,4 +145,39 @@ def get_cloud_tunnel_config() -> Optional[Dict[str, Any]]:
     except Exception as e:
         print(f"[Minenager] Failed to fetch tunnel configuration: {e}")
         return None
+
+def send_tunnel_heartbeat(tunnel_token: str, is_online: bool, peak_players: int = 0, bytes_in: int = 0, bytes_out: int = 0) -> bool:
+    """Send periodic heartbeat & traffic stats for this tunnel to Minenager Cloud."""
+    if not tunnel_token:
+        return False
+    try:
+        _call_cloud_api(
+            endpoint=f"/tunnels/status/{tunnel_token}",
+            method="POST",
+            data={
+                "is_online": is_online,
+                "peak_players": peak_players,
+                "bytes_in": bytes_in,
+                "bytes_out": bytes_out
+            }
+        )
+        return True
+    except Exception as e:
+        print(f"[Minenager Tunnel Heartbeat] Error reporting heartbeat: {e}")
+        return False
+
+def get_billing_config() -> Dict[str, Any]:
+    """Retrieve Stripe publishable key from Cloud API."""
+    return _call_cloud_api(endpoint="/billing/config", method="GET")
+
+def create_stripe_checkout_session() -> Dict[str, Any]:
+    """Call Cloud API to generate an embedded Stripe Checkout Session."""
+    status = get_account_status()
+    if not status.get("logged_in") or not status.get("token"):
+        raise ValueError("You must be logged in to subscribe to Minenager Pro.")
+    return _call_cloud_api(
+        endpoint="/billing/create-checkout-session",
+        method="POST",
+        token=status["token"]
+    )
 
