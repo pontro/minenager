@@ -1,4 +1,4 @@
-import { initServerManager } from './js/server.js?v=7';
+import { initServerManager } from './js/server.js?v=8';
 import { initInstaller } from './js/installer.js?v=7';
 import { initModsManager } from './js/mods.js?v=7';
 import { initMrpackUploader } from './js/mrpack.js?v=7';

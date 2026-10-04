@@ -164,3 +164,14 @@ def clear_account_session() -> Dict[str, Any]:
             pass
     return get_account_status()
 
+def get_cloud_tunnel_config() -> Optional[Dict[str, Any]]:
+    """Retrieve allocated tunnel settings from Cloud API for current authenticated Pro user."""
+    status = get_account_status()
+    if not status.get("logged_in") or not status.get("token"):
+        return None
+    try:
+        return _call_cloud_api(endpoint="/tunnels/config", method="GET", token=status["token"])
+    except Exception as e:
+        print(f"[Minenager] Failed to fetch tunnel configuration: {e}")
+        return None
+

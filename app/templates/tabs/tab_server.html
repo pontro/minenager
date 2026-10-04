@@ -44,8 +44,22 @@
                 <span class="info-value" id="dashboardPlayers">0 / {{ server.max_players }}</span>
             </div>
             <div class="info-box">
-                <span class="info-label">Server Address</span>
+                <span class="info-label">Local Address</span>
                 <span class="info-value" style="font-size: 0.95rem;">localhost:{{ server.port }}</span>
+            </div>
+            <div class="info-box" id="tunnelAddressBox">
+                <span class="info-label" style="display: flex; align-items: center; justify-content: space-between;">
+                    <span>Public Relay IP</span>
+                    <span id="tunnelStatusBadge" class="status-badge" style="font-size: 0.65rem; padding: 0.1rem 0.35rem; background: #27272a; color: #a1a1aa;">Inactive</span>
+                </span>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.2rem;">
+                    <span class="info-value" id="dashboardPublicIp" style="font-size: 0.9rem; font-family: var(--font-mono, monospace); color: var(--accent-color, #38bdf8); word-break: break-all;">
+                        Offline
+                    </span>
+                    <button id="btnCopyPublicIp" class="btn" style="padding: 0.2rem 0.5rem; font-size: 0.75rem; background: #27272a; color: #e4e4e7; border: 1px solid #3f3f46; border-radius: 4px; cursor: pointer;" title="Copy Public Address">
+                        Copy
+                    </button>
+                </div>
             </div>
         </div>
     </section>

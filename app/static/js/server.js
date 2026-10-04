@@ -26,6 +26,20 @@ export function initServerManager() {
     const dashboardPackName = document.getElementById('dashboardPackName');
     const dashboardMcVersion = document.getElementById('dashboardMcVersion');
     const dashboardLoader = document.getElementById('dashboardLoader');
+    const dashboardPublicIp = document.getElementById('dashboardPublicIp');
+    const tunnelStatusBadge = document.getElementById('tunnelStatusBadge');
+    const btnCopyPublicIp = document.getElementById('btnCopyPublicIp');
+
+    btnCopyPublicIp?.addEventListener('click', () => {
+        const text = dashboardPublicIp?.textContent?.trim();
+        if (text && text !== 'Offline' && text !== 'Upgrade to Pro') {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Public address copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy address');
+            });
+        }
+    });
 
     // Upgraded Console Controls
     const consoleSearchInput = document.getElementById('consoleSearchInput');
@@ -53,6 +67,27 @@ export function initServerManager() {
             if (dashboardMcVersion) dashboardMcVersion.textContent = info.version;
             if (dashboardLoader) dashboardLoader.textContent = formattedLoader;
             if (dashboardPackName && info.pack_name) dashboardPackName.textContent = info.pack_name;
+        }
+
+        // Tunnel info update
+        if (dashboardPublicIp && tunnelStatusBadge) {
+            if (info && info.tunnel && info.tunnel.active && info.tunnel.public_address) {
+                dashboardPublicIp.textContent = info.tunnel.public_address;
+                tunnelStatusBadge.textContent = 'Online';
+                tunnelStatusBadge.style.background = '#065f46';
+                tunnelStatusBadge.style.color = '#34d399';
+            } else if (info && info.tunnel && info.tunnel.error) {
+                dashboardPublicIp.textContent = 'Error';
+                dashboardPublicIp.title = info.tunnel.error;
+                tunnelStatusBadge.textContent = 'Error';
+                tunnelStatusBadge.style.background = '#7f1d1d';
+                tunnelStatusBadge.style.color = '#f87171';
+            } else {
+                dashboardPublicIp.textContent = 'Offline';
+                tunnelStatusBadge.textContent = 'Inactive';
+                tunnelStatusBadge.style.background = '#27272a';
+                tunnelStatusBadge.style.color = '#a1a1aa';
+            }
         }
 
         if (mobileStatusBadge) {
@@ -141,8 +176,8 @@ export function initServerManager() {
         }
     }
 
-    // 30s background poller
-    setInterval(pollServerStatusAndLogs, 30000);
+    // Dynamic responsive poller (2.5s for live status and console updates)
+    let pollInterval = setInterval(pollServerStatusAndLogs, 2500);
     pollServerStatusAndLogs();
 
     async function handleStart() {

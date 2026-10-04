@@ -101,6 +101,12 @@ class MinecraftServerManager:
                 self.start_time = None
                 self._append_log(f"[Minenager] Minecraft server process has stopped (exit code: {exit_code}).")
 
+            try:
+                from app.services.tunnel import tunnel_manager
+                tunnel_manager.stop()
+            except Exception:
+                pass
+
             if was_running:
                 if was_stopping or exit_code == 0:
                     self._dispatch_discord_event("server_stop", uptime_seconds=uptime_seconds, exit_code=exit_code)
@@ -162,6 +168,13 @@ class MinecraftServerManager:
             # Start background reader thread
             self._reader_thread = threading.Thread(target=self._read_stdout, daemon=True)
             self._reader_thread.start()
+
+            # Start reverse tunnel if user is Pro
+            try:
+                from app.services.tunnel import tunnel_manager
+                tunnel_manager.start(local_port=25565)
+            except Exception as e:
+                self._append_log(f"[Minenager] Reverse tunnel start error: {e}")
 
             return {
                 "success": True,
@@ -255,6 +268,12 @@ class MinecraftServerManager:
         dash_settings = settings_service.get_dashboard_settings()
         from app.services import mrpack as mrpack_service
         instance = mrpack_service.get_current_instance()
+        tunnel_info = None
+        try:
+            from app.services.tunnel import tunnel_manager
+            tunnel_info = tunnel_manager.get_status()
+        except Exception:
+            pass
 
         return {
             "status": self.status,
@@ -263,7 +282,8 @@ class MinecraftServerManager:
             "ram_allocated": f"{dash_settings.get('ram_gb', 4)} GB",
             "loader": instance["loader"].capitalize() if instance and instance.get("loader") else "Fabric",
             "version": instance["minecraft_version"] if instance and instance.get("minecraft_version") else "1.20.1",
-            "pack_name": instance["name"] if instance and instance.get("name") else "Custom Server"
+            "pack_name": instance["name"] if instance and instance.get("name") else "Custom Server",
+            "tunnel": tunnel_info
         }
 
     def get_logs(self, start_index: int = 0) -> Dict[str, Any]:
