@@ -26,7 +26,7 @@
     left: var(--sidebar-width);
     right: 0;
     bottom: 0;
-    background: transparent;
+    background: rgba(9, 9, 11, 0.72);
     z-index: 90;
     display: none;
     align-items: center;
@@ -35,21 +35,20 @@
     box-sizing: border-box;
     text-align: center;
     pointer-events: auto;
-    transition: left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* When active and Discord tab is displayed, fade in overlay */
+/* When active and Discord tab is displayed, show overlay */
 .tab-pane.active .discord-pro-overlay.active {
     display: flex;
-    animation: fadeInDiscordOverlay 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fadeInDiscordOverlay 0.25s ease forwards;
 }
 
 @keyframes fadeInDiscordOverlay {
     0% {
-        background-color: rgba(9, 9, 11, 0);
+        opacity: 0;
     }
     100% {
-        background-color: rgba(9, 9, 11, 0.72);
+        opacity: 1;
     }
 }
 
