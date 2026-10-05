@@ -18,5 +18,23 @@ class Settings(BaseSettings):
     TUNNEL_RELAY_HOST: str = os.getenv("TUNNEL_RELAY_HOST", "127.0.0.1")
     TUNNEL_RELAY_CONTROL_PORT: int = int(os.getenv("TUNNEL_RELAY_CONTROL_PORT", "2333"))
     TUNNEL_RELAY_TOKEN: str = os.getenv("TUNNEL_RELAY_TOKEN", "minenager_tunnel_dev_secret_token_12345")
+    
+    # Custom Subdomain & Vanilla Port Resolution (SRV DNS)
+    TUNNEL_DOMAIN: str = os.getenv("TUNNEL_DOMAIN", "minenager.net")
+    CLOUDFLARE_API_TOKEN: str = os.getenv("CLOUDFLARE_API_TOKEN", "")
+    CLOUDFLARE_ZONE_ID: str = os.getenv("CLOUDFLARE_ZONE_ID", "")
+
+    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
+    
+    # Admin Dashboard Credentials
+    ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "admin")
+    ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD", "minenager_admin_password_2026!")
+
+    # Stripe Payment & Subscription Configuration
+    STRIPE_PUBLISHABLE_KEY: str = os.getenv("STRIPE_PUBLISHABLE_KEY", "")
+    STRIPE_SECRET_KEY: str = os.getenv("STRIPE_SECRET_KEY", "")
+    STRIPE_PRICE_ID: str = os.getenv("STRIPE_PRICE_ID", "price_1UMwklRg74MeE2fvhbObV3Lm")
+    STRIPE_WEBHOOK_SECRET: str = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+    DOMAIN: str = os.getenv("DOMAIN", "http://localhost:3000")
 
 settings = Settings()

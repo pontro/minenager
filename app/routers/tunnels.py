@@ -30,11 +30,24 @@ async def get_tunnel_config(
         raise HTTPException(status_code=404, detail="No tunnel allocated for user.")
 
     public_addr = f"{tunnel.subdomain}.{settings.TUNNEL_RELAY_HOST}:{tunnel.public_port}"
+    vanilla_addr = f"{tunnel.subdomain}.{settings.TUNNEL_DOMAIN}"
+
+    # Sync DNS SRV record for vanilla zero-port resolution
+    try:
+        from app.services.dns import dns_service
+        dns_service.sync_srv_record(
+            subdomain=tunnel.subdomain,
+            target_host=settings.TUNNEL_RELAY_HOST,
+            public_port=tunnel.public_port
+        )
+    except Exception as e:
+        print(f"[Minenager Cloud API] DNS sync notice: {e}")
 
     return TunnelResponse(
         id=tunnel.id,
         subdomain=tunnel.subdomain,
         public_address=public_addr,
+        vanilla_address=vanilla_addr,
         public_port=tunnel.public_port,
         relay_server_host=settings.TUNNEL_RELAY_HOST,
         relay_server_port=settings.TUNNEL_RELAY_CONTROL_PORT,
@@ -58,14 +71,38 @@ async def update_tunnel_status(
         raise HTTPException(status_code=404, detail="Tunnel token invalid.")
 
     tunnel.is_online = payload.is_online
-    tunnel.last_heartbeat = datetime.utcnow()
+    now = datetime.utcnow()
+    tunnel.last_heartbeat = now
 
-    if payload.bytes_in or payload.bytes_out or payload.peak_players:
+    # Fetch latest recorded metric to avoid excessive database writes on 15s heartbeats
+    latest_metric_stmt = (
+        select(TunnelMetrics)
+        .where(TunnelMetrics.tunnel_id == tunnel.id)
+        .order_by(TunnelMetrics.recorded_at.desc())
+        .limit(1)
+    )
+    latest_metric_res = await db.execute(latest_metric_stmt)
+    latest_metric = latest_metric_res.scalars().first()
+
+    current_players = payload.peak_players or 0
+    should_record = False
+
+    if not latest_metric:
+        should_record = True
+    else:
+        # Record if player count changed or if 5 minutes elapsed since last metric sample
+        players_changed = latest_metric.peak_players != current_players
+        time_elapsed = (now - latest_metric.recorded_at.replace(tzinfo=None)).total_seconds() > 300
+        if players_changed or time_elapsed:
+            should_record = True
+
+    if should_record:
         metric = TunnelMetrics(
             tunnel_id=tunnel.id,
             bytes_in=payload.bytes_in or 0,
             bytes_out=payload.bytes_out or 0,
-            peak_players=payload.peak_players or 0
+            peak_players=current_players,
+            recorded_at=now
         )
         db.add(metric)
 

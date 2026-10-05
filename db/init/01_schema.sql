@@ -31,13 +31,12 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions (user_id);
 
--- 3. Subscriptions & Licenses Table
+-- 3. Subscriptions Table (Stripe Billing)
 CREATE TABLE IF NOT EXISTS subscriptions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     stripe_customer_id VARCHAR(100) UNIQUE,
     stripe_subscription_id VARCHAR(100) UNIQUE,
-    license_key VARCHAR(64) UNIQUE,
     status VARCHAR(32) NOT NULL DEFAULT 'active',
     plan_type VARCHAR(32) NOT NULL DEFAULT 'monthly',
     current_period_end TIMESTAMPTZ,

@@ -12,7 +12,6 @@ class Subscription(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     stripe_customer_id = Column(String(100), unique=True, nullable=True)
     stripe_subscription_id = Column(String(100), unique=True, nullable=True)
-    license_key = Column(String(64), unique=True, nullable=True)
     status = Column(String(32), default="active", nullable=False)
     plan_type = Column(String(32), default="monthly", nullable=False)
     current_period_end = Column(DateTime(timezone=True), nullable=True)

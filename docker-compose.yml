@@ -29,6 +29,8 @@ services:
       - JWT_SECRET=dev_jwt_secret_key_minenager_vps_32bytes_min!
       - JWT_ALGORITHM=HS256
       - JWT_EXPIRATION_MINUTES=43200
+    env_file:
+      - .env
     volumes:
       - ./app:/code/app
     depends_on:

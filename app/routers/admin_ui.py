@@ -1,19 +1,64 @@
-from fastapi import APIRouter, Depends, Form
+import secrets
+from typing import Optional
+from fastapi import APIRouter, Depends, Form, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from app.core.database import get_db
+from app.core.config import settings
 
 router = APIRouter(tags=["admin"])
+security = HTTPBasic(auto_error=False)
+
+def authenticate_admin(credentials: Optional[HTTPBasicCredentials] = Depends(security)):
+    if settings.ENVIRONMENT == "development":
+        return "admin"
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Admin credentials required",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    correct_username = secrets.compare_digest(credentials.username, settings.ADMIN_USERNAME)
+    correct_password = secrets.compare_digest(credentials.password, settings.ADMIN_PASSWORD)
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect admin username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
 
 @router.get("/admin/db", response_class=HTMLResponse)
-async def view_database(db: AsyncSession = Depends(get_db)):
+async def view_database(
+    admin_user: str = Depends(authenticate_admin),
+    db: AsyncSession = Depends(get_db)
+):
     # Fetch all users including plain password
     users_res = await db.execute(text("SELECT id, username, email, COALESCE(plain_password, password_hash) AS password_display, tier, is_active, created_at FROM users ORDER BY created_at DESC;"))
     users = users_res.fetchall()
 
-    # Fetch all tunnels
-    tunnels_res = await db.execute(text("SELECT id, user_id, subdomain, public_port, is_online, last_heartbeat FROM tunnels ORDER BY created_at DESC;"))
+    # Fetch all tunnels joined with latest metrics
+    tunnels_res = await db.execute(text("""
+        SELECT 
+            t.id, 
+            t.user_id, 
+            t.subdomain, 
+            t.public_port, 
+            t.is_online, 
+            t.last_heartbeat,
+            u.username,
+            COALESCE(m.peak_players, 0) AS peak_players
+        FROM tunnels t
+        LEFT JOIN users u ON t.user_id = u.id
+        LEFT JOIN LATERAL (
+            SELECT peak_players FROM tunnel_metrics 
+            WHERE tunnel_id = t.id 
+            ORDER BY recorded_at DESC LIMIT 1
+        ) m ON true
+        ORDER BY t.created_at DESC;
+    """))
     tunnels = tunnels_res.fetchall()
 
     # Generate lightweight HTML
@@ -140,29 +185,19 @@ async def view_database(db: AsyncSession = Depends(get_db)):
                 background: #3f3f46;
             }}
             .btn-delete {{
-                background: rgba(239, 68, 68, 0.15);
-                border: 1px solid rgba(239, 68, 68, 0.4);
+                background: #450a0a;
                 color: #f87171;
-                padding: 0.25rem 0.55rem;
+                border: 1px solid #7f1d1d;
+                padding: 0.25rem 0.6rem;
                 border-radius: 4px;
                 cursor: pointer;
-                font-size: 0.75rem;
                 font-weight: 600;
-                transition: all 0.15s ease;
+                font-size: 0.75rem;
+                transition: background 0.15s;
             }}
             .btn-delete:hover {{
-                background: #ef4444;
-                color: #ffffff;
-            }}
-            .hash-snippet {{
-                font-family: monospace;
-                font-size: 0.72rem;
-                color: var(--muted);
-                max-width: 140px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                display: inline-block;
+                background: #7f1d1d;
+                color: #fff;
             }}
         </style>
     </head>
@@ -224,16 +259,17 @@ async def view_database(db: AsyncSession = Depends(get_db)):
         <!-- TUNNELS TABLE -->
         <div class="card">
             <div class="card-title">
-                <span>🌐 Table: tunnels</span>
+                <span>🌐 Table: tunnels (Live Relays & Metrics)</span>
             </div>
             <table>
                 <thead>
                     <tr>
-                        <th>Tunnel UUID</th>
-                        <th>User ID</th>
+                        <th>Owner</th>
                         <th>Subdomain</th>
+                        <th>Public Address</th>
                         <th>Relay Port</th>
-                        <th>Online</th>
+                        <th>Status</th>
+                        <th>Active Players</th>
                         <th>Last Heartbeat</th>
                     </tr>
                 </thead>
@@ -241,15 +277,16 @@ async def view_database(db: AsyncSession = Depends(get_db)):
     """
 
     for t in tunnels:
-        online_str = '<span style="color:#34d399">ONLINE</span>' if t.is_online else '<span style="color:#71717a">OFFLINE</span>'
+        online_str = '<span style="color:#34d399; font-weight:700;">● ONLINE</span>' if t.is_online else '<span style="color:#71717a">○ OFFLINE</span>'
         html += f"""
                     <tr>
-                        <td style="font-family: monospace; color: var(--muted);">{t.id}</td>
-                        <td style="font-family: monospace; color: var(--muted);">{t.user_id}</td>
-                        <td><strong>{t.subdomain}.minenager.net</strong></td>
+                        <td><strong>{t.username or 'Unknown'}</strong></td>
+                        <td><code>{t.subdomain}</code></td>
+                        <td style="color: var(--primary);"><strong>{t.subdomain}.minenager.net:{t.public_port}</strong></td>
                         <td><code>{t.public_port}</code></td>
                         <td>{online_str}</td>
-                        <td style="color: var(--muted);">{t.last_heartbeat or 'Never'}</td>
+                        <td><span class="pill pill-pro">{t.peak_players}</span></td>
+                        <td style="color: var(--muted);">{t.last_heartbeat.strftime('%Y-%m-%d %H:%M:%S') if t.last_heartbeat else 'Never'}</td>
                     </tr>
         """
 
@@ -263,8 +300,11 @@ async def view_database(db: AsyncSession = Depends(get_db)):
     return html
 
 @router.post("/admin/db/user/delete")
-async def delete_user(user_id: str = Form(...), db: AsyncSession = Depends(get_db)):
+async def delete_user(
+    user_id: str = Form(...),
+    admin_user: str = Depends(authenticate_admin),
+    db: AsyncSession = Depends(get_db)
+):
     await db.execute(text("DELETE FROM users WHERE id = :uid;"), {"uid": user_id})
     await db.commit()
     return RedirectResponse(url="/admin/db", status_code=303)
-

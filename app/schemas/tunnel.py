@@ -7,6 +7,7 @@ class TunnelResponse(BaseModel):
     id: UUID
     subdomain: str
     public_address: str
+    vanilla_address: Optional[str] = None
     public_port: int
     relay_server_host: str
     relay_server_port: int

@@ -27,3 +27,8 @@ Thumbs.db
 
 # Environment variables
 .env
+
+# Relay binaries
+relay/bin/
+relay/bin/*
+
