@@ -1,13 +1,9 @@
 services:
-  dashboard:
+  portal:
     build: .
+    container_name: minenager-landing-portal
     restart: unless-stopped
     ports:
-      - "3000:3000"
-      - "25565:25565"
-    volumes:
-      - ./data:/data
-      - ./app:/code/app
-      - .:/repo
+      - "3001:3001"
     environment:
-      - PYTHONUNBUFFERED=1
+      - NEXT_PUBLIC_CLOUD_API_URL=http://localhost:8080/api/v1

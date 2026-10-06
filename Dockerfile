@@ -1,22 +1,18 @@
-FROM python:3.11-slim
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-# Install standard Java JRE headless and curl
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    default-jre-headless \
-    curl \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3001
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
 
-WORKDIR /code
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY app/ ./app/
-
-# Expose Dashboard web port (3000) and Minecraft server port (25565)
-EXPOSE 3000
-EXPOSE 25565
-
-# Run FastAPI dashboard on port 3000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "3000", "--reload"]
+EXPOSE 3001
+CMD ["npm", "run", "start", "--", "-p", "3001"]
