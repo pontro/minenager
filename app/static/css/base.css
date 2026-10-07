@@ -11,7 +11,8 @@ body {
     background-color: var(--bg-primary);
     background-image: 
         radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.12) 0%, rgba(6, 9, 19, 0.85) 50%, rgba(6, 9, 19, 0.96) 100%),
-        url('/static/img/hero-bg.png');
+        url('/static/img/hero-bg.jpg'),
+        url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDABQODxIPDRQSERIXFhQYHzMhHxwcHz8tLyUzSkFOTUlBSEZSXHZkUldvWEZIZoxob3p9hIWET2ORm4+AmnaBhH//2wBDARYXFx8bHzwhITx/VEhUf39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f39/f3//wAARCAAbAEADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDPgu2UgoeavJqTZ5UY9qwQ2whgakW4w1bqVjNpM6I3IYZBBFRtLn0rKhucHH8JqeSTau4HI9q2T0uZNWZZaX6VE0v0qp9pVupNRvcYBwee1HOh2LbSVDM/A+tVftJ4pPOLcVEppqxSjZlUtSlqbjig1iWSo9W4Zsjax61RWn9q0jJolq5LMuxsjoah3VaxuiGeeKqGiWgIQnFKrYI+tHamjrUlH//Z');
     background-repeat: no-repeat;
     background-position: top center;
     background-size: cover;
