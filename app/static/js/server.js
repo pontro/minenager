@@ -1,7 +1,7 @@
 // --- Live Server Process & Upgraded Console Management ---
 import { escapeHtml, showToast } from './utils.js';
 
-let logStartIndex = 0;
+let lastSeenLogId = 0;
 let commandHistory = [];
 let historyIndex = -1;
 let rawLogs = [];
@@ -168,13 +168,18 @@ export function initServerManager() {
     }
 
     function appendNewLogs(newLogs) {
+        if (!newLogs || newLogs.length === 0) return;
+        
         newLogs.forEach(l => {
             rawLogs.push(l);
+            if (l.id && l.id > lastSeenLogId) {
+                lastSeenLogId = l.id;
+            }
         });
 
-        // Limit memory buffer to 300 entries
-        if (rawLogs.length > 300) {
-            rawLogs = rawLogs.slice(rawLogs.length - 300);
+        // Retain last 500 lines in UI memory buffer without truncating stream cursor
+        if (rawLogs.length > 500) {
+            rawLogs = rawLogs.slice(rawLogs.length - 500);
         }
 
         renderAllLogs();
@@ -188,14 +193,20 @@ export function initServerManager() {
             const st = statusData.status || 'offline';
             updateStatusUI(st, statusData);
 
-            // 2. Fetch incremental live logs
-            const logsRes = await fetch(`/api/server/logs?start_index=${logStartIndex}`);
+            // 2. Fetch incremental live logs using last seen log ID
+            const url = lastSeenLogId > 0 
+                ? `/api/server/logs?after_id=${lastSeenLogId}` 
+                : `/api/server/logs?start_index=0`;
+
+            const logsRes = await fetch(url);
             const logsData = await logsRes.json();
             const newLogs = logsData.logs || [];
             
             if (newLogs.length > 0) {
                 appendNewLogs(newLogs);
-                logStartIndex = logsData.total_count || (logStartIndex + newLogs.length);
+            }
+            if (logsData.latest_id && logsData.latest_id > lastSeenLogId) {
+                lastSeenLogId = logsData.latest_id;
             }
         } catch (err) {
             console.error('Error polling server status/logs:', err);
@@ -324,5 +335,16 @@ export function initServerManager() {
         rawLogs = [];
         renderAllLogs();
         showToast('Console buffer cleared');
+    });
+
+    // Toggle console expanded height
+    const btnToggleConsoleHeight = document.getElementById('btnToggleConsoleHeight');
+    btnToggleConsoleHeight?.addEventListener('click', () => {
+        if (!consoleOutput) return;
+        const isExpanded = consoleOutput.classList.toggle('expanded');
+        btnToggleConsoleHeight.textContent = isExpanded ? 'Collapse' : 'Expand';
+        if (chkAutoScroll?.checked) {
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
     });
 }

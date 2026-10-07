@@ -1,74 +1,85 @@
 <!-- Tab 1: Server Overview & Upgraded Console -->
 <div id="tab-server" class="tab-pane active">
-    <!-- Hero Server Overview Card -->
-    <section class="server-card">
-        <div class="server-header">
-            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-                <h1 class="server-title" id="dashboardPackName" style="font-size: 1.3rem;">{{ server.pack_name }}</h1>
-                <div id="statusBadge" class="status-badge {{ server.status }}">
+    <!-- Unified Server Control HUD & Quick Actions -->
+    <section class="server-card" style="padding: 1.5rem;">
+        <div class="server-header" style="margin-bottom: 1.25rem; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <div>
+                    <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">Server Instance</span>
+                    <h1 class="server-title" id="dashboardPackName" style="font-size: 1.4rem; margin-top: 0.15rem; font-weight: 700;">{{ server.pack_name }}</h1>
+                </div>
+                <div id="statusBadge" class="status-badge {{ server.status }}" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">
                     <span class="status-dot"></span>
                     <span id="statusText">{{ server.status | capitalize }}</span>
                 </div>
             </div>
-            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                <button id="btnStart" class="btn btn-start" {% if server.status != 'offline' %}disabled{% endif %}>
-                    Start
+
+            <!-- Prominent Power Control Actions -->
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <button id="btnStart" class="btn btn-start" style="padding: 0.6rem 1.25rem; font-size: 0.95rem; font-weight: 700;" {% if server.status != 'offline' %}disabled{% endif %}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    <span>Start Server</span>
                 </button>
-                <button id="btnRestart" class="btn btn-restart" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %}>
-                    Restart
+                <button id="btnRestart" class="btn btn-restart" style="padding: 0.6rem 1rem; font-size: 0.88rem;" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    <span>Restart</span>
                 </button>
-                <button id="btnStop" class="btn btn-stop" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %}>
-                    Stop
+                <button id="btnStop" class="btn btn-stop" style="padding: 0.6rem 1rem; font-size: 0.88rem;" {% if server.status == 'offline' or server.status == 'stopping' %}disabled{% endif %}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
+                    <span>Stop</span>
                 </button>
-                <button id="btnCreateBackup" class="btn btn-send" title="Broadcast warning, shutdown, backup, and restart">
-                    Backup
+                <button id="btnCreateBackup" class="btn btn-restart" title="Broadcast warning, shutdown, safe backup, and restart" style="padding: 0.6rem 0.9rem; font-size: 0.88rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    <span>Backup</span>
                 </button>
             </div>
         </div>
 
+        <!-- Metric & Shareable Connect Tiles Grid -->
         <div class="info-grid">
-            <div class="info-box">
-                <span class="info-label">Minecraft</span>
-                <span class="info-value" id="dashboardMcVersion">{{ server.version }}</span>
-            </div>
-            <div class="info-box">
-                <span class="info-label">Loader</span>
-                <span class="info-value" id="dashboardLoader">{{ server.loader }}</span>
-            </div>
-            <div class="info-box">
-                <span class="info-label">RAM Allocated</span>
-                <span class="info-value" id="dashboardRam">{{ server.ram }}</span>
-            </div>
-            <div class="info-box">
-                <span class="info-label">Online Players</span>
-                <span class="info-value" id="dashboardPlayers">0 / {{ server.max_players }}</span>
-            </div>
-            <div class="info-box" id="addressBox">
-                <span class="info-label" style="display: flex; align-items: center; justify-content: space-between;">
-                    <span>Address</span>
-                    <span id="tunnelStatusBadge" class="status-badge" style="font-size: 0.65rem; padding: 0.1rem 0.35rem; background: #27272a; color: #a1a1aa;">Local</span>
-                </span>
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-top: 0.25rem;">
-                    <span class="info-value" id="dashboardVanillaIp" style="font-size: 0.95rem; font-family: var(--font-mono, monospace); color: #38bdf8; font-weight: 700; word-break: break-all;">
+            <div class="info-box" id="addressBox" style="grid-column: span 2; background: rgba(6, 182, 212, 0.08); border-color: rgba(6, 182, 212, 0.3);">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span class="info-label" style="color: var(--color-accent);">Join Address (Share with Friends)</span>
+                    <span id="tunnelStatusBadge" class="status-badge" style="font-size: 0.68rem; padding: 0.15rem 0.45rem; background: #0B1120; color: #94a3b8; border: 1px solid rgba(255,255,255,0.08); font-family: var(--font-mono);">Local</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.35rem;">
+                    <span class="info-value" id="dashboardVanillaIp" style="font-size: 1.15rem; color: #ffffff; font-weight: 700; word-break: break-all;">
                         localhost:{{ server.port }}
                     </span>
-                    <button id="btnCopyVanillaIp" class="btn" style="padding: 0.2rem 0.5rem; font-size: 0.72rem; background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8; border-radius: 4px; cursor: pointer;" title="Copy Address">
-                        Copy
+                    <button id="btnCopyVanillaIp" class="btn" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; background: var(--color-primary); color: #000000; font-weight: 700; border: none; border-radius: 6px; cursor: pointer;" title="Copy to clipboard">
+                        Copy Address
                     </button>
                 </div>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Active Players</span>
+                <span class="info-value" id="dashboardPlayers" style="color: var(--color-accent);">0 / {{ server.max_players }}</span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Version &amp; Loader</span>
+                <span class="info-value" style="font-size: 0.95rem;">
+                    <span id="dashboardLoader">{{ server.loader }}</span> <span id="dashboardMcVersion">{{ server.version }}</span>
+                </span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Memory Allocated</span>
+                <span class="info-value" id="dashboardRam">{{ server.ram }}</span>
             </div>
         </div>
     </section>
 
     <!-- Upgraded Live Console Card (UX Enhancement 2) -->
     <section class="console-card">
-        <div class="console-header" style="margin-bottom: 0.5rem;">
+        <div class="console-header" style="margin-bottom: 0.5rem; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <h2 class="console-title" style="display: flex; align-items: center; gap: 0.4rem;">
                     <span>Live Console</span>
                 </h2>
-                <span id="consoleLineCountBadge" class="status-badge" style="background: #27272a; color: var(--text-secondary); font-size: 0.72rem;">0 lines</span>
+                <span id="consoleLineCountBadge" class="status-badge" style="background: rgba(11, 17, 32, 0.85); color: var(--text-secondary); font-size: 0.72rem; border: 1px solid var(--border-color);">0 lines</span>
             </div>
+            <button type="button" id="btnToggleConsoleHeight" class="btn btn-sm btn-restart" style="font-size: 0.75rem; padding: 0.2rem 0.55rem;" title="Toggle Console Height">
+                Expand
+            </button>
         </div>
 
         <!-- Console Toolbar: Search, Auto-Scroll, Clear -->

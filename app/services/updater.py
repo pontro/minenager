@@ -71,15 +71,17 @@ def get_current_version() -> Dict[str, Any]:
 def get_current_branch() -> str:
     """Get current active git branch."""
     code, out = _run_git_command(["rev-parse", "--abbrev-ref", "HEAD"])
-    return out if code == 0 else "main"
+    return out if (code == 0 and out) else "desktop-app"
 
 def check_for_updates() -> Dict[str, Any]:
     """Fetch remote repository and check if new commits are available."""
     repo_dir = _get_repo_dir()
     current = get_current_version()
-    branch = get_current_branch() or "main"
+    branch = get_current_branch()
+    if not branch or branch == "HEAD":
+        branch = "desktop-app"
 
-    # 1. Fetch remote origin for current branch
+    # 1. Fetch remote origin for desktop-app branch
     code, fetch_out = _run_git_command(["fetch", "origin", branch], cwd=repo_dir)
     if code != 0:
         return {
@@ -113,7 +115,9 @@ def check_for_updates() -> Dict[str, Any]:
 def perform_update() -> Dict[str, Any]:
     """Pull latest changes from origin for current branch and trigger restart."""
     repo_dir = _get_repo_dir()
-    branch = get_current_branch() or "main"
+    branch = get_current_branch()
+    if not branch or branch == "HEAD":
+        branch = "desktop-app"
 
     # 1. Execute git pull for current branch
     code, out = _run_git_command(["pull", "origin", branch], cwd=repo_dir)

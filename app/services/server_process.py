@@ -26,6 +26,7 @@ class MinecraftServerManager:
         self.process: Optional[subprocess.Popen] = None
         self.status: str = "offline"  # offline, starting, online, stopping
         self.logs: deque = deque(maxlen=2000)
+        self.log_counter: int = 0
         self.start_time: Optional[float] = None
         self.lock = threading.Lock()
         self._reader_thread: Optional[threading.Thread] = None
@@ -33,7 +34,11 @@ class MinecraftServerManager:
     def _append_log(self, text: str):
         line = text.rstrip("\r\n")
         if line:
+            with self.lock:
+                self.log_counter += 1
+                entry_id = self.log_counter
             self.logs.append({
+                "id": entry_id,
                 "timestamp": datetime.now().strftime("%H:%M:%S"),
                 "text": line
             })
@@ -286,14 +291,27 @@ class MinecraftServerManager:
             "tunnel": tunnel_info
         }
 
-    def get_logs(self, start_index: int = 0) -> Dict[str, Any]:
-        all_logs = list(self.logs)
+    def get_logs(self, start_index: int = 0, after_id: Optional[int] = None) -> Dict[str, Any]:
+        with self.lock:
+            all_logs = list(self.logs)
+            latest_id = self.log_counter
+            
+        if after_id is not None and after_id > 0:
+            new_logs = [entry for entry in all_logs if entry.get("id", 0) > after_id]
+            return {
+                "logs": new_logs,
+                "latest_id": latest_id,
+                "total_count": latest_id
+            }
+
+        # Fallback to start_index slice if after_id not passed
         total = len(all_logs)
         if start_index >= total:
-            return {"logs": [], "total_count": total}
+            return {"logs": [], "latest_id": latest_id, "total_count": latest_id}
         return {
             "logs": all_logs[start_index:],
-            "total_count": total
+            "latest_id": latest_id,
+            "total_count": latest_id
         }
 
 server_manager = MinecraftServerManager()

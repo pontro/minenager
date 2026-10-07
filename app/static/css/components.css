@@ -5,10 +5,12 @@
 /* Cards */
 .card, .server-card, .console-card, .settings-card, .chart-card {
     background-color: var(--bg-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.25rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    padding: 1.35rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     position: relative;
 }
 
@@ -97,12 +99,13 @@
 
 .btn:hover:not(:disabled) {
     background-color: var(--btn-action-hover);
-    border-color: #3f3f46;
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
 }
 
 .btn:disabled {
     background-color: var(--btn-disabled);
-    color: #52525b;
+    color: #475569;
     border-color: transparent;
     cursor: not-allowed;
     opacity: 0.6;
@@ -131,23 +134,25 @@
 }
 
 .btn-restart {
-    background-color: #27272a;
-    border-color: #3f3f46;
+    background-color: var(--btn-restart);
+    border-color: rgba(255, 255, 255, 0.12);
     color: var(--text-primary);
 }
 .btn-restart:hover:not(:disabled) {
-    background-color: #3f3f46;
-    border-color: #52525b;
+    background-color: var(--btn-restart-hover);
+    border-color: rgba(255, 255, 255, 0.22);
 }
 
 .btn-send, .btn-install {
     background-color: var(--color-primary);
-    border-color: var(--color-primary-hover);
-    color: #ffffff;
-    font-weight: 500;
+    border-color: var(--color-primary);
+    color: #000000;
+    font-weight: 700;
 }
 .btn-send:hover:not(:disabled), .btn-install:hover:not(:disabled) {
-    background-color: var(--color-primary-hover);
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #000000;
 }
 
 .btn-installed {
@@ -320,10 +325,14 @@ input:checked + .slider:before {
 
 /* Empty & Loading States */
 .empty-state, .loading-state {
-    padding: 2rem 1rem;
+    padding: 2.25rem 1.5rem;
     text-align: center;
     color: var(--text-muted);
     font-size: 0.88rem;
+    background: rgba(11, 17, 32, 0.4);
+    border: 1px dashed rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    margin: 0.25rem 0;
 }
 
 .spinner {
@@ -357,7 +366,7 @@ input:checked + .slider:before {
 
 .auth-tabs-nav {
     display: flex;
-    background: #18181b;
+    background: #0B1120;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 3px;
@@ -383,8 +392,9 @@ input:checked + .slider:before {
 }
 
 .auth-tab-btn.active {
-    background: #27272a;
+    background: rgba(6, 182, 212, 0.15);
     color: #ffffff;
+    border: 1px solid rgba(6, 182, 212, 0.3);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
@@ -409,6 +419,9 @@ input:checked + .slider:before {
     padding-right: 2.2rem;
     box-sizing: border-box;
     height: 38px;
+    background-color: #0B1120;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
 .btn-toggle-pw {
@@ -439,12 +452,19 @@ input:checked + .slider:before {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary-hover);
+    color: #000000;
+}
+
+.btn-auth-submit:hover:not(:disabled) {
+    background-color: var(--color-accent);
 }
 
 .btn-link-action {
     background: transparent;
     border: none;
-    color: #38bdf8;
+    color: var(--color-primary);
     font-weight: 600;
     font-size: 0.8rem;
     cursor: pointer;
@@ -454,7 +474,7 @@ input:checked + .slider:before {
 }
 
 .btn-link-action:hover {
-    color: #7dd3fc;
+    color: var(--color-accent);
 }
 
 .auth-alert-error {
@@ -472,26 +492,30 @@ input:checked + .slider:before {
 
 /* Badges */
 .badge-guest {
-    background: #18181b;
-    color: #a1a1aa;
-    border-color: #3f3f46;
+    background: rgba(30, 41, 59, 0.6);
+    color: #94a3b8;
+    border: 1px solid rgba(51, 65, 85, 0.8);
+    font-family: var(--font-mono);
 }
 
 .badge-free {
-    background: #27272a;
-    color: #e4e4e7;
-    border-color: #52525b;
+    background: rgba(6, 182, 212, 0.12);
+    color: #22d3ee;
+    border: 1px solid rgba(6, 182, 212, 0.35);
+    font-family: var(--font-mono);
 }
 
 .badge-pro {
-    background: #3b2a05;
+    background: rgba(245, 158, 11, 0.12);
     color: #fbbf24;
-    border-color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+    font-family: var(--font-mono);
 }
 
 /* Profile View */
 .profile-card {
-    background: var(--bg-primary);
+    background: #0B1120;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 0.9rem 1rem;
@@ -501,27 +525,27 @@ input:checked + .slider:before {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #3f3f46;
-    color: #ffffff;
+    background: rgba(6, 182, 212, 0.15);
+    color: var(--color-accent);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.95rem;
     font-weight: 700;
     flex-shrink: 0;
-    border: 2px solid #52525b;
+    border: 1px solid rgba(6, 182, 212, 0.3);
 }
 
 .license-box {
-    background: var(--bg-primary);
+    background: #0B1120;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 0.85rem 1rem;
 }
 
 .license-box-active {
-    background: rgba(217, 119, 6, 0.08);
-    border: 1px solid rgba(217, 119, 6, 0.3);
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.3);
     border-radius: 8px;
     padding: 0.85rem 1rem;
 }

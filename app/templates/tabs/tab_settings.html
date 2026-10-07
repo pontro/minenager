@@ -371,10 +371,10 @@
             <div>
                 <h2 class="card-title" style="font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
                     <span>Software &amp; Dashboard Updates</span>
-                    <span id="appVersionBadge" class="status-badge online" style="font-family: var(--font-mono); font-size: 0.75rem;">v{{ app_version.commit if app_version else 'main' }}</span>
+                    <span id="appVersionBadge" class="status-badge online" style="font-family: var(--font-mono); font-size: 0.75rem;">v0.4 ({{ app_version.commit if app_version else 'desktop-app' }})</span>
                 </h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
-                    1-Click Update: Fetch latest improvements and fixes directly from GitHub (<code>git pull origin main</code>) and gracefully reload Minenager without terminal access.
+                    1-Click Update: Fetch latest improvements and fixes directly from GitHub (<code>git pull origin desktop-app</code>) and gracefully reload Minenager without terminal access.
                 </p>
             </div>
             <div style="display: flex; gap: 0.5rem;">

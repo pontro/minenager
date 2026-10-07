@@ -2,27 +2,32 @@
    MINENAGER DESIGN SYSTEM - VARIABLES & TOKENS
    ========================================================================== */
 :root {
-    --bg-primary: #09090b;       /* Zinc 950 - Deepest background */
-    --bg-secondary: #121215;     /* Zinc 900 - Sidebar, navigation, bars */
-    --bg-card: #18181b;          /* Zinc 900/800 - Surfaces & cards */
-    --bg-card-hover: #222226;    /* Interactive hover surface */
-    --bg-input: #121215;         /* Form inputs & dropdowns */
-    --bg-console: #0b0b0e;       /* Monospace terminal console */
+    /* Atmospheric Obsidian Palette */
+    --bg-primary: #060913;       /* Obsidian Black - Ambient canvas */
+    --bg-secondary: #0B1120;     /* Midnight Navy - Sidebar, header, navigation */
+    --bg-card: rgba(15, 23, 42, 0.88); /* Higher contrast Slate Glass - Cards & panels */
+    --bg-card-solid: #0f172a;    /* Solid fallback for cards */
+    --bg-card-hover: rgba(30, 41, 59, 0.95); /* Hover card state */
+    --bg-input: #0B1120;         /* Form inputs & dropdowns */
+    --bg-console: #030712;       /* Monospace terminal console */
     
-    --border-color: #27272a;     /* Zinc 800 - Crisp 1px micro-border */
-    --border-subtle: #1f1f23;    /* Zinc 850 - Very subtle dividers */
-    --border-focus: #52525b;     /* Zinc 600 - Focus ring */
+    /* Crisp borders & dividers for high pop/resalto */
+    --border-color: rgba(255, 255, 255, 0.12); /* Brighter 1px border */
+    --border-subtle: rgba(255, 255, 255, 0.08); /* Subtle divider */
+    --border-focus: #06b6d4;     /* Electric cyan focus */
 
-    /* Typography */
-    --text-primary: #fafafa;     /* Zinc 50 - High contrast text */
-    --text-secondary: #a1a1aa;   /* Zinc 400 - Secondary text */
-    --text-muted: #71717a;       /* Zinc 500 - Muted captions/labels */
+    /* Typography (Slate Palette) */
+    --text-primary: #f8fafc;     /* Slate 50 - High contrast */
+    --text-secondary: #94a3b8;   /* Slate 400 - Secondary text */
+    --text-muted: #64748b;       /* Slate 500 - Muted captions/labels */
     --text-highlight: #ffffff;
 
-    /* Brand & Accent Actions */
-    --color-primary: #3b82f6;    /* Crisp Cobalt Blue */
-    --color-primary-hover: #2563eb;
-    --color-accent: #0ea5e9;
+    /* Brand & Accent Actions (Electric Cyan) */
+    --color-primary: #06b6d4;    /* Electric Cyan (Cyan-500) */
+    --color-primary-hover: #0891b2; /* Cyan-600 */
+    --color-accent: #22d3ee;     /* Cyan-400 */
+    --glow-primary: 0 0 20px rgba(6, 182, 212, 0.25);
+    --glow-amber: 0 0 20px rgba(245, 158, 11, 0.25);
 
     /* Status Colors */
     --status-online: #10b981;     /* Emerald */
@@ -42,15 +47,15 @@
     --btn-start-hover: #059669;
     --btn-stop: #ef4444;
     --btn-stop-hover: #dc2626;
-    --btn-restart: #3f3f46;
-    --btn-restart-hover: #52525b;
-    --btn-action: #27272a;
-    --btn-action-hover: #3f3f46;
-    --btn-disabled: #1c1c20;
+    --btn-restart: #1e293b;
+    --btn-restart-hover: #334155;
+    --btn-action: #0f172a;
+    --btn-action-hover: #1e293b;
+    --btn-disabled: #090e1a;
 
     --sidebar-width: 250px;
     --sidebar-width-collapsed: 68px;
 
-    --font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'Geist Mono', 'JetBrains Mono', 'Fira Code', monospace;
 }

@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 from app.services.server_process import server_manager
@@ -40,5 +41,5 @@ async def send_command(payload: CommandRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/logs")
-async def get_logs(start_index: int = Query(0, ge=0)):
-    return server_manager.get_logs(start_index)
+async def get_logs(start_index: int = Query(0, ge=0), after_id: Optional[int] = Query(None)):
+    return server_manager.get_logs(start_index=start_index, after_id=after_id)
