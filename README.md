@@ -1,8 +1,13 @@
 # Minenager Web Portal & Landing Page (`frontend`)
 
-The official public web application for **Minenager** — the modern, free Minecraft server creator and desktop management app.
+The official public website and remote cockpit portal for **Minenager** — the modern, self-hosted Minecraft server engine.
 
-This service delivers the public landing page, interactive modpack builder, user authentication, subscription upgrade portal, and account dashboard.
+### 🖥️ "Your PC is the Engine. Your Browser is the Cockpit."
+Minenager turns the user's PC into a high-performance local Minecraft engine with zero monthly hosting bills, controlled directly through modern web cockpits:
+* **Local Engine (Free)**: Users run their server locally on their computer with 1-click mod installation, safe backups, and local web console access (`http://localhost:8000`).
+* **Minenager Connect (Pro)**: Gives users a personal domain (`yourname.minenager.net`) with secure remote web access from their phone/laptop and 1-click zero-port-forwarding join links for friends.
+
+This repository service delivers the public marketing landing page, interactive mod builder, user authentication, subscription upgrade portal, and cloud account dashboard.
 
 ---
 
@@ -16,7 +21,7 @@ This service delivers the public landing page, interactive modpack builder, user
 
 ```mermaid
 flowchart TD
-    subgraph Browser ["Client Browser"]
+    subgraph Browser ["Client Browser / Mobile Phone"]
         LP["Landing Page (/)"]
         AuthView["Login & Register (/login)"]
         UpgradeView["Pro Upgrade Portal (/upgrade)"]
@@ -36,8 +41,8 @@ flowchart TD
         DB[("PostgreSQL")]
     end
 
-    subgraph DesktopApp ["Minenager Desktop (:3000)"]
-        UpgradeCTA["Upgrade to Pro Button"]
+    subgraph Engine ["Minenager Server Engine (:8000)"]
+        UpgradeCTA["Upgrade to Pro Button / Remote Web Cockpit"]
     end
 
     LP --> NextServer
@@ -57,10 +62,10 @@ flowchart TD
 
 | Route | Description |
 |---|---|
-| `/` | **Landing Page**: Features breakdown, comparison tables, FAQ, live server builder preview, and desktop download links. |
+| `/` | **Landing Page**: Value proposition ("Your PC is the Engine. Your Browser is the Cockpit"), comparison tables, FAQ, live server builder preview, and launcher download links. |
 | `/login` | **Authentication**: Unified Sign In and Create Account view with persistent JWT session management. |
-| `/upgrade` | **Pro Upgrade Portal**: Pricing ($2.50/mo), feature highlights, and direct Stripe checkout session launcher. |
-| `/portal` | **User Account Dashboard**: Displays active subscription status (`FREE` vs `PRO`), custom domain assignment (`<username>.minenager.net`), and desktop setup instructions. |
+| `/upgrade` | **Pro Upgrade Portal**: Minenager Connect pricing ($2.50/mo), feature highlights, and direct Stripe checkout session launcher. |
+| `/portal` | **User Account Dashboard**: Displays active subscription status (`FREE` vs `PRO`), custom domain assignment (`<username>.minenager.net`), and remote access instructions. |
 | `/build` | **Interactive Mod Sandbox**: Live Modrinth and version picker sandbox to preview server presets. |
 
 ---
