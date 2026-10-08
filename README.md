@@ -1,8 +1,8 @@
 # ☁️ Minenager Cloud Backend
 
-The central backend infrastructure and reverse tunnel relay for **Minenager**.
+The central cloud infrastructure, licensing authority, and reverse tunnel relay for **Minenager**.
 
-This service coordinates client authentication, Pro subscription lifecycle, zero-portforward reverse tunnels (powered by FRP), and database administration.
+This service coordinates client authentication, Pro subscription lifecycle, zero-portforward game tunnels & remote web cockpit relays (powered by FRP), and database administration.
 
 ---
 
@@ -18,7 +18,7 @@ The backend stack is managed via Docker Compose (`docker-compose.yml`):
    - Embedded database explorer UI at `/admin/db`.
 2. **`relay` (FRP Server - `frps`)**:
    - Reverse proxy relay listening on control port `2333` (TCP/UDP).
-   - Maps client-side tunnels to public multiplayer ports (`25566-25568+`).
+   - Maps client-side tunnels to public multiplayer game ports (`25566-25568+`) and secure remote web cockpit endpoints (`https://<username>.minenager.net`).
 3. **`postgres` (PostgreSQL 16 Alpine)**:
    - Stores users, sessions, subscription tiers (`free` vs `pro`), tunnels, and telemetry logs.
 
