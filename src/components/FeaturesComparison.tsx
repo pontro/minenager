@@ -9,7 +9,7 @@ export default function FeaturesComparison() {
             Why Selfhost Using Minenager?
           </h2>
           <p className="mt-3.5 text-slate-300 text-base sm:text-lg">
-            Compare traditional paid host limitations against hosting on your own computer with our free desktop app.
+            Compare traditional paid host limitations against hosting on your own computer with our free server-engine.
           </p>
         </div>
 
@@ -45,10 +45,10 @@ export default function FeaturesComparison() {
           </div>
 
           {/* The Minenager Way */}
-          <div className="p-8 sm:p-10 rounded-2xl bg-card-glass border-2 border-cyan-500/40 text-left relative overflow-hidden flex flex-col justify-between glow-primary">
+          <div className="p-8 sm:p-10 rounded-2xl bg-card-glass border border-cyan-500/40 text-left relative overflow-hidden flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 text-cyan-400 font-mono text-sm font-bold uppercase tracking-wider mb-4">
-                <CheckCircle className="w-5 h-5" /> The Minenager Desktop App
+                <CheckCircle className="w-5 h-5" /> The Minenager Server Engine
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-white mb-6">
                 100% Free, 1-Click &amp; Unlimited
@@ -57,7 +57,7 @@ export default function FeaturesComparison() {
                 <li className="flex items-start gap-3.5">
                   <Check className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
                   <span>
-                    <strong className="text-cyan-300">100% Free Desktop App</strong>: Use all of your computer&apos;s RAM &amp; CPU with zero artificial limits or monthly hosting bills.
+                    <strong className="text-cyan-300">100% Free Server Engine</strong>: Use all of your computer&apos;s RAM &amp; CPU with zero artificial limits or monthly hosting bills.
                   </span>
                 </li>
                 <li className="flex items-start gap-3.5">

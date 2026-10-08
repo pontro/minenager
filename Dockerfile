@@ -1,3 +1,13 @@
+FROM node:20-alpine AS dev
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+ENV PORT=3001
+ENV WATCHPACK_POLLING=true
+EXPOSE 3001
+CMD ["npm", "run", "dev", "--", "-p", "3001"]
+
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./

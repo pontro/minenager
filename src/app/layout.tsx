@@ -14,17 +14,17 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Minenager — Build it. Own it. | The Modern Minecraft Server Desktop App",
+  title: "Minenager — Build it. Own it. | The Modern Minecraft Server Engine",
   description:
-    "The 100% free Minecraft server desktop app. Create custom modded servers in seconds and play with friends with zero port forwarding required.",
+    "The self-hosted Minecraft server engine. Create custom modded servers in seconds and play with friends with zero port forwarding required.",
   keywords: [
     "minecraft server",
-    "minecraft server desktop app",
+    "minecraft server engine",
     "modrinth",
     "curseforge",
     "minecraft server maker",
     "zero port forwarding",
-    "free minecraft server app",
+    "free minecraft server engine",
   ],
 };
 

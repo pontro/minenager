@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Monitor, Apple, Terminal, Check, Sparkles } from "lucide-react";
+import { Download, Monitor, Check, Sparkles } from "lucide-react";
 
 export default function DownloadSection() {
   const [downloadingPlatform, setDownloadingPlatform] = useState<string | null>(null);
@@ -20,32 +20,32 @@ export default function DownloadSection() {
         </div>
 
         <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-4">
-          Download the Desktop App
+          Download the Server Engine
         </h2>
         <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto mb-12 leading-relaxed">
-          No coding, no terminal, and no complicated setup. Just install the app, pick your version, and start your Minecraft server in under 60 seconds.
+          No coding, no terminal, and no complicated setup. Just install the server engine, pick your version, and start your Minecraft server in under 60 seconds.
         </p>
 
-        {/* Platform Download Cards - Enlarged & High Readability */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto text-left">
+        {/* Platform Download Card - Windows Centered */}
+        <div className="max-w-md mx-auto text-left">
           {/* Windows */}
-          <div className="p-8 sm:p-9 rounded-2xl bg-card-glass border-2 border-cyan-400 flex flex-col justify-between relative glow-primary">
+          <div className="p-8 sm:p-9 rounded-2xl bg-card-glass border border-cyan-500/40 flex flex-col justify-between relative">
             <div className="absolute -top-3.5 right-6 px-3 py-1 rounded-full bg-cyan-400 text-black font-mono font-bold text-xs uppercase tracking-wider">
-              Recommended
+              Windows (64-bit)
             </div>
             <div>
               <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-5">
                 <Monitor className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-xl sm:text-2xl text-white">Windows</h3>
+              <h3 className="font-bold text-xl sm:text-2xl text-white">Minenager Engine</h3>
               <p className="text-sm sm:text-base text-slate-300 mt-1.5">Windows 10 / 11 (64-bit)</p>
               <div className="text-xs sm:text-sm font-mono text-cyan-300 mt-4">
-                Automatic Java setup included
+                Automatic Java runtime setup included
               </div>
             </div>
             <button
               onClick={() => handleDownload("Windows")}
-              className="mt-8 w-full py-4 px-5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm sm:text-base flex items-center justify-center gap-2.5 transition"
+              className="mt-8 w-full py-4 px-5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm sm:text-base flex items-center justify-center gap-2.5 transition cursor-pointer"
             >
               {downloadingPlatform === "Windows" ? (
                 <>
@@ -55,67 +55,7 @@ export default function DownloadSection() {
               ) : (
                 <>
                   <Download className="w-4 h-4" />
-                  <span>Download for Windows</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* macOS */}
-          <div className="p-8 sm:p-9 rounded-2xl bg-card-glass border border-white/10 flex flex-col justify-between">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white mb-5">
-                <Apple className="w-6 h-6" />
-              </div>
-              <h3 className="font-bold text-xl sm:text-2xl text-white">macOS</h3>
-              <p className="text-sm sm:text-base text-slate-300 mt-1.5">Apple Silicon &amp; Intel</p>
-              <div className="text-xs sm:text-sm font-mono text-slate-400 mt-4">
-                Universal .dmg installer
-              </div>
-            </div>
-            <button
-              onClick={() => handleDownload("macOS")}
-              className="mt-8 w-full py-4 px-5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold font-mono text-sm sm:text-base flex items-center justify-center gap-2.5 transition border border-white/10"
-            >
-              {downloadingPlatform === "macOS" ? (
-                <>
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span>Downloading .dmg...</span>
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4" />
-                  <span>Download for Mac</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* Linux */}
-          <div className="p-8 sm:p-9 rounded-2xl bg-card-glass border border-white/10 flex flex-col justify-between">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white mb-5">
-                <Terminal className="w-6 h-6" />
-              </div>
-              <h3 className="font-bold text-xl sm:text-2xl text-white">Linux</h3>
-              <p className="text-sm sm:text-base text-slate-300 mt-1.5">Ubuntu, Debian, Fedora, Arch</p>
-              <div className="text-xs sm:text-sm font-mono text-slate-400 mt-4">
-                .AppImage &amp; .deb packages
-              </div>
-            </div>
-            <button
-              onClick={() => handleDownload("Linux")}
-              className="mt-8 w-full py-4 px-5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold font-mono text-sm sm:text-base flex items-center justify-center gap-2.5 transition border border-white/10"
-            >
-              {downloadingPlatform === "Linux" ? (
-                <>
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span>Downloading .AppImage...</span>
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4" />
-                  <span>Download for Linux</span>
+                  <span>Download for Windows (.exe)</span>
                 </>
               )}
             </button>
@@ -132,7 +72,7 @@ export default function DownloadSection() {
               Download &amp; Open
             </div>
             <span className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              Double-click the installer on your PC or Mac. Zero technical setup.
+              Double-click the installer on your PC. Zero technical setup.
             </span>
           </div>
 

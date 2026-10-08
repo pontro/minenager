@@ -81,9 +81,9 @@ export default function PortalPage() {
 
       <div className="flex-1 max-w-6xl mx-auto px-6 py-10 w-full">
         {/* Profile Top Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-card-glass border border-white/10 glow-primary mb-8 backdrop-blur-xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-card-glass border border-white/10 mb-8 backdrop-blur-xl">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-mono font-bold text-xl glow-primary">
+            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-mono font-bold text-xl">
               {user.username.slice(0, 2).toUpperCase()}
             </div>
             <div>
@@ -107,7 +107,7 @@ export default function PortalPage() {
             {!isPro && (
               <Link
                 href="/upgrade"
-                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-xs flex items-center justify-center gap-2 glow-primary transition"
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-xs flex items-center justify-center gap-2 transition"
               >
                 <Zap className="w-3.5 h-3.5" />
                 <span>Upgrade Plan ($2.50)</span>
@@ -184,7 +184,7 @@ export default function PortalPage() {
           <div className="space-y-6">
             {/* Pro Remote Cockpit Hero Card */}
             {isPro ? (
-              <div className="p-6 sm:p-8 rounded-2xl bg-card-glass border-2 border-cyan-400/40 glow-primary relative overflow-hidden">
+              <div className="p-6 sm:p-8 rounded-2xl bg-card-glass border border-cyan-500/40 relative overflow-hidden">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                   <div className="space-y-2">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
@@ -204,7 +204,7 @@ export default function PortalPage() {
                       href={remoteCockpitUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-6 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center justify-center gap-2 glow-primary transition"
+                      className="px-6 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center justify-center gap-2 transition"
                     >
                       <span>Open Remote Cockpit</span>
                       <ExternalLink className="w-4 h-4" />
@@ -261,7 +261,7 @@ export default function PortalPage() {
                 </div>
                 <Link
                   href="/upgrade"
-                  className="px-6 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center justify-center gap-2 glow-primary transition shrink-0"
+                  className="px-6 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center justify-center gap-2 transition shrink-0"
                 >
                   <Zap className="w-4 h-4" />
                   <span>Get Minenager Connect ($2.50)</span>
@@ -419,7 +419,7 @@ export default function PortalPage() {
                 <button
                   type="button"
                   onClick={() => token && copyToClipboard(token, "auth_token")}
-                  className="px-4 py-2 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black font-mono font-bold text-xs flex items-center gap-2 shrink-0 transition glow-primary"
+                  className="px-4 py-2 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black font-mono font-bold text-xs flex items-center gap-2 shrink-0 transition"
                 >
                   {copiedKey === "auth_token" ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedKey === "auth_token" ? "Copied!" : "Copy Token"}</span>

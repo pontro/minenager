@@ -54,7 +54,7 @@ export default function UpgradePage() {
       <div className="flex-1 max-w-5xl mx-auto px-6 py-16 w-full flex flex-col justify-center">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-xs font-mono text-cyan-300 mb-4 glow-primary">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-xs font-mono text-cyan-300 mb-4">
             <Zap className="w-3.5 h-3.5" />
             <span>Minenager Pro Upgrade</span>
           </div>
@@ -75,7 +75,7 @@ export default function UpgradePage() {
         )}
 
         {/* Plan Card */}
-        <div className="max-w-xl mx-auto w-full p-8 sm:p-10 rounded-2xl bg-card-glass border-2 border-cyan-400 glow-primary-lg relative">
+        <div className="max-w-xl mx-auto w-full p-8 sm:p-10 rounded-2xl bg-card-glass border border-cyan-500/40 relative">
           <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-cyan-400 text-black font-mono font-bold text-xs uppercase tracking-wider">
             Simple Pricing
           </div>
@@ -121,7 +121,7 @@ export default function UpgradePage() {
             <li className="flex items-start gap-3">
               <Check className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
               <span>
-                <strong>Instant Activation</strong>: Changes sync automatically with your desktop app.
+                <strong>Instant Activation</strong>: Changes sync automatically with your server engine.
               </span>
             </li>
           </ul>
@@ -140,7 +140,7 @@ export default function UpgradePage() {
                   <span>Minenager Pro is Active!</span>
                 </div>
                 <p className="text-xs text-slate-300 mt-1">
-                  Logged in as <strong className="text-white">{user.username}</strong> ({user.email}). Tunnels and Discord features are unlocked on your desktop app.
+                  Logged in as <strong className="text-white">{user.username}</strong> ({user.email}). Tunnels and Discord features are unlocked on your server engine.
                 </p>
                 <Link
                   href="/portal"
@@ -160,7 +160,7 @@ export default function UpgradePage() {
                   type="button"
                   onClick={handleStartCheckout}
                   disabled={isCheckingOut}
-                  className="w-full py-4 rounded-xl bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-black font-bold font-mono text-base transition flex items-center justify-center gap-2 glow-primary shadow-lg cursor-pointer"
+                  className="w-full py-4 rounded-xl bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-black font-bold font-mono text-base transition flex items-center justify-center gap-2 shadow-lg cursor-pointer"
                 >
                   {isCheckingOut ? (
                     <>
@@ -189,7 +189,7 @@ export default function UpgradePage() {
                   </Link>
                   <Link
                     href="/login?mode=register&redirect=/upgrade"
-                    className="flex-1 py-3.5 text-center rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-mono font-bold text-sm transition glow-primary"
+                    className="flex-1 py-3.5 text-center rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-mono font-bold text-sm transition"
                   >
                     Create Account &rarr;
                   </Link>

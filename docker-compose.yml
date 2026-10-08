@@ -1,9 +1,17 @@
 services:
   portal:
-    build: .
+    build:
+      context: .
+      target: dev
     container_name: minenager-landing-portal
     restart: unless-stopped
     ports:
       - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
     environment:
       - NEXT_PUBLIC_CLOUD_API_URL=http://localhost:8080/api/v1
+      - WATCHPACK_POLLING=true
+      - PORT=3001

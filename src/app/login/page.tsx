@@ -56,10 +56,10 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md p-8 sm:p-10 rounded-2xl bg-card-glass border border-white/10 glow-primary-lg shadow-2xl relative z-10 backdrop-blur-xl">
+    <div className="w-full max-w-md p-8 sm:p-10 rounded-2xl bg-card-glass border border-white/10 shadow-2xl relative z-10 backdrop-blur-xl">
       {/* Brand Icon Header */}
       <div className="text-center mb-8">
-        <div className="w-12 h-12 mx-auto rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-4 glow-primary">
+        <div className="w-12 h-12 mx-auto rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-4">
           <Box className="w-6 h-6" />
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">
@@ -189,7 +189,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full mt-2 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-black font-bold font-mono text-sm transition flex items-center justify-center gap-2 glow-primary"
+          className="w-full mt-2 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 disabled:opacity-50 text-black font-bold font-mono text-sm transition flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>

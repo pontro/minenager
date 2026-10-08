@@ -25,7 +25,7 @@ export default function Navbar() {
   const { user, isLoading } = useAuth();
 
   return (
-    <nav className="w-full border-b border-white/5 bg-black/40 backdrop-blur-md sticky top-0 z-50">
+    <nav className="w-full border-b border-white/10 bg-[#060913] sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -97,7 +97,7 @@ export default function Navbar() {
 
           <Link
             href="/upgrade"
-            className="px-4 py-2 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black font-semibold text-xs transition-all flex items-center gap-2 glow-primary"
+            className="px-4 py-2 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black font-semibold text-xs transition-all flex items-center gap-2"
           >
             <span>Get Minenager Pro</span>
             <ArrowRight className="w-3.5 h-3.5" />

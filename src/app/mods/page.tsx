@@ -228,7 +228,7 @@ export default function ModCatalogPage() {
             <p className="text-sm text-slate-400 mt-2 max-w-2xl">
               Live, unified server-side library querying Modrinth and Hangar.
               Check compatibility, explore packages, or stage a blueprint to
-              import straight into the Minenager Desktop App.
+              import straight into the Minenager Server Engine.
             </p>
           </div>
 
@@ -540,7 +540,7 @@ export default function ModCatalogPage() {
 
                 <div className="mt-4 p-3 bg-black/40 rounded-xl border border-white/5 text-xs font-mono text-slate-300">
                   <div className="text-slate-400 mb-1">Import Instructions:</div>
-                  Open the <strong>Minenager Desktop App</strong> &gt; Click <em>"Import Blueprint"</em> &gt; Paste this blueprint to automatically download the exact loader builds and packages.
+                  Open the <strong>Minenager Server Engine</strong> &gt; Click <em>"Import Blueprint"</em> &gt; Paste this blueprint to automatically download the exact loader builds and packages.
                 </div>
               </div>
 

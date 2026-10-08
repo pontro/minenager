@@ -375,7 +375,7 @@ export default function GuidedBuilderPage() {
               onClick={() => setStep(s.num)}
               className={`flex-1 py-3 px-2 sm:px-3 rounded-xl text-center font-mono text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 ${
                 step === s.num
-                  ? "bg-cyan-400 text-black shadow-lg glow-primary"
+                  ? "bg-cyan-400 text-black shadow-lg"
                   : step > s.num
                   ? "bg-white/10 text-cyan-300"
                   : "text-slate-500 hover:text-slate-300"
@@ -463,7 +463,7 @@ export default function GuidedBuilderPage() {
                   onClick={() => setLoader(l.name)}
                   className={`p-6 rounded-2xl border transition cursor-pointer text-left flex flex-col justify-between ${
                     loader === l.name
-                      ? "bg-cyan-950/40 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)] glow-primary"
+                      ? "bg-cyan-950/40 border-cyan-400"
                       : "bg-card-glass border-white/10 hover:border-white/20"
                   }`}
                 >
@@ -493,7 +493,7 @@ export default function GuidedBuilderPage() {
             <div className="flex justify-end pt-4">
               <button
                 onClick={() => setStep(2)}
-                className="px-7 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center gap-2 transition glow-primary"
+                className="px-7 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center gap-2 transition"
               >
                 <span>Continue to Add Mods</span>
                 <ArrowRight className="w-4 h-4" />
@@ -660,7 +660,7 @@ export default function GuidedBuilderPage() {
 
               <button
                 onClick={() => setStep(3)}
-                className="px-7 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center gap-2 transition glow-primary"
+                className="px-7 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center gap-2 transition"
               >
                 <span>Continue to Hardware Config</span>
                 <ArrowRight className="w-4 h-4" />
@@ -880,7 +880,7 @@ export default function GuidedBuilderPage() {
 
               <button
                 onClick={() => setStep(4)}
-                className="px-7 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center gap-2 transition glow-primary"
+                className="px-7 py-3.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm flex items-center gap-2 transition"
               >
                 <span>Review Final Blueprint</span>
                 <ArrowRight className="w-4 h-4" />
@@ -903,12 +903,12 @@ export default function GuidedBuilderPage() {
                 Your Server Blueprint is Ready!
               </h2>
               <p className="text-slate-300 text-sm sm:text-base mt-2">
-                Download your blueprint JSON and launch it directly in the Minenager Desktop App.
+                Download your blueprint JSON and launch it directly in the Minenager Server Engine.
               </p>
             </div>
 
             {/* Final Server Instance Card */}
-            <div className="p-8 sm:p-10 rounded-3xl bg-card-glass border-2 border-cyan-400 text-left relative glow-primary space-y-6 shadow-2xl">
+            <div className="p-8 sm:p-10 rounded-3xl bg-card-glass border border-cyan-500/40 text-left relative space-y-6 shadow-2xl">
               <div className="flex items-center justify-between pb-4 border-b border-white/10">
                 <div className="flex items-center gap-2.5">
                   <span className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse"></span>
@@ -947,7 +947,7 @@ export default function GuidedBuilderPage() {
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   onClick={handleExportBlueprint}
-                  className="flex-1 py-4 px-6 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm sm:text-base flex items-center justify-center gap-2.5 transition glow-primary"
+                  className="flex-1 py-4 px-6 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-sm sm:text-base flex items-center justify-center gap-2.5 transition"
                 >
                   {exportFeedback ? (
                     <>
@@ -981,11 +981,11 @@ export default function GuidedBuilderPage() {
               </div>
             </div>
 
-            {/* Quick Desktop App Launch Guide */}
+            {/* Quick Server Engine Launch Guide */}
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-left font-mono text-xs text-slate-300 space-y-2">
               <div className="font-bold text-cyan-400 text-sm mb-1">How to launch:</div>
-              <div>1. Open your <strong>Minenager Desktop App</strong>.</div>
-              <div>2. Drag &amp; drop the exported <code>.json</code> file into the app window.</div>
+              <div>1. Open your <strong>Minenager Server Engine</strong> dashboard.</div>
+              <div>2. Drag &amp; drop the exported <code>.json</code> file into the dashboard.</div>
               <div>3. Click <strong>Start Server</strong> — Minenager downloads mods &amp; boots everything automatically.</div>
             </div>
 

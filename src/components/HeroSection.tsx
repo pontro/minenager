@@ -5,17 +5,12 @@ export default function HeroSection() {
   return (
     <header
       id="builder-sandbox"
-      className="relative overflow-hidden hero-glow-bg py-16 lg:py-24 border-b border-white/5"
+      className="relative overflow-hidden py-16 lg:py-24 border-b border-white/5"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Copy & Value Proposition */}
           <div className="lg:col-span-5 space-y-7 text-left">
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-xs sm:text-sm font-mono text-cyan-300">
-              <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
-              <span>100% Free Desktop App</span>
-            </div>
-
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
               Build it. <span className="text-cyan-400">Own it.</span>
             </h1>
@@ -28,10 +23,10 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <a
                 href="#download"
-                className="px-7 py-4 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 transition glow-primary"
+                className="px-7 py-4 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 transition"
               >
                 <Download className="w-5 h-5" />
-                <span>Download Desktop App</span>
+                <span>Download Server Engine</span>
               </a>
               <a
                 href="#pricing"

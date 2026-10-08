@@ -326,7 +326,7 @@ export default function SandboxBuilder() {
         <div className="flex items-center gap-2.5">
           <button
             onClick={handleExportBlueprint}
-            className="px-4 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-xs sm:text-sm flex items-center justify-center gap-1.5 transition glow-primary shrink-0"
+            className="px-4 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold font-mono text-xs sm:text-sm flex items-center justify-center gap-1.5 transition shrink-0"
           >
             {exportFeedback ? (
               <>

@@ -6,18 +6,14 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Geist Mono', monospace;
   
-  /* OFFICIAL PALETTE: Obsidian & Neon Cyan (Electric Blue / Cloud Edge) */
+  /* MODERN CLEAN PALETTE: Deep Slate, Obsidian & Cyan */
   --bg-main: #060913;
   --bg-surface: #0B1120;
-  --bg-card: rgba(11, 17, 32, 0.75);
+  --bg-card: rgba(11, 17, 32, 0.85);
   --border-card: rgba(255, 255, 255, 0.08);
   --accent-primary: #06B6D4;
   --accent-primary-hover: #0891B2;
-  --accent-primary-glow: rgba(6, 182, 212, 0.25);
-  --accent-secondary: #F59E0B;
-  --accent-secondary-glow: rgba(245, 158, 11, 0.2);
   --text-muted: #94A3B8;
-  --hero-radial: radial-gradient(circle at 50% 10%, rgba(6, 182, 212, 0.14) 0%, rgba(245, 158, 11, 0.04) 45%, transparent 75%);
 }
 
 body {
@@ -32,16 +28,4 @@ body {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border-card);
-}
-
-.glow-primary {
-  box-shadow: 0 0 25px var(--accent-primary-glow);
-}
-
-.glow-primary-lg {
-  box-shadow: 0 0 45px var(--accent-primary-glow);
-}
-
-.hero-glow-bg {
-  background: var(--hero-radial);
 }
