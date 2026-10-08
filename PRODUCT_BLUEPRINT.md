@@ -7,24 +7,25 @@ This document outlines the product strategy, freemium model, monetization tiers,
 ## 1. Product & Business Strategy
 
 ### Core Value Proposition
-> **"The easiest way to host a Minecraft server on your own PC, with zero port forwarding, instant mod management, and complete Discord bot remote control."**
+> **"Host Minecraft on your own PC for maximum speed & zero monthly bills. Manage in your browser at home for free, or unlock remote phone control & zero-port-forwarding tunnels with Minenager Connect."**
 
 ### Target Market
-- Casual gamers & friend groups who want to play modded/vanilla Minecraft together without paying \$15–\$30/mo for game server hosting.
-- Streamers and community managers looking for modern, non-clunky server management.
+- Casual gamers & friend groups who want to play modded/vanilla Minecraft together without paying $15–$30/mo for game server hosting.
+- Players who want to check their server status, restart crashes, or OP friends from their phone without being tied to their computer desk.
 
 ---
 
 ## 2. Freemium & Tier Matrix
 
-| Feature | Free Tier (Local App) | Pro Subscription (\$3 - \$5/mo) |
+| Feature | Free Tier (Local Engine) | Pro (Minenager Connect $2.50 - $4/mo) |
 | :--- | :--- | :--- |
+| **Management Cockpit** | In-browser on host PC (`http://localhost:8000`) | Secure Remote Access (`https://yourname.minenager.net`) on **any device/phone** |
+| **How Friends Connect** | Local LAN / Manual Router Port-Forward | **1-Click Zero Port-Forwarding** (`yourname.minenager.net`) |
 | **Server Instances** | 1 Active Instance per machine | Multi-instance profile switching |
 | **Mod & .mrpack Installer** | Full Modrinth integration | Full Modrinth integration |
-| **Console & Metrics** | Real-time local dashboard | Real-time local + Remote Web Access |
-| **Discord Bot Integration** | Locked | **Unlocked** (Remote commands, status, player alerts) |
-| **Minenager Tunnel (Zero-Portforward)** | Manual Port Forwarding | **1-Click Custom Domain** (`myserver.minenager.net`) |
-| **Cloud Backups** | Local storage only | Auto-sync to Google Drive / OneDrive / S3 |
+| **Live Console & Metrics** | Real-time local stream | Real-time local + Remote phone stream |
+| **Discord Bot Integration** | Basic status | **Full Remote Commands & Live Game Alerts** |
+| **Cloud Backups** | Local disk storage only | Auto-sync encrypted snapshots to cloud storage |
 
 ---
 

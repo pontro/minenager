@@ -1,14 +1,19 @@
 # ⛏️ Minenager
 
-**Minenager** (Minecraft Server Manager) is a lightweight, zero-bloat web dashboard designed to make hosting and managing Minecraft servers effortless on low-spec hardware.
+**Minenager** is a lightweight, zero-bloat self-hosted Minecraft server engine and modern web cockpit designed to give players maximum performance, unlimited RAM, and zero monthly server hosting bills.
 
-Built with **FastAPI**, **Docker**, and modern vanilla JavaScript & CSS with no heavy frontend frameworks.
+### 🖥️ "Your PC is the Engine. Your Browser is the Cockpit."
+Instead of running a heavy, bloated electron app, Minenager runs as a lightweight native engine on your computer:
+* **Free (Local Engine)**: Open `http://localhost:8000` in any web browser on your computer to manage worlds, 1-click install mods, configure gamerules, and play with friends on your local network.
+* **Pro (Minenager Connect)**: Unlocks secure remote access (`https://yourname.minenager.net`) so you can manage, OP players, or restart your server from your phone or laptop away from home, plus 1-click zero-port-forwarding tunnels for your friends.
+
+Built with **FastAPI**, **Docker**, and modern vanilla JavaScript & CSS with zero client-side bloat.
 
 ---
 
 ## ✨ Features
 
-- 🌐 **Zero-Portforward Reverse Tunnels (Pro)**: Share your server with friends using custom subdomains (e.g. `yourname.minenager.net`) without opening ports on your home router.
+- 🌐 **Remote Web Cockpit & Tunnels (Pro)**: Manage your server from your phone via `https://yourname.minenager.net` and share 1-click join links with friends without touching router port forwarding.
 - 🔐 **Account & Authentication**: Integrated cloud account login, registration, and Pro plan upgrades.
 - 🚀 **1-Click Software & Version Installer**: Easily install Vanilla, Fabric, or Quilt across versions with automatic loader resolution and EULA handling.
 - 💬 **Discord Bot & Remote Control**: Manage your server directly from Discord (`!turnon`, `!turnoff`, `!restart`, `!status`, `!players`, `!cmd`) with automated game event broadcasts (server start/stop, player joins/leaves with avatars, crash alerts).
@@ -16,7 +21,7 @@ Built with **FastAPI**, **Docker**, and modern vanilla JavaScript & CSS with no 
   - Search and install mods directly from Modrinth with loader & version auto-filtering.
   - Import `.mrpack` modpacks with automatic file extraction and dependency resolution.
 - 👥 **Visual Player Management**: View online players with avatars (Minotar), kick, ban, whitelist, or promote to OP with a single click.
-- 💻 **Real-time Web Console**: Live log streaming with colorized output and an interactive command input box.
+- 💻 **Real-time Web Console**: Continuous log streaming with monotonic sequence tracking, search filters, and an interactive command input box.
 - ⚙️ **Simplified Server Settings**: Adjust RAM allocation, gamemode, difficulty, max players (1–10), view distance, simulation distance, and MOTD.
 - 🔌 **Auto-Start on Boot**: Optional toggle to launch the Minecraft server automatically when the Docker container boots on host PC power-on.
 - 💾 **1-Click Backups & Storage Optimizer**: Quick world backups, download/restore points, and a 1-click log & crash report cleaner to save disk space on small hosts.
@@ -29,7 +34,7 @@ Minenager is built specifically for low-spec and older hardware:
 
 | Component | RAM Usage (Idle) | CPU Usage (Idle) |
 | :--- | :--- | :--- |
-| **Web Dashboard & API** | **~95 MB** | **< 1.0%** |
+| **Web Dashboard & Engine** | **~95 MB** | **< 1.0%** |
 | **Vanilla Frontend** | **0 MB** (Zero client bundles/node_modules) | **0%** |
 
 *Minecraft server RAM is separately configurable (1 GB to 16 GB) directly from the Settings tab.*
@@ -61,7 +66,7 @@ docker compose up -d
 ```
 
 ### 3. Access Dashboard
-- **Web Dashboard**: Open [http://localhost:3000](http://localhost:3000)
+- **Web Cockpit**: Open [http://localhost:8000](http://localhost:8000)
 - **Minecraft Server Port**: `25565`
 
 ---
