@@ -24,7 +24,21 @@ export interface TunnelInfo {
   public_address?: string;
 }
 
-export async function loginUser(username_or_email: string, password: string):Promise<AuthResponse> {
+export interface TunnelConfig {
+  id: string;
+  subdomain: string;
+  public_address: string;
+  vanilla_address: string;
+  public_port: number;
+  relay_server_host: string;
+  relay_server_port: number;
+  relay_auth_token: string;
+  tunnel_secret_token: string;
+  is_online: boolean;
+  last_heartbeat?: string;
+}
+
+export async function loginUser(username_or_email: string, password: string): Promise<AuthResponse> {
   const res = await fetch(`${CLOUD_API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -61,6 +75,20 @@ export async function fetchCurrentUser(token: string): Promise<User> {
     throw new Error(data.detail || "Session expired.");
   }
   return data;
+}
+
+export async function fetchTunnelConfig(token: string): Promise<TunnelConfig | null> {
+  try {
+    const res = await fetch(`${CLOUD_API_URL}/tunnels/config`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
 }
 
 export async function createCheckoutSession(token: string): Promise<{ client_secret: string }> {
