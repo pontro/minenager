@@ -5,7 +5,9 @@ interface ModItem {
   slug: string;
   name: string;
   description: string;
+  author?: string;
   platform: string;
+  source: "modrinth" | "hangar" | "both";
   serverSide: string;
   clientSide: string;
   categories: string[];
@@ -18,6 +20,7 @@ interface ModrinthSearchHit {
   slug: string;
   title: string;
   description: string;
+  author?: string;
   categories: string[];
   client_side: string;
   server_side: string;
@@ -39,6 +42,7 @@ interface HangarProjectHit {
   };
   description: string;
   avatarUrl?: string;
+  category?: string;
   stats: {
     downloads: number;
     stars: number;
@@ -56,10 +60,10 @@ interface HangarSearchResponse {
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const query = searchParams.get("query") || "";
+  const query = searchParams.get("query") || searchParams.get("q") || "";
   const loader = (searchParams.get("loader") || "fabric").toLowerCase();
   const version = searchParams.get("version") || "1.20.1";
-  const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 40);
+  const limit = Math.min(parseInt(searchParams.get("limit") || "36", 10), 60);
 
   // If vanilla, return clean empty response
   if (loader === "vanilla") {
@@ -104,8 +108,13 @@ export async function GET(request: NextRequest) {
         categoryFilters.push(`categories:${loader}`);
       }
 
+      const projectTypes =
+        loader === "paper" || loader === "purpur"
+          ? ["project_type:mod", "project_type:plugin"]
+          : ["project_type:mod"];
+
       const facets: (string[] | string)[] = [
-        ["project_type:mod"],
+        projectTypes,
         categoryFilters,
         [`versions:${version}`],
         ["server_side:required", "server_side:optional"],
@@ -146,7 +155,9 @@ export async function GET(request: NextRequest) {
           slug: hit.slug,
           name: hit.title,
           description: hit.description,
+          author: hit.author || "",
           platform: "Modrinth",
+          source: "modrinth",
           serverSide: hit.server_side,
           clientSide: hit.client_side,
           categories: hit.categories || [],
@@ -161,7 +172,7 @@ export async function GET(request: NextRequest) {
 
   // 2. Fetch from Hangar (especially relevant for Paper/Purpur/Spigot setups)
   const fetchHangar = async () => {
-    if (loader !== "paper") return;
+    if (loader !== "paper" && loader !== "purpur") return;
 
     try {
       const hangarUrl = new URL("https://hangar.papermc.io/api/v1/projects");
@@ -195,9 +206,13 @@ export async function GET(request: NextRequest) {
 
         if (existing) {
           existing.platform = "Modrinth & Hangar";
+          existing.source = "both";
           existing.downloads = Math.max(existing.downloads, hit.stats?.downloads || 0);
           if (!existing.iconUrl && hit.avatarUrl) {
             existing.iconUrl = hit.avatarUrl;
+          }
+          if (hit.category && !existing.categories.includes(hit.category.toLowerCase())) {
+            existing.categories.push(hit.category.toLowerCase());
           }
         } else {
           resultsMap.set(key, {
@@ -205,10 +220,12 @@ export async function GET(request: NextRequest) {
             slug: hit.namespace.slug,
             name: hit.name,
             description: hit.description,
+            author: hit.namespace.owner || "",
             platform: "Hangar",
+            source: "hangar",
             serverSide: "required",
             clientSide: "unsupported",
-            categories: ["plugin", "paper"],
+            categories: hit.category ? [hit.category.toLowerCase(), "plugin", "paper"] : ["plugin", "paper"],
             downloads: hit.stats?.downloads || 0,
             iconUrl: hit.avatarUrl || null,
           });

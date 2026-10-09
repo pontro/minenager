@@ -1,44 +1,89 @@
 import { NextResponse } from "next/server";
 
-interface MojangVersion {
-  id: string;
-  type: string;
-  url: string;
-  time: string;
-  releaseTime: string;
-}
-
-interface MojangManifest {
-  latest: {
-    release: string;
-    snapshot: string;
-  };
-  versions: MojangVersion[];
+interface ModrinthGameVersion {
+  version: string;
+  version_type: "release" | "snapshot" | "beta" | "alpha";
+  date: string;
+  major: boolean;
 }
 
 export async function GET() {
   try {
-    const res = await fetch("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json", {
-      next: { revalidate: 3600 }, // cache for 1 hour
-      headers: { "User-Agent": "Minenager/1.0" },
+    const res = await fetch("https://api.modrinth.com/v2/tag/game_version", {
+      next: { revalidate: 3600 },
+      headers: {
+        "User-Agent": "Minenager-WebBuilder/1.0 (contact@minenager.com)",
+      },
     });
 
     if (!res.ok) {
-      throw new Error(`Mojang API responded with status ${res.status}`);
+      throw new Error(`Modrinth API responded with status ${res.status}`);
     }
 
-    const data: MojangManifest = await res.json();
-    const releases = data.versions
-      .filter((v) => v.type === "release")
-      .map((v) => v.id);
+    const data: ModrinthGameVersion[] = await res.json();
 
-    // Curated major versions to present prominently
+    // Filter release versions supported by Modrinth
+    const releases = data
+      .filter((v) => v.version_type === "release")
+      .map((v) => v.version);
+
+    // Filter out test tags / pre-releases and maintain valid semver release versions
+    const supportedReleases = releases.filter((ver) => {
+      const match = ver.match(/^1\.(\d+)(?:\.(\d+))?$/);
+      if (!match) return false;
+      const minor = parseInt(match[1], 10);
+      const patch = match[2] ? parseInt(match[2], 10) : 0;
+      if (minor < 12) return false; // Modern versions (1.12+)
+      if (minor === 21 && patch > 4) return false; // Guard against Modrinth preview tags > 1.21.4
+      return true;
+    });
+
     const majorVersions = [
       "1.21.4",
+      "1.21.3",
+      "1.21.2",
       "1.21.1",
+      "1.21",
+      "1.20.6",
       "1.20.4",
+      "1.20.2",
       "1.20.1",
+      "1.20",
       "1.19.4",
+      "1.19.3",
+      "1.19.2",
+      "1.19.1",
+      "1.19",
+      "1.18.2",
+      "1.18.1",
+      "1.18",
+      "1.17.1",
+      "1.16.5",
+      "1.12.2",
+    ];
+
+    const resultList = supportedReleases.length > 0 ? supportedReleases : majorVersions;
+
+    return NextResponse.json({
+      latest: resultList[0] || "1.21.4",
+      featured: majorVersions,
+      versions: resultList,
+      all: resultList,
+    });
+  } catch (error) {
+    const fallbackList = [
+      "1.21.4",
+      "1.21.3",
+      "1.21.2",
+      "1.21.1",
+      "1.21",
+      "1.20.6",
+      "1.20.4",
+      "1.20.2",
+      "1.20.1",
+      "1.20",
+      "1.19.4",
+      "1.19.3",
       "1.19.2",
       "1.18.2",
       "1.16.5",
@@ -46,16 +91,10 @@ export async function GET() {
     ];
 
     return NextResponse.json({
-      latest: data.latest.release,
-      featured: majorVersions,
-      all: releases.slice(0, 30),
-    });
-  } catch (error) {
-    // Fallback list if external network error
-    return NextResponse.json({
       latest: "1.21.4",
-      featured: ["1.21.4", "1.21.1", "1.20.4", "1.20.1", "1.19.2", "1.18.2"],
-      all: ["1.21.4", "1.21.1", "1.20.4", "1.20.1", "1.19.4", "1.19.2", "1.18.2"],
+      featured: fallbackList,
+      versions: fallbackList,
+      all: fallbackList,
     });
   }
 }

@@ -8,7 +8,7 @@ export interface FlexItem {
   id: string;
   title: string;
   category: string;
-  badge: string;
+  badge?: string;
   imageSrc: string;
   icon: React.ElementType;
   tagColor: string;
@@ -80,9 +80,7 @@ export default function FlexCarousel({
                   {item.category}
                 </div>
 
-                <span className="font-mono text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded border bg-white/5 text-slate-400 border-white/10">
-                  {item.badge}
-                </span>
+                <div className="w-2 h-2 rounded-full bg-white/10" />
               </div>
             )}
 
@@ -95,9 +93,6 @@ export default function FlexCarousel({
                     {item.category}
                   </span>
                 </div>
-                <span className="font-mono text-[9px] uppercase px-2 py-0.5 rounded border bg-white/5 text-slate-400 border-white/10">
-                  {item.badge}
-                </span>
               </div>
             )}
 
@@ -116,13 +111,6 @@ export default function FlexCarousel({
                       {item.title}
                     </div>
                   </div>
-                </div>
-
-                <div className="hidden sm:flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                    {item.badge}
-                  </span>
                 </div>
               </div>
             )}
