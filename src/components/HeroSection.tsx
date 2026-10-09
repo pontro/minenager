@@ -36,11 +36,11 @@ export default function HeroSection() {
   ];
 
   return (
-    <header id="hero" className="relative overflow-hidden pt-24 pb-12 lg:pt-28 lg:pb-16 border-b border-white/5 bg-transparent">
+    <header id="hero" className="relative overflow-hidden pt-24 pb-12 lg:pt-28 lg:pb-16 bg-transparent">
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         
         {/* UNIFIED FULL-WIDTH BIG CARD MODAL CONTAINER */}
-        <div className="p-6 sm:p-10 lg:p-12 rounded-3xl bg-[#0B1120]/75 border border-white/10 shadow-2xl backdrop-blur-2xl">
+        <div className="p-6 sm:p-10 lg:p-12 rounded-3xl bg-[#0B1120] border border-white/15 shadow-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* LEFT SIDE: Copy & Value Proposition (4 Columns) */}

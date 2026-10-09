@@ -18,7 +18,7 @@ export default function HomePage() {
           fill
           priority
           unoptimized
-          className="object-cover object-center opacity-50 blur-[1.5px] scale-105"
+          className="object-cover object-center opacity-45 scale-105"
         />
         {/* Soft dark gradient vignette across full page */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#060913]/60 via-[#060913]/40 to-[#060913]/90" />

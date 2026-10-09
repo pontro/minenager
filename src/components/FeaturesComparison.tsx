@@ -2,7 +2,7 @@ import { XCircle, X, CheckCircle, Check } from "lucide-react";
 
 export default function FeaturesComparison() {
   return (
-    <section id="features" className="py-24 border-b border-white/5">
+    <section id="features" className="py-24">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">

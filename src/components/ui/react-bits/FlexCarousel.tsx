@@ -42,27 +42,25 @@ export default function FlexCarousel({
             onMouseEnter={() => setActiveId(item.id)}
             className={`relative rounded-2xl border transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] overflow-hidden cursor-pointer ${
               isActive
-                ? "flex-[4] sm:flex-[3.5] bg-black/70 border-cyan-500/40 shadow-2xl ring-1 ring-cyan-400/20"
-                : "flex-1 bg-[#090e1c]/80 border-white/10 hover:border-white/20 hover:bg-[#0c1324]"
+                ? "flex-[4] sm:flex-[3.5] bg-[#0B1120] border-cyan-500/40 shadow-2xl ring-1 ring-cyan-400/20"
+                : "flex-1 bg-[#0B1120] border-white/15 hover:border-white/25 hover:bg-[#0e1628]"
             }`}
           >
             {/* Background Screenshot */}
-            <div className="absolute inset-0 w-full h-full">
+            <div className="absolute inset-0 w-full h-full transform-gpu bg-[#0B1120]">
               <Image
                 src={item.imageSrc}
                 alt={item.title}
                 fill
                 priority={isActive}
                 unoptimized
-                className={`object-cover md:object-contain object-center transition-all duration-500 ${
-                  isActive
-                    ? "opacity-100 scale-100"
-                    : "opacity-30 blur-[1px] scale-105"
+                className={`object-cover object-top transition-opacity duration-300 ${
+                  isActive ? "opacity-100" : "opacity-25"
                 }`}
               />
               {/* Darkening gradient overlay */}
               <div
-                className={`absolute inset-0 transition-opacity duration-500 ${
+                className={`absolute inset-0 transition-opacity duration-300 ${
                   isActive
                     ? "bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"
                     : "bg-black/60 hover:bg-black/40"
@@ -105,7 +103,7 @@ export default function FlexCarousel({
 
             {/* Active Expanded Card Footer Bar */}
             {isActive && (
-              <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 z-20 flex items-center justify-between bg-gradient-to-t from-[#060913] via-[#060913]/90 to-transparent backdrop-blur-sm border-t border-white/10">
+              <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 z-20 flex items-center justify-between bg-[#060913] border-t border-white/10">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
                     <Icon className="w-5 h-5" />

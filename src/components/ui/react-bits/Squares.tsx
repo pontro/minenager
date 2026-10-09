@@ -53,25 +53,28 @@ export default function Squares({
       const startX = -squareSize + offsetX;
       const startY = -squareSize + offsetY;
 
+      ctx.beginPath();
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = 1;
+
       for (let x = startX; x < width + squareSize; x += squareSize) {
-        for (let y = startY; y < height + squareSize; y += squareSize) {
-          if (mousePos.current) {
-            const isHovered =
-              mousePos.current.x >= x &&
-              mousePos.current.x < x + squareSize &&
-              mousePos.current.y >= y &&
-              mousePos.current.y < y + squareSize;
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+      }
 
-            if (isHovered) {
-              ctx.fillStyle = hoverFillColor;
-              ctx.fillRect(x, y, squareSize, squareSize);
-            }
-          }
+      for (let y = startY; y < height + squareSize; y += squareSize) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+      }
 
-          ctx.strokeStyle = borderColor;
-          ctx.lineWidth = 1;
-          ctx.strokeRect(x, y, squareSize, squareSize);
-        }
+      ctx.stroke();
+
+      // Highlight single hovered square if mouse is present
+      if (mousePos.current) {
+        const hx = Math.floor((mousePos.current.x - offsetX) / squareSize) * squareSize + offsetX;
+        const hy = Math.floor((mousePos.current.y - offsetY) / squareSize) * squareSize + offsetY;
+        ctx.fillStyle = hoverFillColor;
+        ctx.fillRect(hx, hy, squareSize, squareSize);
       }
 
       const effectiveSpeed = Math.max(speed, 0.01);

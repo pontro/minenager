@@ -20,7 +20,7 @@ function GithubIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
 
 export default function Footer() {
   return (
-    <footer className="py-12 bg-black/60 border-t border-white/5 mt-auto">
+    <footer className="py-12 bg-[#04060d]/95 backdrop-blur-2xl border-t border-white/10 mt-auto">
       <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs text-slate-400">
         <div className="flex items-center gap-3">
           <div className="w-6 h-6 rounded bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
